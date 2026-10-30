@@ -315,14 +315,62 @@ export default function Dashboard() {
     }
   }
 
+  const solicitarUnirse = async (session) => {
+    if (session.status === 'cerrada') {
+      setToastMessage({
+        type: 'error',
+        text: 'Esta sesion esta cerrada y no acepta solicitudes'
+      })
+      setTimeout(() => setToastMessage(null), 4500)
+      return false
+    }
+
+    setJoiningSessionId(session.id)
+
+    try {
+      await api.post(`/sessions/${session.id}/requests`)
+
+      setToastMessage({
+        type: 'success',
+        text: `Solicitud enviada para "${session.name}". Espera la respuesta del organizador.`
+      })
+
+      setTimeout(() => setToastMessage(null), 4500)
+
+      return true;
+    } catch (error) {
+      const mensaje = err?.response?.data?.detail ||
+      'No se pudo enviar la solicitud. Inténtalo nuevamente.'
+      
+      setToastMessage({
+        type: 'error',
+        text: mensaje
+      })
+
+      setTimeout(() => setToastMessage(null), 4500);
+
+      return false
+    } finally {
+      setJoiningSessionId(null)
+    }
+
+  }
+
+
   // Confirmar e inscribirse desde el diálogo modal (Ley de Fitts y Heurística H5)
   const handleConfirmJoin = async () => {
+    
     if (!sessionToJoin) return
-    try {
-      await handleJoinSession(sessionToJoin)
-    } finally {
-      setSessionToJoin(null)
-    }
+
+    const enviada = await solicitarUnirse(sessionToJoin)
+
+    if (enviada)
+      setSessionToJoin(null);
+    // try {
+    //   await handleJoinSession(sessionToJoin)
+    // } finally {
+    //   setSessionToJoin(null)
+    // }
   }
 
   // Acción: Cerrar inscripciones (Transición abierta -> cerrada)
@@ -819,30 +867,30 @@ export default function Dashboard() {
             </div>
           ) : sessions.length > 0 ? (
             <div className="sessions-grid">
-              {sessions.map((s) => {
-                const isClosed = s.status === 'cerrada'
+              {sessions.map((session) => {
+                const isClosed = session.status === 'cerrada'
                 // Validación por correo electrónico: solo quien creó la sesión puede cerrarla
                 const isCreator = Boolean(
                   user && user.email && (
-                    (s.creator_email && s.creator_email.trim().toLowerCase() === user.email.trim().toLowerCase()) ||
-                    (s.creator_id && Number(s.creator_id) === Number(user.id))
+                    (session.creator_email && session.creator_email.trim().toLowerCase() === user.email.trim().toLowerCase()) ||
+                    (session.creator_id && Number(session.creator_id) === Number(user.id))
                   )
                 )
 
                 // Verifica si el usuario actual ya se encuentra inscrito
                 const isEnrolled = Boolean(
-                  user && user.email && Array.isArray(s.participant_emails) &&
-                  s.participant_emails.map((e) => String(e).toLowerCase().trim()).includes(user.email.trim().toLowerCase())
+                  user && user.email && Array.isArray(session.participant_emails) &&
+                  session.participant_emails.map((e) => String(e).toLowerCase().trim()).includes(user.email.trim().toLowerCase())
                 )
 
                 // Verifica si la fecha de la sesión ya pasó (comparación local)
                 const today = new Date()
                 today.setHours(0, 0, 0, 0)
-                const sessionDate = new Date(s.date + 'T00:00:00')
-                const isPastDate = Boolean(s.date && sessionDate < today)
+                const sessionDate = new Date(session.date + 'T00:00:00')
+                const isPastDate = Boolean(session.date && sessionDate < today)
 
                 // Verifica si los cupos están agotados
-                const isFull = Boolean(s.spots && (s.participants_count || 0) >= s.spots)
+                const isFull = Boolean(session.spots && (session.participants_count || 0) >= session.spots)
 
                 // Determinar el badge de estado superior coherente (IHC)
                 let statusBadgeClass = 'status-open'
@@ -865,50 +913,50 @@ export default function Dashboard() {
 
                 return (
                   <div
-                    key={s.id}
+                    key={session.id}
                     className={`session-card ${cardStateClass}`}
                   >
                     <div className="session-card-header">
                       <div className="session-card-tags">
-                        <span className={`session-modality-badge ${modalityColor(s.modality)}`}>
-                          {s.modality}
+                        <span className={`session-modality-badge ${modalityColor(session.modality)}`}>
+                          {session.modality}
                         </span>
-                        {s.subject && (
-                          <span className="session-subject-badge" title={`Materia: ${s.subject}`}>
-                            📚 {s.subject}
+                        {session.subject && (
+                          <span className="session-subject-badge" title={`Materia: ${session.subject}`}>
+                            📚 {session.subject}
                           </span>
                         )}
                       </div>
                       <span
                         className={`session-status-badge ${statusBadgeClass}`}
-                        id={`status-badge-${s.id}`}
+                        id={`status-badge-${session.id}`}
                       >
                         {statusBadgeLabel}
                       </span>
                     </div>
 
                     <span className="session-date">
-                      📅 {new Date(s.date + 'T00:00:00').toLocaleDateString('es-BO', {
+                      📅 {new Date(session.date + 'T00:00:00').toLocaleDateString('es-BO', {
                         day: '2-digit', month: 'long', year: 'numeric'
                       })}
                     </span>
 
-                    <h3 className="session-name">{s.name}</h3>
+                    <h3 className="session-name">{session.name}</h3>
 
-                    {s.creator_name && (
+                    {session.creator_name && (
                       <div className="session-creator-tag">
-                        👤 Organizado por: <strong>{isCreator ? `${s.creator_name} (Tú)` : s.creator_name}</strong>
+                        👤 Organizado por: <strong>{isCreator ? `${session.creator_name} (Tú)` : session.creator_name}</strong>
                       </div>
                     )}
 
                     <div className="session-spots">
-                      👥 <strong>{s.participants_count || 0} / {s.spots}</strong> participantes
+                      👥 <strong>{session.participants_count || 0} / {session.spots}</strong> participantes
                       {isClosed && <span className="session-spots-closed-pill"> (Cupo cerrado)</span>}
-                      {!isClosed && !isFull && ((s.spots || 0) - (s.participants_count || 0) === 1) && (
+                      {!isClosed && !isFull && ((session.spots || 0) - (session.participants_count || 0) === 1) && (
                         <span className="session-spots-urgency-pill"> ⚠️ ¡Último cupo disponible!</span>
                       )}
-                      {!isClosed && !isFull && ((s.spots || 0) - (s.participants_count || 0) > 1) && (
-                        <span className="session-spots-available-pill"> ({((s.spots || 0) - (s.participants_count || 0))} cupos libres)</span>
+                      {!isClosed && !isFull && ((session.spots || 0) - (session.participants_count || 0) > 1) && (
+                        <span className="session-spots-available-pill"> ({((session.spots || 0) - (session.participants_count || 0))} cupos libres)</span>
                       )}
                     </div>
 
@@ -918,7 +966,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           className="btn-toolbar-action btn-edit-session"
-                          onClick={() => openEditModal(s)}
+                          onClick={() => openEditModal(session)}
                           title="Editar los datos de esta sesión"
                         >
                           ✏️ Editar
@@ -926,7 +974,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           className="btn-toolbar-action btn-delete-session"
-                          onClick={() => setSessionToDelete(s)}
+                          onClick={() => setSessionToDelete(session)}
                           title="Eliminar esta sesión de estudio"
                         >
                           🗑️ Eliminar
@@ -943,13 +991,13 @@ export default function Dashboard() {
                           </div>
                           {!isClosed && !isPastDate && (
                             <button
-                              id={`btn-close-session-${s.id}`}
+                              id={`btn-close-session-${session.id}`}
                               className="btn-close-registration"
-                              onClick={() => handleCloseRegistration(s.id, s.name)}
-                              disabled={closingSessionId === s.id}
+                              onClick={() => handleCloseRegistration(session.id, session.name)}
+                              disabled={closingSessionId === session.id}
                               title="Cerrar inscripciones para esta sesión (Solo el creador)"
                             >
-                              {closingSessionId === s.id ? (
+                              {closingSessionId === session.id ? (
                                 <>⏳ Cerrando...</>
                               ) : (
                                 <>🔒 Cerrar inscripciones</>
@@ -1015,11 +1063,11 @@ export default function Dashboard() {
                           <button
                             type="button"
                             className="btn-join-session btn-join-active"
-                            onClick={() => setSessionToJoin(s)}
-                            disabled={joiningSessionId === s.id}
-                            title="Unirme a esta sesión de estudio"
+                            onClick={() => setSessionToJoin(session)}
+                            disabled={joiningSessionId === session.id}
+                            title="Solicitar unirme a esta sesión de estudio"
                           >
-                            {joiningSessionId === s.id ? '⏳ Inscribiendo...' : 'Inscribirme'}
+                            {joiningSessionId === session.id ? '⏳ Inscribiendo...' : 'Solicitar Inscribirme'}
                           </button>
                         </div>
                       )}
@@ -1272,7 +1320,7 @@ export default function Dashboard() {
 
             <div className="modal-body-content">
               <p className="join-confirm-intro">
-                Revisa los detalles antes de unirte. Tu lugar quedará reservado inmediatamente en la base de datos:
+                Revisa los detalles antes de enviar la solicitud. El organizador decidira si la acepta o rechaza
               </p>
 
               <div className="join-session-summary-card">
@@ -1322,7 +1370,8 @@ export default function Dashboard() {
               <div className="join-disclaimer-box">
                 <span className="disclaimer-icon">💡</span>
                 <p>
-                  Al confirmar, te comprometes a participar en la sesión y tu correo quedará registrado en la lista oficial de asistentes.
+                  Enviar una solicitud no reserva un cupo.
+                  Tu inscripción se confirmará cuando el organizador la acepte.
                 </p>
               </div>
             </div>
@@ -1342,7 +1391,7 @@ export default function Dashboard() {
                 onClick={handleConfirmJoin}
                 disabled={joiningSessionId === sessionToJoin.id}
               >
-                {joiningSessionId === sessionToJoin.id ? '⏳ Inscribiendo...' : '✅ Sí, Unirme a la sesión'}
+                {joiningSessionId === sessionToJoin.id ? '⏳ Enviando Solicitud...' : '✅ Enviar Solicitud'}
               </button>
             </div>
           </div>

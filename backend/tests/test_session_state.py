@@ -12,7 +12,7 @@ Requisitos evaluados:
 """
 
 import unittest
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import sys
 import os
 
@@ -35,7 +35,7 @@ class TestSessionStateTransitions(unittest.TestCase):
         self.session = Session(
             id=101,
             name="Taller de Álgebra Lineal - Espacios Vectoriales",
-            date=date(2026, 10, 20),
+            date=date.today() + timedelta(days=3),
             modality="Presencial",
             spots=15,
             participants_count=0,

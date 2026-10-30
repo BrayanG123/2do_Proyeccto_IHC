@@ -29,6 +29,48 @@ docker-compose down -v
 
 ---
 
+## Datos de demostración
+
+Con los servicios en ejecución, carga las materias y los datos de prueba con:
+
+```bash
+docker compose exec backend python seed.py
+```
+
+Sin Docker, desde la carpeta `backend` y con el entorno virtual activado:
+
+```bash
+python seed.py
+```
+
+El script agrega cinco usuarios, seis sesiones, siete solicitudes y once eventos
+de historial. Las sesiones se identifican con el prefijo `[DEMO]` e incluyen
+sesiones abiertas, una cerrada, una pasada, una con cupos llenos y una sin
+solicitudes. Las solicitudes incluyen los estados pendiente, aceptada y rechazada;
+solo las aceptadas se incluyen como participantes y generan un evento `unido`.
+
+Todas las cuentas nuevas usan la contraseña **`StudyMatch123!`**:
+
+| Correo | Datos que permite probar |
+| --- | --- |
+| `ana.demo@example.com` | Organiza tres sesiones y tiene una solicitud pendiente en Estructuras Discretas. |
+| `bruno.demo@example.com` | Organiza dos sesiones y está aceptado en el taller con cupos llenos. |
+| `carla.demo@example.com` | Tiene una solicitud pendiente en Cálculo I y una aceptada en Álgebra Lineal. |
+| `diego.demo@example.com` | Está aceptado en Cálculo I y tiene historial de participación. |
+| `elena.demo@example.com` | Organiza una sesión sin solicitudes; tiene una solicitud rechazada y una participación pasada. |
+
+Por ejemplo, entra como Carla para ver su solicitud pendiente y como Ana para
+consultarla desde la sesión de Cálculo I cuando esté disponible la gestión de
+solicitudes en la interfaz.
+
+Puedes repetir el comando: conserva las contraseñas de cuentas existentes y las
+decisiones, participantes y cambios de las sesiones ya cargadas. Las fechas se
+calculan respecto al día de la primera carga de cada sesión y no se desplazan al
+repetirla. El arranque normal del backend sigue cargando únicamente las materias;
+los datos de demostración se agregan al ejecutar `seed.py`.
+
+---
+
 ## 🚀 Cómo iniciar el proyecto (sin Docker)
 
 ### Pre-requisitos

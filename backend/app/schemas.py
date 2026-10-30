@@ -251,3 +251,17 @@ class HistoryEventResponse(BaseModel):
     participants_count: int | None = None
     spots: int | None = None
 
+
+
+
+class SessionJoinRequestResponse(BaseModel):
+    id: int
+    session_id: int
+    user_id: int
+    status: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+    

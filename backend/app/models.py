@@ -1,10 +1,11 @@
+from email.policy import default
 import json
 from datetime import date as dt_date, timedelta
 from typing import Optional, List
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, ForeignKey
 from sqlalchemy.sql import func
 from app.database import Base
-
+from sqlalchemy import UniqueConstraint, CheckConstraint
 
 
 class User(Base):
@@ -20,8 +21,6 @@ class User(Base):
     avatar_url = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
-
-
 
 
 class Subject(Base):
@@ -175,6 +174,30 @@ class Session(Base):
     @property
     def is_open(self) -> bool:
         return self.status == "abierta"
+
+
+class SessionJoinRequest(Base):
+    __tablename__ = "session_join_requests"
+
+    id =         Column( Integer, primary_key=True, index=True)
+    session_id = Column( Integer, ForeignKey("sessions.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id =    Column( Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    status =     Column( String(20), nullable=False, default="pendiente")
+    created_at = Column( DateTime(timezone=True), nullable=False, server_default=func.now() )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "session_id",
+            "user_id",
+            name="uq_session_join_request_user"
+        ),
+        CheckConstraint(
+            "status IN ('pendiente', 'aceptada', 'rechazada')",
+            name="ck_session_join_request_status"
+        ),
+    )
+
+
 
 
 # ── HISTORIAL DE PARTICIPACIÓN (Issue #12 / #13) ───────────

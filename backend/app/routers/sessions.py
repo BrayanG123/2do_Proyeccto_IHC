@@ -3,10 +3,16 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session as DBSession
+from sqlalchemy.exc import IntegrityError
 from app.database import get_db
-from app.models import Session, User, Subject, filter_sessions_query, record_session_event
-from app.schemas import SessionCreate, SessionResponse, SessionStatusUpdate, SessionUpdate
+from app.models import Session, User, Subject, filter_sessions_query, record_session_event, SessionJoinRequest
+from app.schemas import SessionCreate, SessionResponse, SessionStatusUpdate, SessionUpdate, SessionJoinRequestResponse
 from app.routers.auth import get_current_user
+
+
+
+
+
 
 router = APIRouter(prefix="/sessions", tags=["Sesiones"])
 
@@ -311,3 +317,101 @@ def join_session(
 
 
 
+@router.post(
+    "/{session_id}/requests",
+    response_model=SessionJoinRequestResponse,
+    status_code=status.HTTP_201_CREATED
+)
+def solicitar_unirse(
+    session_id: int,
+    db: DBSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    
+    session = (
+        db.query(Session)
+        .filter(Session.id == session_id)
+        .first()
+    )
+
+    if session is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Sesión no encontrada."
+        )
+
+
+    if session.creator_id is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Esta sesión no tiene un organizador disponible."
+        )
+
+
+    if session.creator_id == current_user.id:
+        raise HTTPException(
+            status_code=400,
+            detail="No puedes solicitar unirte a tu propia sesión."
+        )
+
+
+    existente = (
+        db.query(SessionJoinRequest)
+        .filter(
+            SessionJoinRequest.session_id == session_id,
+            SessionJoinRequest.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if existente is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Ya tienes una solicitud para esta sesión "
+                f"con estado '{existente.status}'."
+            )
+        )
+
+
+    permitido, motivo = session.can_join(current_user.email)
+
+    if not permitido:
+        raise HTTPException(
+            status_code=400,
+            detail=motivo
+        )
+
+
+    solicitud = SessionJoinRequest(
+        session_id=session.id,
+        user_id=current_user.id,
+        status="pendiente"
+    )
+
+
+    db.add(solicitud)
+
+
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+
+        constraint_name = getattr(
+            getattr(exc.orig, "diag", None),
+            "constraint_name",
+            None
+        )
+
+        if constraint_name == "uq_session_join_request_user":
+            raise HTTPException(
+                status_code=409,
+                detail="Ya tienes una solicitud para esta sesión."
+            ) from exc
+
+
+        raise
+
+    db.refresh(solicitud)
+    return solicitud
