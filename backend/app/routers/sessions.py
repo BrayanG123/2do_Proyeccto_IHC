@@ -1,4 +1,5 @@
-from datetime import date as dt_date, timedelta
+from datetime import date as dt_date, timedelta, datetime, timezone
+import json
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func
@@ -6,8 +7,9 @@ from sqlalchemy.orm import Session as DBSession
 from sqlalchemy.exc import IntegrityError
 from app.database import get_db
 from app.models import Session, User, Subject, filter_sessions_query, record_session_event, SessionJoinRequest
-from app.schemas import SessionCreate, SessionResponse, SessionStatusUpdate, SessionUpdate, SessionJoinRequestResponse
+from app.schemas import SessionCreate, SessionResponse, SessionStatusUpdate, SessionUpdate, SessionJoinRequestResponse, RequestDecision
 from app.routers.auth import get_current_user
+from app.waitlist import promote_waiting, request_view
 
 
 
@@ -97,7 +99,7 @@ def close_session_registration(
     Aplica la regla de transición de estado: 'abierta' -> 'cerrada'.
     Rechaza transiciones inválidas con error HTTP 400 y accesos no autorizados con HTTP 403.
     """
-    session = db.query(Session).filter(Session.id == session_id).first()
+    session = db.query(Session).filter(Session.id == session_id).with_for_update().first()
     if not session:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -141,7 +143,7 @@ def update_session_status(
     """
     Actualiza el estado de la sesión validando que el usuario sea el creador por correo.
     """
-    session = db.query(Session).filter(Session.id == session_id).first()
+    session = db.query(Session).filter(Session.id == session_id).with_for_update().first()
     if not session:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -199,7 +201,7 @@ def update_session(
     1. Editar: Los datos del elemento (nombre, fecha, modalidad, cupos).
     Solo el creador puede editar los datos de su sesión.
     """
-    session = db.query(Session).filter(Session.id == session_id).first()
+    session = db.query(Session).filter(Session.id == session_id).with_for_update().first()
     if not session:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -259,7 +261,7 @@ def delete_session(
     2. Eliminar: Elimina la sesión solicitando confirmación previa en la UI.
     Solo el creador puede eliminar su sesión.
     """
-    session = db.query(Session).filter(Session.id == session_id).first()
+    session = db.query(Session).filter(Session.id == session_id).with_for_update().first()
     if not session:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -285,7 +287,7 @@ def delete_session(
     return {"message": "Sesión eliminada exitosamente", "id": session_id}
 
 
-@router.post("/{session_id}/join", response_model=SessionResponse)
+@router.post("/{session_id}/join", response_model=SessionJoinRequestResponse)
 def join_session(
     session_id: int,
     db: DBSession = Depends(get_db),
@@ -295,25 +297,8 @@ def join_session(
     3. Aplicar una restricción según su estado:
     Directriz de STUDYMATCH: Una sesión cerrada no acepta nuevos participantes.
     """
-    session = db.query(Session).filter(Session.id == session_id).first()
-    if not session:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Sesión no encontrada"
-        )
-
-    try:
-        session.register_participant(user_email=current_user.email)
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-
-    record_session_event(db, current_user.id, "unido", session)
-    db.commit()
-    db.refresh(session)
-    return session
+    # Compatibilidad de ruta: tampoco permite saltarse la aprobación del organizador.
+    return solicitar_unirse(session_id, db, current_user)
 
 
 
@@ -331,6 +316,7 @@ def solicitar_unirse(
     session = (
         db.query(Session)
         .filter(Session.id == session_id)
+        .with_for_update()
         .first()
     )
 
@@ -374,7 +360,7 @@ def solicitar_unirse(
         )
 
 
-    permitido, motivo = session.can_join(current_user.email)
+    permitido, motivo = session.can_join(current_user.email, check_capacity=False)
 
     if not permitido:
         raise HTTPException(
@@ -415,3 +401,85 @@ def solicitar_unirse(
 
     db.refresh(solicitud)
     return solicitud
+
+
+def locked_session(db, session_id):
+    session = db.query(Session).filter(Session.id == session_id).with_for_update().first()
+    if session is None:
+        raise HTTPException(404, 'Sesión no encontrada.')
+    return session
+
+
+def require_organizer(session, user):
+    if session.creator_id != user.id:
+        raise HTTPException(403, 'Solo el organizador puede gestionar las solicitudes.')
+
+
+@router.get('/requests/me', response_model=List[SessionJoinRequestResponse])
+def my_requests(db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    requests = db.query(SessionJoinRequest).filter(SessionJoinRequest.user_id == current_user.id).all()
+    return [request_view(db, item) for item in requests]
+
+
+@router.get('/{session_id}/requests', response_model=List[SessionJoinRequestResponse])
+def list_requests(session_id: int, db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = db.get(Session, session_id)
+    if session is None:
+        raise HTTPException(404, 'Sesión no encontrada.')
+    require_organizer(session, current_user)
+    requests = db.query(SessionJoinRequest).filter(SessionJoinRequest.session_id == session_id).order_by(SessionJoinRequest.id).all()
+    return [request_view(db, item) for item in requests]
+
+
+@router.patch('/{session_id}/requests/{request_id}', response_model=SessionJoinRequestResponse)
+def decide_request(session_id: int, request_id: int, body: RequestDecision,
+                   db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = locked_session(db, session_id)
+    require_organizer(session, current_user)
+    request = db.query(SessionJoinRequest).filter(
+        SessionJoinRequest.id == request_id, SessionJoinRequest.session_id == session_id,
+    ).first()
+    if request is None:
+        raise HTTPException(404, 'Solicitud no encontrada.')
+    if request.status not in ('pendiente', 'en_espera'):
+        raise HTTPException(409, 'Esta solicitud ya tiene una decisión definitiva.')
+    if body.decision == 'rechazar':
+        request.status = 'rechazada'
+    else:
+        if request.status != 'pendiente':
+            raise HTTPException(409, 'La solicitud ya está en la lista de espera.')
+        applicant = db.get(User, request.user_id)
+        allowed, reason = session.can_join(applicant.email, check_capacity=False)
+        if not allowed:
+            raise HTTPException(400, reason)
+        request.status = 'en_espera'
+        request.waitlisted_at = datetime.now(timezone.utc)
+        # El bloqueo de la sesión serializa este contador incluso si dos relojes coinciden.
+        request.wait_order = (db.query(func.max(SessionJoinRequest.wait_order)).filter(
+            SessionJoinRequest.session_id == session_id,
+        ).scalar() or 0) + 1
+        db.flush()
+        promote_waiting(db, session)
+    db.commit()
+    return request_view(db, request)
+
+
+@router.post('/{session_id}/leave', response_model=SessionResponse)
+def leave_session(session_id: int, db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = locked_session(db, session_id)
+    request = db.query(SessionJoinRequest).filter(
+        SessionJoinRequest.session_id == session_id, SessionJoinRequest.user_id == current_user.id,
+    ).first()
+    email = (request.confirmed_email if request and request.confirmed_email else current_user.email).strip().lower()
+    if not session.is_user_registered(email):
+        raise HTTPException(409, 'No estás confirmado en esta sesión.')
+    emails = session.get_participant_emails_list()
+    emails.remove(email)
+    session.participant_emails = json.dumps(emails)
+    session.participants_count = max(0, session.participants_count - 1)
+    if request:
+        request.status = 'retirada'
+    promote_waiting(db, session)
+    db.commit()
+    db.refresh(session)
+    return session

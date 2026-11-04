@@ -18,6 +18,14 @@ ALTER TABLE sessions ADD COLUMN IF NOT EXISTS participant_emails TEXT DEFAULT '[
 UPDATE sessions SET participant_emails = '[]' WHERE participant_emails IS NULL;
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS subject VARCHAR(150);
 
+-- Lista de espera: conservar las solicitudes existentes y ampliar sus estados.
+ALTER TABLE session_join_requests ADD COLUMN IF NOT EXISTS waitlisted_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE session_join_requests ADD COLUMN IF NOT EXISTS wait_order INTEGER;
+ALTER TABLE session_join_requests ADD COLUMN IF NOT EXISTS confirmed_email VARCHAR(150);
+ALTER TABLE session_join_requests DROP CONSTRAINT IF EXISTS ck_session_join_request_status;
+ALTER TABLE session_join_requests ADD CONSTRAINT ck_session_join_request_status
+CHECK (status IN ('pendiente', 'aceptada', 'rechazada', 'en_espera', 'retirada'));
+
 CREATE OR REPLACE FUNCTION update_user_profile_trigger()
 RETURNS TRIGGER AS $$
 BEGIN

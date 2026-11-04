@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, Literal
 from datetime import datetime
 import re
 from pydantic import BaseModel, EmailStr, field_validator
@@ -260,8 +260,12 @@ class SessionJoinRequestResponse(BaseModel):
     user_id: int
     status: str
     created_at: datetime
+    user_name: str | None = None
+    user_email: str | None = None
+    queue_position: int | None = None
 
     model_config = {"from_attributes": True}
 
 
-    
+class RequestDecision(BaseModel):
+    decision: Literal['aceptar', 'rechazar']

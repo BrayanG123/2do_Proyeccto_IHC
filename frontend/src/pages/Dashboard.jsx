@@ -58,6 +58,18 @@ export default function Dashboard() {
   const [deletingId, setDeletingId] = useState(null)
   const [joiningSessionId, setJoiningSessionId] = useState(null)
   const [sessionToJoin, setSessionToJoin] = useState(null)
+  const [myRequests, setMyRequests] = useState([])
+  const [managedSession, setManagedSession] = useState(null)
+  const [managedRequests, setManagedRequests] = useState([])
+  const [requestsLoading, setRequestsLoading] = useState(false)
+  const [requestsError, setRequestsError] = useState('')
+  const [requestBusy, setRequestBusy] = useState(false)
+
+  const requestLabel = (request) => ({
+    pendiente: 'Pendiente de aprobación', aceptada: 'Confirmado',
+    en_espera: `En espera · posición ${request.queue_position}`,
+    rechazada: 'Solicitud rechazada', retirada: 'Saliste de la sesión',
+  }[request.status])
 
   // Debounce para la búsqueda por texto (300ms)
   useEffect(() => {
@@ -96,7 +108,10 @@ export default function Dashboard() {
       }
       if (filterOnlyAvailable) params.only_available = true
 
-      const res = await api.get('/sessions/', { params })
+      const [res, own] = await Promise.all([
+        api.get('/sessions/', { params }), api.get('/sessions/requests/me'),
+      ])
+      setMyRequests(own.data)
       if (Array.isArray(res.data)) setSessions(res.data)
     } catch (err) {
       console.warn('Error al cargar sesiones filtradas:', err)
@@ -286,35 +301,6 @@ export default function Dashboard() {
     }
   }
 
-  // 3. RESTRICCIÓN SEGÚN ESTADO: Inscribirse a una sesión
-  const handleJoinSession = async (session) => {
-    if (session.status === 'cerrada') {
-      setToastMessage({
-        type: 'error',
-        text: '⛔ Restricción StudyMatch: Una sesión cerrada no acepta nuevos participantes.'
-      })
-      setTimeout(() => setToastMessage(null), 4500)
-      return
-    }
-
-    setJoiningSessionId(session.id)
-    try {
-      const res = await api.post(`/sessions/${session.id}/join`)
-      setSessions((prev) => prev.map((s) => (s.id === session.id ? res.data : s)))
-      setToastMessage({
-        type: 'success',
-        text: `🎉 ¡Te has inscrito a "${session.name}"! Cupo reservado y persistido en la BD.`
-      })
-      setTimeout(() => setToastMessage(null), 4000)
-    } catch (err) {
-      const msg = err?.response?.data?.detail || 'Error al unirte a la sesión.'
-      setToastMessage({ type: 'error', text: `⚠️ ${msg}` })
-      setTimeout(() => setToastMessage(null), 4500)
-    } finally {
-      setJoiningSessionId(null)
-    }
-  }
-
   const solicitarUnirse = async (session) => {
     if (session.status === 'cerrada') {
       setToastMessage({
@@ -328,7 +314,8 @@ export default function Dashboard() {
     setJoiningSessionId(session.id)
 
     try {
-      await api.post(`/sessions/${session.id}/requests`)
+      const res = await api.post(`/sessions/${session.id}/requests`)
+      setMyRequests(prev => [...prev.filter(item => item.session_id !== session.id), res.data])
 
       setToastMessage({
         type: 'success',
@@ -339,7 +326,7 @@ export default function Dashboard() {
 
       return true;
     } catch (error) {
-      const mensaje = err?.response?.data?.detail ||
+      const mensaje = error?.response?.data?.detail ||
       'No se pudo enviar la solicitud. Inténtalo nuevamente.'
       
       setToastMessage({
@@ -366,11 +353,6 @@ export default function Dashboard() {
 
     if (enviada)
       setSessionToJoin(null);
-    // try {
-    //   await handleJoinSession(sessionToJoin)
-    // } finally {
-    //   setSessionToJoin(null)
-    // }
   }
 
   // Acción: Cerrar inscripciones (Transición abierta -> cerrada)
@@ -402,6 +384,43 @@ export default function Dashboard() {
   const handleLogout = () => {
     logout()
     navigate('/')
+  }
+
+  const manageRequests = async (session) => {
+    setManagedSession(session)
+    setManagedRequests([])
+    setRequestsError('')
+    setRequestsLoading(true)
+    try {
+      const res = await api.get(`/sessions/${session.id}/requests`)
+      setManagedRequests(res.data)
+    } catch (error) {
+      setRequestsError(error?.response?.data?.detail || 'No se pudieron cargar las solicitudes.')
+    } finally { setRequestsLoading(false) }
+  }
+
+  const decideRequest = async (request, decision) => {
+    setRequestBusy(true)
+    setRequestsError('')
+    try {
+      await api.patch(`/sessions/${managedSession.id}/requests/${request.id}`, { decision })
+      const res = await api.get(`/sessions/${managedSession.id}/requests`)
+      setManagedRequests(res.data)
+      await fetchSessions()
+    } catch (error) {
+      setRequestsError(error?.response?.data?.detail || 'No se pudo guardar la decisión.')
+    } finally { setRequestBusy(false) }
+  }
+
+  const leaveSession = async (session) => {
+    setRequestBusy(true)
+    try {
+      await api.post(`/sessions/${session.id}/leave`)
+      await fetchSessions()
+      setToastMessage({ type: 'success', text: `Saliste de "${session.name}". Si había una lista de espera y la sesión sigue abierta, el primer estudiante fue confirmado.` })
+    } catch (error) {
+      setToastMessage({ type: 'error', text: error?.response?.data?.detail || 'No se pudo salir de la sesión.' })
+    } finally { setRequestBusy(false) }
   }
 
   const displayName = user?.first_name || user?.full_name?.split(' ')[0] || 'Estudiante'
@@ -891,6 +910,7 @@ export default function Dashboard() {
 
                 // Verifica si los cupos están agotados
                 const isFull = Boolean(session.spots && (session.participants_count || 0) >= session.spots)
+                const myRequest = myRequests.find(item => item.session_id === session.id)
 
                 // Determinar el badge de estado superior coherente (IHC)
                 let statusBadgeClass = 'status-open'
@@ -963,6 +983,9 @@ export default function Dashboard() {
                     {/* Acciones exclusivas del creador: Editar y Eliminar */}
                     {isCreator && (
                       <div className="session-creator-toolbar">
+                        <button type="button" className="btn-toolbar-action" onClick={() => manageRequests(session)}>
+                          Gestionar solicitudes
+                        </button>
                         <button
                           type="button"
                           className="btn-toolbar-action btn-edit-session"
@@ -1005,6 +1028,18 @@ export default function Dashboard() {
                             </button>
                           )}
                         </div>
+                      ) : (isEnrolled || myRequest?.status === 'aceptada') ? (
+                        <div className="session-status-restricted-box">
+                          <p role="status">Estado: Confirmado</p>
+                          <button type="button" className="btn-close-registration" disabled={requestBusy} onClick={() => leaveSession(session)}>
+                            Salir de la sesión
+                          </button>
+                        </div>
+                      ) : myRequest ? (
+                        <div className="session-status-restricted-box">
+                          <p role="status">Estado: {requestLabel(myRequest)}</p>
+                          <button type="button" className="btn-join-session" disabled>Solicitud registrada</button>
+                        </div>
                       ) : isClosed ? (
                         /* Caso 2: Sesión cerrada */
                         <div className="session-status-restricted-box">
@@ -1036,26 +1071,14 @@ export default function Dashboard() {
                         <div className="session-status-restricted-box">
                           <button
                             type="button"
-                            className="btn-join-session btn-join-disabled"
-                            disabled
-                            title="No hay cupos disponibles en esta sesión de estudio."
+                            className="btn-join-session btn-join-active"
+                            disabled={joiningSessionId === session.id}
+                            onClick={() => setSessionToJoin(session)}
+                            title="Solicitar aprobación para entrar en la lista de espera"
                           >
-                            👥 Cupos agotados
+                            Solicitar Inscribirme
                           </button>
-                          <span className="restriction-caption">Motivo: Se han ocupado todos los cupos disponibles</span>
-                        </div>
-                      ) : isEnrolled ? (
-                        /* Caso 5: Ya está inscrito */
-                        <div className="session-status-restricted-box">
-                          <button
-                            type="button"
-                            className="btn-join-session btn-join-enrolled"
-                            disabled
-                            title="Ya te encuentras registrado como participante en esta sesión"
-                          >
-                            ✅ Ya estás inscrito
-                          </button>
-                          <span className="restriction-caption" style={{ color: '#059669' }}>Motivo: Ya formas parte de esta sesión</span>
+                          <span className="restriction-caption">Sesión llena. Si el organizador te acepta, entrarás en la lista de espera.</span>
                         </div>
                       ) : (
                         /* Caso 6: Cumple todos los requisitos para unirse */
@@ -1371,7 +1394,7 @@ export default function Dashboard() {
                 <span className="disclaimer-icon">💡</span>
                 <p>
                   Enviar una solicitud no reserva un cupo.
-                  Tu inscripción se confirmará cuando el organizador la acepte.
+                  El organizador debe aprobarte. Si hay cupo, quedarás confirmado; si está llena, quedarás en espera por orden de aprobación.
                 </p>
               </div>
             </div>
@@ -1399,6 +1422,33 @@ export default function Dashboard() {
       )}
 
       {/* Logout confirm modal */}
+      {managedSession && (
+        <div className="modal-overlay">
+          <div className="modal requests-modal" role="dialog" aria-modal="true" aria-labelledby="requests-title">
+            <h2 id="requests-title">Solicitudes de {managedSession.name}</h2>
+            <p>Aceptar confirma al estudiante si hay cupo. Si está llena, entra al final de la lista de espera.</p>
+            {requestsLoading && <p role="status">Cargando solicitudes...</p>}
+            {requestsError && <p role="alert">{requestsError}</p>}
+            {!requestsLoading && !requestsError && managedRequests.length === 0 && <p>No hay solicitudes todavía.</p>}
+            <ul className="requests-list">
+              {managedRequests.map(request => (
+                <li key={request.id} aria-label={`Solicitud de ${request.user_email}`}>
+                  <strong>{request.user_name}</strong>
+                  <span>{request.user_email}</span>
+                  <p role="status">Estado: {requestLabel(request)}</p>
+                  {request.status === 'pendiente' && (
+                    <button type="button" className="btn-confirm-edit" disabled={requestBusy || managedSession.status !== 'abierta'} onClick={() => decideRequest(request, 'aceptar')}>Aceptar</button>
+                  )}
+                  {['pendiente', 'en_espera'].includes(request.status) && (
+                    <button type="button" className="btn-cancel" disabled={requestBusy} onClick={() => decideRequest(request, 'rechazar')}>Rechazar</button>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <button type="button" className="btn-cancel" disabled={requestBusy} onClick={() => setManagedSession(null)}>Cerrar solicitudes</button>
+          </div>
+        </div>
+      )}
       {showLogoutConfirm && (
         <div className="modal-overlay" onClick={() => setShowLogoutConfirm(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>

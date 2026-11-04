@@ -29,7 +29,7 @@ from sqlalchemy.orm import sessionmaker
 from app.database import Base
 from app.models import Session, SessionHistory, User, record_session_event, backfill_session_history
 from app.history import get_user_history, current_session_status
-from app.schemas import SessionCreate
+from app.schemas import SessionCreate, RequestDecision
 from app.routers import sessions as sessions_router
 
 
@@ -70,9 +70,15 @@ class TestSessionHistory(unittest.TestCase):
         return sessions_router.create_session(data, self.db, self.creator)
 
     # ── 1. Una acción genera el evento ───────────────────────
+    def _confirm_student(self, session):
+        request = sessions_router.join_session(session.id, self.db, self.student)
+        # Una solicitud pendiente todavía no es una participación.
+        self.assertEqual(get_user_history(self.db, self.student.id), [])
+        sessions_router.decide_request(session.id, request.id, RequestDecision(decision='aceptar'), self.db, self.creator)
+
     def test_01_unirse_genera_evento_unido(self):
         session = self._create_session()
-        sessions_router.join_session(session.id, self.db, self.student)
+        self._confirm_student(session)
 
         history = get_user_history(self.db, self.student.id)
         self.assertEqual(len(history), 1)
@@ -99,7 +105,7 @@ class TestSessionHistory(unittest.TestCase):
     # ── 2. Usuario correcto ──────────────────────────────────
     def test_04_consulta_solo_devuelve_eventos_del_usuario(self):
         session = self._create_session()
-        sessions_router.join_session(session.id, self.db, self.student)
+        self._confirm_student(session)
 
         student_history = get_user_history(self.db, self.student.id)
         creator_history = get_user_history(self.db, self.creator.id)
@@ -129,7 +135,7 @@ class TestSessionHistory(unittest.TestCase):
     # ── 5. Conservación ──────────────────────────────────────
     def test_07_evento_se_conserva_al_eliminar_la_sesion(self):
         session = self._create_session("Sesión que será eliminada")
-        sessions_router.join_session(session.id, self.db, self.student)
+        self._confirm_student(session)
         sessions_router.delete_session(session.id, self.db, self.creator)
         self.db.expire_all()
 

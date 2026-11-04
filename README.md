@@ -60,8 +60,7 @@ Todas las cuentas nuevas usan la contraseña **`StudyMatch123!`**:
 | `elena.demo@example.com` | Organiza una sesión sin solicitudes; tiene una solicitud rechazada y una participación pasada. |
 
 Por ejemplo, entra como Carla para ver su solicitud pendiente y como Ana para
-consultarla desde la sesión de Cálculo I cuando esté disponible la gestión de
-solicitudes en la interfaz.
+consultarla desde **Gestionar solicitudes** en la sesión de Cálculo I.
 
 Puedes repetir el comando: conserva las contraseñas de cuentas existentes y las
 decisiones, participantes y cambios de las sesiones ya cargadas. Las fechas se
@@ -174,6 +173,49 @@ docker exec -it studymatch_backend python -m pytest -v
 
 ---
 
+## Lista de espera y aprobación de solicitudes (Tarea 6)
+
+El organizador tiene el botón **Gestionar solicitudes** en cada sesión propia.
+Puede aceptar o rechazar las solicitudes pendientes. Una aceptación confirma al
+estudiante si hay cupo; si la sesión está llena, lo agrega al final de la lista
+de espera. Las sesiones llenas siguen permitiendo solicitar ingreso.
+
+Cada estudiante ve su estado: pendiente, confirmado, en espera con su posición,
+rechazado o retirado. **Salir de la sesión** libera el cupo de una persona
+confirmada y promueve al primero previamente aprobado en espera. Una sesión
+cerrada o pasada no promueve estudiantes. El organizador no ocupa un cupo.
+Los cambios de otras personas se ven al recargar o volver a buscar.
+
+Para probarlo manualmente, crea una sesión futura con un cupo. En otra sesión
+de navegador, solicita ingreso con Bruno y acéptalo como organizador. Repite
+con Carla: quedará en espera. Cuando Bruno salga, Carla pasará a confirmada;
+recarga con Carla para comprobarlo. Usa perfiles de navegador distintos o
+cierra sesión al cambiar de cuenta.
+
+Al iniciar el backend se agregan las columnas de la cola y se actualiza la
+restricción de estados, conservando las solicitudes existentes. El orden de la
+cola se establece al aprobar, mediante un contador por sesión. Aprobar y salir
+bloquean la fila de la sesión durante la transacción para proteger el cupo.
+Las solicitudes rechazadas o retiradas no se pueden reenviar en este alcance.
+La ruta antigua `/sessions/{id}/join` ahora también crea una solicitud pendiente:
+su respuesta cambió de sesión a solicitud para exigir la aprobación.
+
+Con frontend, backend y datos de prueba preparados, desde la raíz:
+
+```powershell
+pnpm exec playwright test --project=chromium --workers=1 --reporter=line --trace=off
+```
+
+Solo el recorrido de espera:
+
+```powershell
+pnpm exec playwright test tests/lista-espera.spec.js --project=chromium --workers=1 --reporter=line --trace=off
+```
+
+Cada prueba nueva crea sus propias cuentas y sesiones de prueba. Los resultados
+antes y después y el alcance pendiente están en [evidencias/tarea-6.md](evidencias/tarea-6.md).
+Los ejemplos de instalación de `example.spec.js` se excluyen de la suite.
+
 ## 🕘 Historial de Participación (Tarea 4 – Issue #12)
 
 Responde la pregunta de StudyMatch: **¿En qué sesiones participó la persona?**
@@ -186,7 +228,7 @@ Responde la pregunta de StudyMatch: **¿En qué sesiones participó la persona?*
 - **Interfaz:** página **Mi historial** (`/historial`), accesible desde el sidebar y la barra inferior móvil, con filtros `Todas · Me uní · Organicé`, detalle expandible y estado vacío con acción **"Buscar sesiones"**.
 
 ### Cómo comprobarlo
-1. Inicia sesión y únete a una sesión abierta desde el Dashboard.
+1. Inicia sesión, solicita entrar a una sesión abierta desde el Dashboard y pide al organizador que la acepte con cupo disponible.
 2. Entra a **Mi historial**: aparece *"Te uniste a ..."* con la fecha y el estado actual.
 3. Recarga la página: el evento sigue ahí (persistido en la base de datos).
 4. Con un usuario sin actividad se muestra el estado vacío.

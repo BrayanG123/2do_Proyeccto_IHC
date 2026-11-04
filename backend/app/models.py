@@ -110,7 +110,7 @@ class Session(Base):
         self.status = "abierta"
         return self
 
-    def can_join(self, user_email: str | None = None) -> tuple[bool, str]:
+    def can_join(self, user_email: str | None = None, check_capacity: bool = True) -> tuple[bool, str]:
         """
         Regla de negocio: ¿Puede unirse a la sesión?
         Evalúa si un estudiante cumple todas las condiciones para inscribirse:
@@ -144,7 +144,7 @@ class Session(Base):
 
         # 5. Cupos disponibles
         current_count = self.participants_count or len(self.get_participant_emails_list())
-        if self.spots is not None and current_count >= self.spots:
+        if check_capacity and self.spots is not None and current_count >= self.spots:
             return False, "No hay cupos disponibles en esta sesión de estudio."
 
         return True, "Permitido"
@@ -184,6 +184,9 @@ class SessionJoinRequest(Base):
     user_id =    Column( Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     status =     Column( String(20), nullable=False, default="pendiente")
     created_at = Column( DateTime(timezone=True), nullable=False, server_default=func.now() )
+    waitlisted_at = Column(DateTime(timezone=True), nullable=True)
+    wait_order = Column(Integer, nullable=True)
+    confirmed_email = Column(String(150), nullable=True)
 
     __table_args__ = (
         UniqueConstraint(
@@ -192,7 +195,7 @@ class SessionJoinRequest(Base):
             name="uq_session_join_request_user"
         ),
         CheckConstraint(
-            "status IN ('pendiente', 'aceptada', 'rechazada')",
+            "status IN ('pendiente', 'aceptada', 'rechazada', 'en_espera', 'retirada')",
             name="ck_session_join_request_status"
         ),
     )

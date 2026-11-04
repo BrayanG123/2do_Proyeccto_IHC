@@ -2279,6 +2279,16 @@
   color: #e2e8f0;
 }
 
+.requests-modal { max-height: 85vh; overflow-y: auto; width: min(600px, 94vw); }
+.requests-modal h2 { overflow-wrap: anywhere; }
+.requests-modal > p { color: var(--text-muted); margin: 12px 0; }
+.requests-list { list-style: none; padding: 0; margin: 16px 0; }
+.requests-list li { border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.requests-list li > strong, .requests-list li > span { display: block; overflow-wrap: anywhere; }
+.requests-list li > p { margin: 12px 0; }
+.requests-list button, .requests-modal > button { min-height: 44px; margin: 4px; }
+.requests-list button:disabled { opacity: .6; cursor: not-allowed; }
+
 [data-theme="dark"] .join-confirm-intro {
   color: #94a3b8;
 }
