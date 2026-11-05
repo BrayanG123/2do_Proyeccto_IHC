@@ -7,6 +7,11 @@ import { getStudentInitials } from '../utils/avatar'
 import LogoutIcon from '../components/LogoutIcon'
 import '../styles/Dashboard.css'
 
+function joinSessionName(session) {
+  const automatedName = /^\[E2E\]\s+.+\s+[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return automatedName.test(session.name) ? 'Sesión de estudio' : session.name;
+}
+
 export default function Dashboard() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -1322,89 +1327,71 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Modal de confirmación previa para unirse (Heurística H5: Prevención de errores / H3: Control del usuario) */}
       {sessionToJoin && (
         <div className="modal-overlay" onClick={() => setSessionToJoin(null)}>
-          <div className="modal modal-join-confirm" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal modal-join-confirm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="join-title"
+            aria-describedby="join-request-explanation"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') setSessionToJoin(null)
+            }}
+          >
             <div className="modal-header-row">
-              <div className="modal-header-icon-title">
-                <span className="modal-icon-badge">🎒</span>
-                <h3>Confirmar inscripción a sesión</h3>
-              </div>
+              <h3 id="join-title">Solicitar participar</h3>
               <button
                 type="button"
                 className="btn-modal-close-icon"
                 onClick={() => setSessionToJoin(null)}
-                title="Cerrar ventana"
+                aria-label="Cerrar ventana"
+                autoFocus
               >
                 ✕
               </button>
             </div>
 
-            <div className="modal-body-content">
-              <p className="join-confirm-intro">
-                Revisa los detalles antes de enviar la solicitud. El organizador decidira si la acepta o rechaza
+            <div className="join-session-summary-card">
+              <h4 className="join-session-name">{joinSessionName(sessionToJoin)}</h4>
+              <p className="join-subject">{sessionToJoin.subject || 'General'}</p>
+              <dl className="join-session-details-grid">
+                <div>
+                  <dt>Fecha</dt>
+                  <dd>
+                    {new Date(sessionToJoin.date + 'T00:00:00').toLocaleDateString('es-BO', {
+                      day: 'numeric', month: 'long', year: 'numeric',
+                    })}
+                    {sessionToJoin.time ? ` · ${sessionToJoin.time}` : ''}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Modalidad</dt>
+                  <dd>{sessionToJoin.modality}</dd>
+                </div>
+              </dl>
+              <p className="join-availability">
+                {Math.max(0, sessionToJoin.spots - (sessionToJoin.participants_count || 0))} de {sessionToJoin.spots} cupos disponibles
               </p>
-
-              <div className="join-session-summary-card">
-                <div className="join-session-name-row">
-                  <h4 className="join-session-name">{sessionToJoin.name}</h4>
-                  <span className="join-session-modality-pill">
-                    {sessionToJoin.modality === 'Virtual' ? '💻 Virtual' : sessionToJoin.modality === 'Presencial' ? '🏫 Presencial' : '🔄 Híbrida'}
-                  </span>
-                </div>
-
-                <div className="join-session-details-grid">
-                  <div className="join-detail-item">
-                    <span className="detail-label">📚 Materia:</span>
-                    <span className="detail-value">{sessionToJoin.subject || 'General'}</span>
-                  </div>
-                  <div className="join-detail-item">
-                    <span className="detail-label">📅 Fecha:</span>
-                    <span className="detail-value">{sessionToJoin.date}</span>
-                  </div>
-                  {sessionToJoin.time && (
-                    <div className="join-detail-item">
-                      <span className="detail-label">⏰ Horario:</span>
-                      <span className="detail-value">{sessionToJoin.time}</span>
-                    </div>
-                  )}
-                  <div className="join-detail-item">
-                    <span className="detail-label">👥 Cupos libres:</span>
-                    <span className="detail-value highlight-spots">
-                      {Math.max(0, (sessionToJoin.spots || 0) - (sessionToJoin.participants_count || 0))} de {sessionToJoin.spots} disponibles
-                    </span>
-                  </div>
-                  {sessionToJoin.location && (
-                    <div className="join-detail-item full-width">
-                      <span className="detail-label">📍 Ubicación / Enlace:</span>
-                      <span className="detail-value">{sessionToJoin.location}</span>
-                    </div>
-                  )}
-                  {sessionToJoin.creator_name && (
-                     <div className="join-detail-item full-width">
-                      <span className="detail-label">👤 Organizador:</span>
-                      <span className="detail-value">{sessionToJoin.creator_name}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="join-disclaimer-box">
-                <span className="disclaimer-icon">💡</span>
-                <p>
-                  Enviar una solicitud no reserva un cupo.
-                  El organizador debe aprobarte. Si hay cupo, quedarás confirmado; si está llena, quedarás en espera por orden de aprobación.
-                </p>
-              </div>
             </div>
 
+            <p className="join-request-explanation" id="join-request-explanation">
+              {(sessionToJoin.participants_count || 0) >= sessionToJoin.spots
+                ? 'La sesión está llena. Si el organizador te acepta, entrarás en la lista de espera.'
+                : 'Tu solicitud quedará pendiente hasta que el organizador la acepte.'}
+            </p>
+
+            {(sessionToJoin.creator_name || sessionToJoin.location) && (
+              <details className="join-extra-details">
+                <summary>Ver más detalles</summary>
+                {sessionToJoin.creator_name && <p>Organiza {sessionToJoin.creator_name}</p>}
+                {sessionToJoin.location && <p>Ubicación o enlace · {sessionToJoin.location}</p>}
+              </details>
+            )}
+
             <div className="modal-actions">
-              <button
-                type="button"
-                className="btn-cancel"
-                onClick={() => setSessionToJoin(null)}
-              >
+              <button type="button" className="btn-cancel" onClick={() => setSessionToJoin(null)}>
                 Cancelar
               </button>
               <button
@@ -1414,7 +1401,7 @@ export default function Dashboard() {
                 onClick={handleConfirmJoin}
                 disabled={joiningSessionId === sessionToJoin.id}
               >
-                {joiningSessionId === sessionToJoin.id ? '⏳ Enviando Solicitud...' : '✅ Enviar Solicitud'}
+                {joiningSessionId === sessionToJoin.id ? 'Enviando solicitud…' : 'Enviar solicitud'}
               </button>
             </div>
           </div>

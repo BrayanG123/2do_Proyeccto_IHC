@@ -1,0 +1,136 @@
+# Tarea 7 — Mejora por feedback y reprogramación con reconfirmación
+
+Proyecto StudyMatch. Documento preparado el 5 de noviembre de 2026.
+
+La entrega requiere dos cambios y dos commits separados. El primero corresponde a una mejora basada en el feedback recibido. El segundo corresponde a reprogramar una sesión con reconfirmación de sus participantes.
+
+| Entregable | Estado | Commit |
+| --- | --- | --- |
+| Mejora por feedback | Diálogo simplificado y contraste comprobado. Evidencias antes y después incluidas. | Pendiente |
+| Reprogramación con reconfirmación | Implementación y comprobación pendientes. | Pendiente |
+
+## 1. Mejora basada en el feedback
+
+### Feedback recibido
+
+| Dato | Información proporcionada por el evaluador |
+| --- | --- |
+| Evaluador | Daniel Joaquin Mamani Pena |
+| Proyecto del evaluador | Súmate, caso Voluntariado Cerca |
+| Proyecto evaluado | StudyMatch |
+| Integrante evaluado | Brayan Gonzales |
+| Fecha de evaluación | 03/11/2026 |
+| Versión indicada | Rama `main`, commit `74331cc` |
+| Aplicación evaluada | Ejecutada en local |
+| Repositorio evaluado | https://github.com/BrayanG123/2do_Proyeccto_IHC |
+
+El feedback original está publicado en el repositorio del evaluador. [Feedback de Daniel](https://github.com/Joabits/sumate-app/blob/main/clase-19-feedback-a-otro-proyecto/mamani-pena/feedback.md).
+
+Daniel completó sin ayuda los dos recorridos que probó.
+
+- Buscó una sesión por materia, solicitó participar y vio el estado de su solicitud.
+- Creó una sesión y comprobó que apareciera con la materia, fecha y cupos ingresados.
+
+Su dificultad estuvo en la lectura del modo oscuro. Indicó que algunos textos y botones se confundían con el fondo y propuso mejorar el contraste, con una referencia de al menos 4,5 a 1 para el texto. También señaló que la organización de la experiencia podía mejorar. Consideró necesarias las funciones existentes.
+
+El estudiante aclaró posteriormente que la observación sobre la organización se refería al diálogo **Confirmar inscripción a sesión**. Según esa aclaración, al evaluador le resultó confuso el nombre largo de una sesión de prueba y encontró demasiada información para leer antes de enviar la solicitud.
+
+### Problema elegido
+
+El diálogo de confirmación requiere leer varios bloques antes de solicitar participar. En las capturas aparece además una sesión con un nombre generado por las pruebas automáticas, como `[E2E] Sesion 607ca21c-2622-4e59-95e2-767434467fee`, que dificulta reconocer el tema de estudio.
+
+El origen de ese nombre está en los datos creados para las pruebas E2E. La mejora del diálogo reconoce ese formato generado y muestra un título legible junto con la materia. Los nombres personalizados se presentan completos.
+
+### Antes del cambio
+
+Las dos capturas siguientes fueron proporcionadas por el estudiante el 5 de noviembre. Documentan el estado anterior que observó en pantalla. El evaluador indicó haber probado el commit `74331cc` el 3 de noviembre. No se ha verificado que las capturas correspondan exactamente a ese commit.
+
+En el listado aparecen sesiones con nombres de prueba largos y avisos de cupos y estado. La tercera tarjeta de la primera fila corresponde a la sesión que se muestra después en el diálogo.
+
+![Listado de sesiones en modo oscuro antes de la mejora](tarea-7/antes/01-listado-sesiones-modo-oscuro.png)
+
+Al solicitar participar se muestra un diálogo con título, explicación inicial, nombre de la sesión, modalidad, materia, fecha, cupos, organizador, explicación de aprobación y espera y botones de acción. Algunas etiquetas se ven tenues en modo oscuro. Al reproducir la ventana se midió un contraste de 3,77 a 1 para el texto blanco sobre el verde del botón principal.
+
+![Diálogo Confirmar inscripción a sesión antes de la mejora](tarea-7/antes/02-confirmar-inscripcion-modo-oscuro.png)
+
+### Pasos para reproducir y comparar
+
+1. Iniciar sesión con una cuenta de prueba y activar el modo oscuro.
+2. Buscar una sesión abierta de otro organizador.
+3. Pulsar **Solicitar Inscribirme**.
+4. Observar el diálogo **Confirmar inscripción a sesión** y la cantidad de información que requiere leer.
+5. Comparar con la captura anterior, prestando atención al nombre de prueba largo y a la legibilidad de las etiquetas.
+
+Se reprodujo el problema el 5 de noviembre con Ana y una sesión existente de Programación II. Se guardaron nuevas capturas del mismo escenario, antes de editar el código, a 1280 × 900 y 390 × 844 píxeles. Se utilizó esa misma sesión y esos tamaños al capturar el resultado.
+
+[Antes reproducido en escritorio](tarea-7/antes/03-dialogo-escritorio-oscuro.png) · [Antes reproducido en móvil](tarea-7/antes/04-dialogo-movil-oscuro.png).
+
+### Mejora propuesta
+
+Simplificar la organización del diálogo para que la sesión y la acción de enviar la solicitud se entiendan con facilidad. Utilizar nombres comprensibles en los datos de demostración y revisar la legibilidad de los textos en modo oscuro.
+
+Se eligió una distribución con información principal visible y datos secundarios desplegables, descrita en el cambio realizado.
+
+| Archivo modificado | Responsabilidad relacionada |
+| --- | --- |
+| `frontend/src/pages/Dashboard.jsx` | Contenido del diálogo y acciones de la solicitud. |
+| `frontend/src/styles/Dashboard.css` | Distribución y colores del diálogo en ambos temas. |
+| `tests/confirmacion.spec.js` | Contraste y comportamiento del diálogo en ambos temas, con nombres personalizados y generados. |
+| `tests/sesiones.spec.js` y `tests/lista-espera.spec.js` | Selectores actualizados a los nuevos textos de la interfaz. |
+
+### Cambio realizado
+
+- El título del diálogo pasa a **Solicitar participar**, coherente con el envío de una solicitud pendiente.
+- La información inicial se concentra en nombre, materia, fecha legible, modalidad y cupos disponibles.
+- El organizador y la ubicación, cuando existen, están en **Ver más detalles**.
+- La explicación de aprobación se resume en una frase. Una sesión llena informa que aceptar la solicitud llevará a la lista de espera.
+- Las sesiones cuyo nombre coincide exactamente con el formato automatizado `[E2E] … UUID` se presentan en este diálogo como **Sesión de estudio**, con su materia debajo. Esta decisión afecta a la presentación del diálogo. Los nombres personalizados se muestran completos.
+- Se aumenta el contraste del botón principal y de los textos secundarios, se mantienen controles de al menos 44 píxeles y se permite cerrar con Escape.
+- Los datos usados en las capturas pertenecen a la misma sesión de prueba antes y después. La mejora visible procede del cambio de presentación.
+
+### Después del cambio
+
+Se capturó el mismo diálogo después del cambio en escritorio y móvil. Se desactivaron las animaciones durante la captura para mostrar el estado final de la ventana.
+
+![Diálogo simplificado en escritorio y modo oscuro](tarea-7/despues/03-dialogo-escritorio-oscuro.png)
+
+![Diálogo simplificado en móvil y modo oscuro](tarea-7/despues/04-dialogo-movil-oscuro.png)
+
+![Diálogo simplificado en móvil y modo claro](tarea-7/despues/05-dialogo-movil-claro.png)
+
+### Comprobación
+
+| Comprobación prevista | Resultado |
+| --- | --- |
+| Revisar la jerarquía de la información en el diálogo | Revisada en escritorio y móvil. Se accede al organizador desplegando el detalle. |
+| Medir el contraste de los textos que se modifiquen | El botón pasa de 3,77 a 5,48 a 1. Mínimo de textos medidos en el diálogo actualizado, 4,76 a 1 en claro y 5,48 a 1 en oscuro. |
+| Comprobar la legibilidad en modo claro y oscuro | Capturas revisadas en ambos temas y medición automatizada de colores CSS. |
+| Enviar una solicitud y comprobar su confirmación y estado | Aprobado en las pruebas nuevas de ambos temas. |
+| Recargar y comprobar que el estado se conserva | Aprobado en las pruebas nuevas de ambos temas. |
+| Ejecutar la prueba E2E relacionada | 12 pruebas relacionadas aprobadas en Chromium, en 2,7 minutos. Incluyen los dos temas, sesiones y lista de espera. |
+
+El contraste se calculó con los colores CSS del texto y su fondo, componiendo transparencias. Esta medición corresponde a los elementos comprobados del diálogo. La revisión visual y las pruebas funcionales verifican su presentación y funcionamiento. La facilidad de comprensión después del cambio requiere una nueva evaluación con una persona.
+
+Para repetir los casos relacionados desde la raíz, con la aplicación en ejecución
+
+```powershell
+pnpm exec playwright test tests/confirmacion.spec.js tests/sesiones.spec.js tests/lista-espera.spec.js --project=chromium --workers=1 --reporter=line --trace=off
+```
+
+La compilación del frontend con `npm run build` terminó correctamente.
+
+Commit de la mejora pendiente de crear y enlazar.
+
+## 2. Reprogramación de una sesión con reconfirmación
+
+La funcionalidad asignada en la diapositiva 13 amplía el recorrido existente.
+
+- El organizador cambia la fecha u horario e indica el motivo.
+- Los participantes confirmados pasan a pendientes de reconfirmación y conservan temporalmente su cupo.
+- Cada participante acepta el cambio o se retira.
+- Una retirada libera el cupo y promueve al primero de la lista de espera.
+- Mientras existan reconfirmaciones pendientes, se bloquea otra reprogramación.
+
+El escenario mínimo debe mostrar dos participantes confirmados. Uno reconfirma y otro se retira. La primera persona en espera asciende una sola vez.
+
+Implementación, evidencia del recorrido, resultado de las pruebas y commit de esta funcionalidad pendientes.

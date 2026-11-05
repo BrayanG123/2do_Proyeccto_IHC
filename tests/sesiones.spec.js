@@ -83,11 +83,11 @@ test('Solicitar unirse: cancelar no envía y confirmar muestra la solicitud envi
   await buscar(page, nombre);
   await page.getByRole('button', { name: 'Solicitar Inscribirme', exact: true }).click();
   await page.getByRole('button', { name: 'Cancelar', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Confirmar inscripción a sesión', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Solicitar participar', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Solicitar Inscribirme', exact: true }).click();
-  await page.getByRole('button', { name: '✅ Enviar Solicitud', exact: true }).click();
+  await page.getByRole('button', { name: 'Enviar solicitud', exact: true }).click();
   await expect(page.getByText(`Solicitud enviada para "${nombre}". Espera la respuesta del organizador.`, { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Confirmar inscripción a sesión', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Solicitar participar', exact: true })).toHaveCount(0);
 });
 
 test('Solicitar unirse: una solicitud pendiente impide volver a enviar y persiste', async ({ page }) => {
@@ -96,8 +96,8 @@ test('Solicitar unirse: una solicitud pendiente impide volver a enviar y persist
   await registrar(page);
   await buscar(page, nombre);
   await page.getByRole('button', { name: 'Solicitar Inscribirme', exact: true }).click();
-  await page.getByRole('button', { name: '✅ Enviar Solicitud', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Confirmar inscripción a sesión', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Enviar solicitud', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Solicitar participar', exact: true })).toHaveCount(0);
   await expect(page.getByText('Estado: Pendiente de aprobación', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Solicitud registrada', exact: true })).toBeDisabled();
   await page.reload();

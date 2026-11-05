@@ -17,7 +17,7 @@ test('Lista de espera: aprobar, esperar sin cupo, salir y promover al primero', 
     const solicitar = async (page) => {
       await buscar(page, nombre);
       await page.getByRole('button', { name: 'Solicitar Inscribirme', exact: true }).click();
-      await page.getByRole('button', { name: '✅ Enviar Solicitud', exact: true }).click();
+      await page.getByRole('button', { name: 'Enviar solicitud', exact: true }).click();
       await expect(page.getByText('Estado: Pendiente de aprobación', { exact: true })).toBeVisible();
     };
     const aprobar = async (correo, estado) => {
