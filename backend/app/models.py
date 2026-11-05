@@ -2,7 +2,7 @@ from email.policy import default
 import json
 from datetime import date as dt_date, timedelta
 from typing import Optional, List
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, Time, ForeignKey
 from sqlalchemy.sql import func
 from app.database import Base
 from sqlalchemy import UniqueConstraint, CheckConstraint
@@ -53,6 +53,7 @@ class Session(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(150), nullable=False)
     date = Column(Date, nullable=False)
+    time = Column(Time, nullable=True)
     modality = Column(String(50), nullable=False)
     spots = Column(Integer, nullable=False)
     participants_count = Column(Integer, default=0, nullable=False)
@@ -201,6 +202,37 @@ class SessionJoinRequest(Base):
     )
 
 
+
+
+class SessionReschedule(Base):
+    """Un cambio de fecha u hora, con sus valores anteriores y su motivo."""
+    __tablename__ = 'session_reschedules'
+
+    id = Column(Integer, primary_key=True)
+    session_id = Column(Integer, ForeignKey('sessions.id', ondelete='CASCADE'), nullable=False, index=True)
+    organizer_id = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
+    old_date = Column(Date, nullable=False)
+    old_time = Column(Time, nullable=True)
+    new_date = Column(Date, nullable=False)
+    new_time = Column(Time, nullable=True)
+    reason = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class SessionReconfirmation(Base):
+    """Respuesta de un participante a un cambio. Su cupo sigue ocupado mientras decide."""
+    __tablename__ = 'session_reconfirmations'
+
+    id = Column(Integer, primary_key=True)
+    reschedule_id = Column(Integer, ForeignKey('session_reschedules.id', ondelete='CASCADE'), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
+    status = Column(String(12), nullable=False, default='pendiente')
+    responded_at = Column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint('reschedule_id', 'user_id', name='uq_reconfirmation_participant'),
+        CheckConstraint("status IN ('pendiente', 'confirmada', 'retirada')", name='ck_reconfirmation_status'),
+    )
 
 
 # ── HISTORIAL DE PARTICIPACIÓN (Issue #12 / #13) ───────────

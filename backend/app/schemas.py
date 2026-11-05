@@ -147,6 +147,7 @@ class SessionCreate(BaseModel):
     name: str
     subject: str | None = None
     date: dt.date
+    time: dt.time | None = None
     modality: str
     spots: int
     status: str = "abierta"
@@ -175,6 +176,7 @@ class SessionUpdate(BaseModel):
     name: str | None = None
     subject: str | None = None
     date: dt.date | None = None
+    time: dt.time | None = None
     modality: str | None = None
     spots: int | None = None
     status: str | None = None
@@ -208,6 +210,7 @@ class SessionResponse(BaseModel):
     name: str
     subject: str | None = None
     date: dt.date
+    time: dt.time | None = None
     modality: str
     spots: int
     participants_count: int = 0
@@ -269,3 +272,45 @@ class SessionJoinRequestResponse(BaseModel):
 
 class RequestDecision(BaseModel):
     decision: Literal['aceptar', 'rechazar']
+
+
+class SessionRescheduleCreate(BaseModel):
+    date: dt.date
+    time: dt.time | None = None
+    reason: str
+
+    @field_validator('reason')
+    @classmethod
+    def validate_reason(cls, value: str) -> str:
+        value = value.strip()
+        if not 3 <= len(value) <= 1000:
+            raise ValueError('El motivo debe tener entre 3 y 1000 caracteres.')
+        return value
+
+    @field_validator('time')
+    @classmethod
+    def validate_time(cls, value: dt.time | None) -> dt.time | None:
+        if value is not None and value.tzinfo is not None:
+            raise ValueError('Indica una hora local sin zona horaria.')
+        return value
+
+
+class ReconfirmationResponse(BaseModel):
+    user_id: int
+    user_name: str
+    status: str
+    responded_at: datetime | None
+
+
+class SessionRescheduleResponse(BaseModel):
+    id: int
+    session_id: int
+    old_date: dt.date
+    old_time: dt.time | None
+    new_date: dt.date
+    new_time: dt.time | None
+    reason: str
+    created_at: datetime
+    pending_count: int
+    own_status: str | None
+    responses: list[ReconfirmationResponse]

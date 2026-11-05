@@ -6,8 +6,8 @@ La entrega requiere dos cambios y dos commits separados. El primero corresponde 
 
 | Entregable | Estado | Commit |
 | --- | --- | --- |
-| Mejora por feedback | Diálogo simplificado y contraste comprobado. Evidencias antes y después incluidas. | Pendiente |
-| Reprogramación con reconfirmación | Implementación y comprobación pendientes. | Pendiente |
+| Mejora por feedback | Diálogo simplificado y contraste comprobado. Evidencias antes y después incluidas. | `dbdd928` |
+| Reprogramación con reconfirmación | Implementada. Pruebas y evidencias descritas en la sección 2. | Pendiente de crear |
 
 ## 1. Mejora basada en el feedback
 
@@ -119,7 +119,7 @@ pnpm exec playwright test tests/confirmacion.spec.js tests/sesiones.spec.js test
 
 La compilación del frontend con `npm run build` terminó correctamente.
 
-Commit de la mejora pendiente de crear y enlazar.
+Commit de la mejora `dbdd928`, con el mensaje `fix: simplificacion el dialogo de solicitud y mejorar su contraste`.
 
 ## 2. Reprogramación de una sesión con reconfirmación
 
@@ -131,6 +131,92 @@ La funcionalidad asignada en la diapositiva 13 amplía el recorrido existente.
 - Una retirada libera el cupo y promueve al primero de la lista de espera.
 - Mientras existan reconfirmaciones pendientes, se bloquea otra reprogramación.
 
-El escenario mínimo debe mostrar dos participantes confirmados. Uno reconfirma y otro se retira. La primera persona en espera asciende una sola vez.
+### Punto de partida
 
-Implementación, evidencia del recorrido, resultado de las pruebas y commit de esta funcionalidad pendientes.
+En el commit anterior, `dbdd928`, las sesiones tenían fecha y podían editarse desde el formulario general. La lista de espera ya permitía aprobar solicitudes, ocupar cupos y promover al primero cuando un participante salía.
+
+La tarea agrega el motivo del cambio, la hora de encuentro, el historial de reprogramaciones y una respuesta individual de los participantes confirmados.
+
+### Datos y reglas implementadas
+
+| Dato | Dónde se guarda | Para qué sirve |
+| --- | --- | --- |
+| Hora de encuentro | `sessions.time` | Permite cambiar el horario. Es opcional para poder utilizar las sesiones antiguas que solo tenían fecha. |
+| Reprogramación | `session_reschedules` | Guarda la fecha y hora anteriores, las nuevas, el motivo, el organizador y el momento del cambio. |
+| Respuesta de cada participante | `session_reconfirmations` | Guarda una respuesta por participante y reprogramación, con su estado y el momento de respuesta. |
+
+Las respuestas tienen tres estados.
+
+| Acción | Estado de reconfirmación | Efecto sobre el cupo |
+| --- | --- | --- |
+| El organizador reprograma | `pendiente` | El participante conserva su cupo. |
+| El participante pulsa Confirmar asistencia | `confirmada` | Conserva su cupo y acepta el nuevo encuentro. |
+| El participante pulsa Retirarme o Salir de la sesión | `retirada` | Libera su cupo. La primera solicitud aprobada en espera pasa a confirmada si la sesión está abierta y vigente. |
+
+Mientras una respuesta está pendiente, la solicitud de ingreso sigue aceptada y el participante continúa en el contador de ocupación. Al retirarse, también se actualiza la solicitud de ingreso a `retirada`.
+
+El organizador debe indicar un motivo de entre 3 y 1000 caracteres y cambiar efectivamente la fecha o la hora. La fecha nueva debe ser hoy o posterior. Se eligió permitir la reprogramación con las inscripciones abiertas, en coherencia con la regla de promoción de la lista de espera. Para una sesión cerrada, el organizador puede abrir las inscripciones desde la edición.
+
+Otra reprogramación queda bloqueada mientras exista alguna respuesta pendiente. La validación se aplica también al intentar cambiar fecha u hora desde la edición general. Cuando hay participantes, esos campos se cambian mediante **Reprogramar sesión**, donde se registra el motivo.
+
+La reprogramación, la confirmación y la retirada bloquean la fila de la sesión durante su transacción. Cada respuesta corresponde a un participante y a un cambio concreto. Repetir una confirmación o una retirada devuelve un conflicto HTTP 409. Esto evita descontar dos veces el cupo o repetir una promoción.
+
+Al iniciar el backend se crean las dos tablas y se añade la columna de hora a la base existente. Los participantes de sesiones antiguas se reconocen por sus correos guardados. Para las solicitudes aceptadas también se utiliza el correo registrado al confirmar, lo que permite reconocer a quien después cambió el correo de su perfil.
+
+### Recorrido comprobado
+
+Se utilizaron cuatro cuentas ficticias y cuatro contextos de navegador independientes, con una sesión futura de dos cupos.
+
+1. El organizador aceptó a dos estudiantes y aprobó una tercera solicitud, que quedó primera en espera.
+2. Reprogramó la fecha y fijó las 19:00, indicando el motivo.
+3. El contador siguió en **2 / 2** y aparecieron **2 respuestas pendientes**. El formulario de otra reprogramación quedó bloqueado.
+4. Ambos estudiantes vieron la fecha anterior, la nueva, el motivo y el aviso de cupo reservado después de recargar.
+5. El primer estudiante confirmó su asistencia. El contador siguió en **2 / 2** y quedó una respuesta pendiente.
+6. El segundo estudiante se retiró. La primera persona en espera pasó a confirmada y el contador siguió en **2 / 2**.
+7. El organizador vio las respuestas `confirmada` y `retirada`, con cero pendientes, y pudo volver a utilizar el formulario de reprogramación.
+
+Las capturas se generan al ejecutar `tests/reprogramacion.spec.js` y muestran datos ficticios de esa ejecución.
+
+![Organizador con respuestas pendientes y otra reprogramación bloqueada](tarea-7/reprogramacion/01-organizador-pendientes.png)
+
+![Participante con cupo reservado y las opciones de confirmar o retirarse](tarea-7/reprogramacion/02-cupo-reservado.png)
+
+![Primera persona en espera confirmada después de la retirada](tarea-7/reprogramacion/03-primero-en-espera-confirmado.png)
+
+![Historial con una respuesta confirmada y otra retirada](tarea-7/reprogramacion/04-respuestas-resueltas.png)
+
+![Formulario de reprogramación en móvil y modo oscuro](tarea-7/reprogramacion/05-reprogramar-movil-oscuro.png)
+
+### Ubicación del código
+
+| Archivo | Responsabilidad |
+| --- | --- |
+| `backend/app/models.py` | Modelos de reprogramación, respuestas y hora de la sesión. |
+| `backend/app/schemas.py` | Datos de entrada y salida, validación del motivo y de la hora. |
+| `backend/app/rescheduling.py` | Reglas de reprogramación, reserva, confirmación y retirada. |
+| `backend/app/routers/sessions.py` | Permisos, bloqueo de la sesión y rutas de la API. La retirada reutiliza la promoción existente. |
+| `backend/app/triggers.py` | Adición de la hora a las bases PostgreSQL existentes. |
+| `frontend/src/components/RescheduleDialog.jsx` | Formulario del organizador e historial de cambios y respuestas. |
+| `frontend/src/pages/Dashboard.jsx` | Avisos y acciones de cada participante en las tarjetas. |
+| `backend/tests/test_rescheduling.py` | Nueve pruebas de reglas, permisos, reservas y repetición de acciones. |
+| `tests/reprogramacion.spec.js` | Recorrido completo con cuatro personas en el navegador. |
+
+La API agrega `POST /sessions/{id}/reschedule`, `POST /sessions/{id}/reschedules/{cambio_id}/confirm` y `GET /sessions/reschedules/me`. La retirada utiliza `POST /sessions/{id}/leave`.
+
+### Repetición de las pruebas
+
+Desde la carpeta `backend`, con el entorno virtual preparado
+
+```powershell
+.\venv\Scripts\python.exe -m pytest -q
+```
+
+Para repetir únicamente el recorrido nuevo desde la raíz, con frontend y backend en ejecución
+
+```powershell
+pnpm exec playwright test tests/reprogramacion.spec.js --project=chromium --workers=1 --reporter=line --trace=off
+```
+
+La prueba crea sus propias cuentas y su sesión de demostración. Esos registros quedan en la base local al terminar.
+
+Commit de la funcionalidad pendiente de crear.

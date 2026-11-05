@@ -10,6 +10,9 @@ from app.models import Session, User, Subject, filter_sessions_query, record_ses
 from app.schemas import SessionCreate, SessionResponse, SessionStatusUpdate, SessionUpdate, SessionJoinRequestResponse, RequestDecision
 from app.routers.auth import get_current_user
 from app.waitlist import promote_waiting, request_view
+from app.models import SessionReschedule, SessionReconfirmation
+from app.schemas import SessionRescheduleCreate, SessionRescheduleResponse
+from app.rescheduling import check_schedule_edit, reschedule_session, confirm_reschedule, mark_withdrawn, reschedule_view
 
 
 
@@ -46,6 +49,7 @@ def create_session(
         name=data.name,
         subject=subject_val,
         date=data.date,
+        time=data.time,
         modality=data.modality,
         spots=data.spots,
         status="abierta",
@@ -220,10 +224,13 @@ def update_session(
             detail="No autorizado: Solo el creador puede editar los datos de su sesión."
         )
 
+    check_schedule_edit(db, session, data)
     if data.name is not None:
         session.name = data.name
     if data.date is not None:
         session.date = data.date
+    if 'time' in data.model_fields_set:
+        session.time = data.time
     if data.modality is not None:
         session.modality = data.modality
     if data.spots is not None:
@@ -479,7 +486,41 @@ def leave_session(session_id: int, db: DBSession = Depends(get_db), current_user
     session.participants_count = max(0, session.participants_count - 1)
     if request:
         request.status = 'retirada'
+    mark_withdrawn(db, session_id, current_user.id)
     promote_waiting(db, session)
     db.commit()
     db.refresh(session)
     return session
+
+
+@router.get('/reschedules/me', response_model=List[SessionRescheduleResponse])
+def my_reschedules(db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    organized = db.query(Session.id).filter(Session.creator_id == current_user.id).all()
+    requested = db.query(SessionJoinRequest.session_id).filter(SessionJoinRequest.user_id == current_user.id).all()
+    involved = db.query(SessionReschedule.session_id).join(
+        SessionReconfirmation, SessionReconfirmation.reschedule_id == SessionReschedule.id,
+    ).filter(SessionReconfirmation.user_id == current_user.id).all()
+    session_ids = {row[0] for row in organized + requested + involved}
+    changes = db.query(SessionReschedule).filter(SessionReschedule.session_id.in_(session_ids)).order_by(
+        SessionReschedule.id.desc(),
+    ).all()
+    return [reschedule_view(db, change, current_user) for change in changes]
+
+
+@router.post('/{session_id}/reschedule', response_model=SessionRescheduleResponse, status_code=201)
+def create_reschedule(session_id: int, body: SessionRescheduleCreate,
+                      db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = locked_session(db, session_id)
+    require_organizer(session, current_user)
+    change = reschedule_session(db, session, current_user, body)
+    db.commit()
+    return reschedule_view(db, change, current_user)
+
+
+@router.post('/{session_id}/reschedules/{reschedule_id}/confirm', response_model=SessionRescheduleResponse)
+def reconfirm_session(session_id: int, reschedule_id: int,
+                      db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    locked_session(db, session_id)
+    confirm_reschedule(db, session_id, reschedule_id, current_user.id)
+    db.commit()
+    return reschedule_view(db, db.get(SessionReschedule, reschedule_id), current_user)

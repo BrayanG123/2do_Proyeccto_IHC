@@ -5,6 +5,8 @@ import ThemeToggle from '../components/ThemeToggle'
 import api from '../api/axios'
 import { getStudentInitials } from '../utils/avatar'
 import LogoutIcon from '../components/LogoutIcon'
+import RescheduleDialog from '../components/RescheduleDialog'
+import { formatSchedule } from '../utils/schedule'
 import '../styles/Dashboard.css'
 
 function joinSessionName(session) {
@@ -28,6 +30,7 @@ export default function Dashboard() {
     name: '',
     subject: '',
     date: '',
+    time: '',
     modality: 'Presencial',
     spots: '',
   })
@@ -53,6 +56,7 @@ export default function Dashboard() {
     name: '',
     subject: '',
     date: '',
+    time: '',
     modality: 'Presencial',
     spots: '',
     status: 'abierta'
@@ -64,6 +68,8 @@ export default function Dashboard() {
   const [joiningSessionId, setJoiningSessionId] = useState(null)
   const [sessionToJoin, setSessionToJoin] = useState(null)
   const [myRequests, setMyRequests] = useState([])
+  const [reschedules, setReschedules] = useState([])
+  const [sessionToReschedule, setSessionToReschedule] = useState(null)
   const [managedSession, setManagedSession] = useState(null)
   const [managedRequests, setManagedRequests] = useState([])
   const [requestsLoading, setRequestsLoading] = useState(false)
@@ -113,10 +119,11 @@ export default function Dashboard() {
       }
       if (filterOnlyAvailable) params.only_available = true
 
-      const [res, own] = await Promise.all([
-        api.get('/sessions/', { params }), api.get('/sessions/requests/me'),
+      const [res, own, changes] = await Promise.all([
+        api.get('/sessions/', { params }), api.get('/sessions/requests/me'), api.get('/sessions/reschedules/me'),
       ])
       setMyRequests(own.data)
+      setReschedules(changes.data)
       if (Array.isArray(res.data)) setSessions(res.data)
     } catch (err) {
       console.warn('Error al cargar sesiones filtradas:', err)
@@ -199,11 +206,12 @@ export default function Dashboard() {
         name: sessionForm.name.trim(),
         subject: finalSubject || null,
         date: sessionForm.date,
+        time: sessionForm.time || null,
         modality: sessionForm.modality,
         spots: parseInt(sessionForm.spots),
       })
       setSessions((prev) => [res.data, ...prev])
-      setSessionForm({ name: '', subject: '', date: '', modality: 'Presencial', spots: '' })
+      setSessionForm({ name: '', subject: '', date: '', time: '', modality: 'Presencial', spots: '' })
       setCustomSubjectName('')
       setShowSessionForm(false)
       setToastMessage({
@@ -226,6 +234,7 @@ export default function Dashboard() {
       name: session.name,
       subject: session.subject || '',
       date: session.date,
+      time: session.time || '',
       modality: session.modality,
       spots: session.spots,
       status: session.status || 'abierta',
@@ -264,6 +273,7 @@ export default function Dashboard() {
         name: editForm.name.trim(),
         subject: finalSubject || null,
         date: editForm.date,
+        time: editForm.time || null,
         modality: editForm.modality,
         spots: parseInt(editForm.spots),
         status: editForm.status,
@@ -426,6 +436,19 @@ export default function Dashboard() {
     } catch (error) {
       setToastMessage({ type: 'error', text: error?.response?.data?.detail || 'No se pudo salir de la sesión.' })
     } finally { setRequestBusy(false) }
+  }
+
+  const confirmNewSchedule = async (session, change) => {
+    setRequestBusy(true)
+    try {
+      await api.post(`/sessions/${session.id}/reschedules/${change.id}/confirm`)
+      await fetchSessions()
+      setToastMessage({ type: 'success', text: 'Confirmaste tu asistencia al nuevo encuentro.' })
+    } catch (error) {
+      setToastMessage({ type: 'error', text: error?.response?.data?.detail || 'No se pudo reconfirmar.' })
+    } finally {
+      setRequestBusy(false)
+    }
   }
 
   const displayName = user?.first_name || user?.full_name?.split(' ')[0] || 'Estudiante'
@@ -832,6 +855,11 @@ export default function Dashboard() {
                     </div>
 
                     <div className="session-form-group">
+                      <label htmlFor="session-time">Hora opcional</label>
+                      <input id="session-time" type="time" step="1" value={sessionForm.time} onChange={e => setSessionForm(p => ({ ...p, time: e.target.value }))} />
+                    </div>
+
+                    <div className="session-form-group">
                       <label htmlFor="session-modality">Modalidad</label>
                       <select
                         id="session-modality"
@@ -916,6 +944,8 @@ export default function Dashboard() {
                 // Verifica si los cupos están agotados
                 const isFull = Boolean(session.spots && (session.participants_count || 0) >= session.spots)
                 const myRequest = myRequests.find(item => item.session_id === session.id)
+                const latestChange = reschedules.find(item => item.session_id === session.id)
+                const needsReconfirmation = latestChange?.own_status === 'pendiente'
 
                 // Determinar el badge de estado superior coherente (IHC)
                 let statusBadgeClass = 'status-open'
@@ -964,6 +994,7 @@ export default function Dashboard() {
                       📅 {new Date(session.date + 'T00:00:00').toLocaleDateString('es-BO', {
                         day: '2-digit', month: 'long', year: 'numeric'
                       })}
+                      {session.time && ` · ${session.time.slice(0, 5)}`}
                     </span>
 
                     <h3 className="session-name">{session.name}</h3>
@@ -985,9 +1016,23 @@ export default function Dashboard() {
                       )}
                     </div>
 
-                    {/* Acciones exclusivas del creador: Editar y Eliminar */}
+                    {latestChange && (
+                      <section className="reschedule-notice" aria-label="Cambio de fecha">
+                        <strong>Sesión reprogramada</strong>
+                        <p>Anterior · {formatSchedule(latestChange.old_date, latestChange.old_time)}</p>
+                        <p>Nuevo · {formatSchedule(latestChange.new_date, latestChange.new_time)}</p>
+                        <p>{latestChange.reason}</p>
+                        {isCreator && <p role="status">{latestChange.pending_count} {latestChange.pending_count === 1 ? 'respuesta pendiente' : 'respuestas pendientes'}</p>}
+                        <button type="button" className="btn-toolbar-action" onClick={() => setSessionToReschedule(session)}>Ver reprogramaciones</button>
+                      </section>
+                    )}
+
+                    {/* Acciones exclusivas del creador */}
                     {isCreator && (
                       <div className="session-creator-toolbar">
+                        <button type="button" className="btn-toolbar-action" disabled={isClosed} onClick={() => setSessionToReschedule(session)}>
+                          Reprogramar sesión
+                        </button>
                         <button type="button" className="btn-toolbar-action" onClick={() => manageRequests(session)}>
                           Gestionar solicitudes
                         </button>
@@ -1032,6 +1077,14 @@ export default function Dashboard() {
                               )}
                             </button>
                           )}
+                        </div>
+                      ) : needsReconfirmation ? (
+                        <div className="reschedule-notice">
+                          <p role="status">Pendiente de reconfirmación. Tu cupo está reservado.</p>
+                          <button type="button" className="btn-confirm-edit" disabled={requestBusy} onClick={() => confirmNewSchedule(session, latestChange)}>
+                            Confirmar asistencia
+                          </button>
+                          <button type="button" className="btn-cancel" disabled={requestBusy} onClick={() => leaveSession(session)}>Retirarme</button>
                         </div>
                       ) : (isEnrolled || myRequest?.status === 'aceptada') ? (
                         <div className="session-status-restricted-box">
@@ -1210,13 +1263,21 @@ export default function Dashboard() {
 
               <div className="form-row-edit">
                 <div className="form-group">
-                  <label>Fecha</label>
+                  <label htmlFor="edit-session-date">Fecha</label>
                   <input
+                    id="edit-session-date"
                     type="date"
+                    disabled={editingSession.participants_count > 0}
                     value={editForm.date}
                     onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
                     required
                   />
+                  {editingSession.participants_count > 0 && <small>Para cambiar el encuentro, usa Reprogramar sesión.</small>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="edit-session-time">Hora opcional</label>
+                  <input id="edit-session-time" type="time" step="1" disabled={editingSession.participants_count > 0} value={editForm.time} onChange={e => setEditForm({ ...editForm, time: e.target.value })} />
                 </div>
 
                 <div className="form-group">
@@ -1363,7 +1424,7 @@ export default function Dashboard() {
                     {new Date(sessionToJoin.date + 'T00:00:00').toLocaleDateString('es-BO', {
                       day: 'numeric', month: 'long', year: 'numeric',
                     })}
-                    {sessionToJoin.time ? ` · ${sessionToJoin.time}` : ''}
+                    {sessionToJoin.time ? ` · ${sessionToJoin.time.slice(0, 5)}` : ''}
                   </dd>
                 </div>
                 <div>
@@ -1409,6 +1470,15 @@ export default function Dashboard() {
       )}
 
       {/* Logout confirm modal */}
+      {sessionToReschedule && (
+        <RescheduleDialog
+          session={sessionToReschedule}
+          changes={reschedules.filter(change => change.session_id === sessionToReschedule.id)}
+          isOrganizer={Number(sessionToReschedule.creator_id) === Number(user.id)}
+          onSaved={fetchSessions}
+          onClose={() => setSessionToReschedule(null)}
+        />
+      )}
       {managedSession && (
         <div className="modal-overlay">
           <div className="modal requests-modal" role="dialog" aria-modal="true" aria-labelledby="requests-title">

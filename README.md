@@ -216,6 +216,30 @@ Cada prueba nueva crea sus propias cuentas y sesiones de prueba. Los resultados
 antes y después y el alcance pendiente están en [evidencias/tarea-6.md](evidencias/tarea-6.md).
 Los ejemplos de instalación de `example.spec.js` se excluyen de la suite.
 
+## Reprogramación con reconfirmación (Tarea 7)
+
+1. Como organizador, busca tu sesión y pulsa **Reprogramar sesión**.
+2. Cambia la fecha o la hora, indica el motivo y guarda la reprogramación.
+3. Cada participante confirmado verá el cambio al recargar o volver a buscar.
+   Puede pulsar **Confirmar asistencia** o **Retirarme**. Su cupo se reserva mientras decide.
+4. Si alguien se retira, la primera persona aprobada en espera pasa a confirmada,
+   siempre que la sesión esté abierta y vigente.
+5. El organizador puede consultar las respuestas en **Ver reprogramaciones**.
+   Cuando todas estén resueltas, podrá reprogramar otra vez.
+
+La hora es opcional para admitir las sesiones anteriores. La reprogramación exige
+inscripciones abiertas y un motivo. El backend aplica las reglas y bloquea cambios
+de fecha u hora desde la edición general cuando requieren reconfirmación.
+
+Para ejecutar el recorrido completo desde la raíz, con la aplicación en ejecución
+
+```powershell
+pnpm exec playwright test tests/reprogramacion.spec.js --project=chromium --workers=1 --reporter=line --trace=off
+```
+
+La explicación del código, los resultados y las capturas están en
+[evidencias/tarea-7.md](evidencias/tarea-7.md).
+
 ## 🕘 Historial de Participación (Tarea 4 – Issue #12)
 
 Responde la pregunta de StudyMatch: **¿En qué sesiones participó la persona?**
