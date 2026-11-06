@@ -93,4 +93,4 @@ Las pruebas nuevas crean cuentas y sesiones ficticias propias en la base local. 
 
 ## Commit
 
-Pendiente de crear y enlazar. Mensaje propuesto `feat: agregar Mis solicitudes a la navegación de StudyMatch`.
+[Ver commit de la mejora 347968c](https://github.com/BrayanG123/2do_Proyeccto_IHC/commit/347968c556317e4daec885c654c34558db593e39), con el mensaje `feat: agregar Mis solicitudes a la navegación de StudyMatch`.
