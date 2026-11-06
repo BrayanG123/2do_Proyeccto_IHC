@@ -29,7 +29,15 @@ export default function App() {
               path="/dashboard"
               element={
                 <PrivateRoute>
-                  <Dashboard />
+                  <Dashboard key="dashboard" />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mis-solicitudes"
+              element={
+                <PrivateRoute>
+                  <Dashboard key="requests" onlyMyRequests />
                 </PrivateRoute>
               }
             />

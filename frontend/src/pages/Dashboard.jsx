@@ -14,7 +14,7 @@ function joinSessionName(session) {
   return automatedName.test(session.name) ? 'Sesión de estudio' : session.name;
 }
 
-export default function Dashboard() {
+export default function Dashboard({ onlyMyRequests = false }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
@@ -24,7 +24,8 @@ export default function Dashboard() {
 
   // ── SESIONES ──────────────────────────────────────────
   const [sessions, setSessions] = useState([])
-  const [loadingSessions, setLoadingSessions] = useState(false)
+  const [loadingSessions, setLoadingSessions] = useState(true)
+  const [sessionsLoadError, setSessionsLoadError] = useState('')
   const [showSessionForm, setShowSessionForm] = useState(false)
   const [sessionForm, setSessionForm] = useState({
     name: '',
@@ -105,6 +106,7 @@ export default function Dashboard() {
   // Consulta de sesiones en la BD con todos los filtros combinables
   const fetchSessions = useCallback(async () => {
     setLoadingSessions(true)
+    setSessionsLoadError('')
     try {
       const params = {}
       if (debouncedSearch.trim()) params.search = debouncedSearch.trim()
@@ -124,13 +126,18 @@ export default function Dashboard() {
       ])
       setMyRequests(own.data)
       setReschedules(changes.data)
-      if (Array.isArray(res.data)) setSessions(res.data)
+      if (Array.isArray(res.data)) {
+        // Esta sección reúne las sesiones que tienen una solicitud de la cuenta actual.
+        const requestedIds = new Set(own.data.map(request => request.session_id))
+        setSessions(onlyMyRequests ? res.data.filter(session => requestedIds.has(session.id)) : res.data)
+      }
     } catch (err) {
       console.warn('Error al cargar sesiones filtradas:', err)
+      setSessionsLoadError('No se pudieron cargar las sesiones. Intenta nuevamente.')
     } finally {
       setLoadingSessions(false)
     }
-  }, [debouncedSearch, filterSubject, filterModality, filterDate, filterDateFrom, filterDateTo, filterOnlyAvailable])
+  }, [debouncedSearch, filterSubject, filterModality, filterDate, filterDateFrom, filterDateTo, filterOnlyAvailable, onlyMyRequests])
 
   // Cargar o refrescar sesiones cuando cambien los filtros
   useEffect(() => {
@@ -500,8 +507,9 @@ export default function Dashboard() {
           </div>
         </div>
         <nav className="sidebar-nav">
-          <Link to="/dashboard" className="sidebar-item active">🏠 <span>Dashboard</span></Link>
-          <a href="#sesiones" className="sidebar-item">📅 <span>Todas las sesiones ({sessions.length})</span></a>
+          <Link to="/dashboard" className={`sidebar-item ${onlyMyRequests ? '' : 'active'}`}>🏠 <span>Dashboard</span></Link>
+          <Link to="/dashboard#sesiones" className="sidebar-item">📅 <span>Todas las sesiones</span></Link>
+          <Link to="/mis-solicitudes" className={`sidebar-item ${onlyMyRequests ? 'active' : ''}`} aria-current={onlyMyRequests ? 'page' : undefined}>📨 <span>Mis solicitudes</span></Link>
           <Link to="/historial" className="sidebar-item">🕘 <span>Mi historial</span></Link>
           <Link to="/profile" className="sidebar-item">👤 <span>Mi perfil</span></Link>
         </nav>
@@ -533,10 +541,10 @@ export default function Dashboard() {
         <header className="dashboard-header">
           <div>
             <h1 className="welcome-title">
-              ¡Hola, <span className="user-name">{displayName}</span>! 👋
+              {onlyMyRequests ? 'Mis solicitudes' : <>¡Hola, <span className="user-name">{displayName}</span>! 👋</>}
             </h1>
             <p className="welcome-sub">
-              Sesiones de estudio · StudyMatch
+              {onlyMyRequests ? 'Consulta la respuesta a tus solicitudes de participación.' : 'Sesiones de estudio · StudyMatch'}
             </p>
           </div>
           <div className="dashboard-header-right">
@@ -557,7 +565,7 @@ export default function Dashboard() {
         </header>
 
         {/* Stats Grid */}
-        <div className="stats-grid">
+        {!onlyMyRequests && <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-value">{sessions.length}</div>
             <div className="stat-label">Total Sesiones</div>
@@ -574,31 +582,31 @@ export default function Dashboard() {
             </div>
             <div className="stat-label">Inscripciones Cerradas</div>
           </div>
-        </div>
+        </div>}
 
         {/* ── SECCIÓN SESIONES ── */}
         <section id="sesiones" className="sessions-section">
           <div className="sessions-header-bar">
             <div>
               <h2 className="section-title">
-                Sesiones de Estudio
+                {onlyMyRequests ? 'Sesiones solicitadas' : 'Sesiones de Estudio'}
                 <span className="subjects-count-badge">{sessions.length}</span>
               </h2>
               <p className="section-subtitle">
-                Crea y gestiona tus sesiones de estudio grupales
+                {onlyMyRequests ? 'En cada tarjeta puedes ver tu estado y las acciones disponibles.' : 'Crea y gestiona tus sesiones de estudio grupales'}
               </p>
             </div>
-            <button
+            {!onlyMyRequests && <button
               id="btn-crear-sesion"
               className="btn-create-session"
               onClick={() => { setShowSessionForm(true); setSessionError(''); setCustomSubjectName('') }}
             >
               + Crear Sesión
-            </button>
+            </button>}
           </div>
 
           {/* ── BARRA DE BÚSQUEDA Y FILTROS (ISSUE #2) ── */}
-          <div className="sessions-filter-container">
+          {!onlyMyRequests && <div className="sessions-filter-container">
             {/* Fila principal: Búsqueda por texto y selector de materia */}
             <div className="filter-main-row">
               <div className="search-input-wrapper">
@@ -777,7 +785,7 @@ export default function Dashboard() {
                 {loadingSessions ? '⏳ Buscando sesiones...' : `📋 ${sessions.length} ${sessions.length === 1 ? 'sesión encontrada' : 'sesiones encontradas'}`}
               </span>
             </div>
-          </div>
+          </div>}
 
           {/* Formulario modal de nueva sesión */}
           {showSessionForm && (
@@ -912,7 +920,12 @@ export default function Dashboard() {
             </div>
           )}
 
-          {loadingSessions ? (
+          {sessionsLoadError ? (
+            <div className="no-sessions-placeholder" role="alert">
+              <p>{sessionsLoadError}</p>
+              <button type="button" className="btn-reset-empty-state" onClick={fetchSessions}>Reintentar</button>
+            </div>
+          ) : loadingSessions ? (
             <div className="sessions-loading-placeholder">
               <span className="sessions-loading-spinner">⏳</span>
               <p>Consultando sesiones en la base de datos...</p>
@@ -1157,6 +1170,13 @@ export default function Dashboard() {
                 )
               })}
             </div>
+          ) : onlyMyRequests ? (
+            <div className="no-sessions-placeholder">
+              <span className="no-sessions-icon">📨</span>
+              <h3>Aún no has enviado solicitudes</h3>
+              <p>Encuentra una sesión de estudio y solicita participar para consultar su estado aquí.</p>
+              <Link to="/dashboard#sesiones" className="btn-reset-empty-state">Buscar sesiones</Link>
+            </div>
           ) : hasActiveFilters ? (
             <div className="no-sessions-placeholder filter-empty-state">
               <span className="no-sessions-icon">🔍</span>
@@ -1182,14 +1202,18 @@ export default function Dashboard() {
 
       {/* Mobile Bottom Navigation */}
       <nav className="mobile-bottom-nav">
-        <a href="#" className="mobile-nav-item active">
+        <Link to="/dashboard" className={`mobile-nav-item ${onlyMyRequests ? '' : 'active'}`}>
           <span className="mobile-nav-icon">🏠</span>
           <span>Inicio</span>
-        </a>
-        <a href="#sesiones" className="mobile-nav-item">
+        </Link>
+        <Link to="/dashboard#sesiones" className="mobile-nav-item">
           <span className="mobile-nav-icon">📅</span>
           <span>Sesiones</span>
-        </a>
+        </Link>
+        <Link to="/mis-solicitudes" className={`mobile-nav-item ${onlyMyRequests ? 'active' : ''}`} aria-label="Mis solicitudes" aria-current={onlyMyRequests ? 'page' : undefined}>
+          <span className="mobile-nav-icon">📨</span>
+          <span>Solicitudes</span>
+        </Link>
         <Link to="/historial" className="mobile-nav-item">
           <span className="mobile-nav-icon">🕘</span>
           <span>Historial</span>

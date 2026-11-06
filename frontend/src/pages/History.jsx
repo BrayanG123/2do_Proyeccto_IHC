@@ -155,6 +155,7 @@ export default function History() {
         <nav className="sidebar-nav">
           <Link to="/dashboard" className="sidebar-item">🏠 <span>Dashboard</span></Link>
           <Link to="/dashboard#sesiones" className="sidebar-item">📅 <span>Todas las sesiones</span></Link>
+          <Link to="/mis-solicitudes" className="sidebar-item">📨 <span>Mis solicitudes</span></Link>
           <Link to="/historial" className="sidebar-item active" aria-current="page">🕘 <span>Mi historial</span></Link>
           <Link to="/profile" className="sidebar-item">👤 <span>Mi perfil</span></Link>
         </nav>
@@ -308,6 +309,10 @@ export default function History() {
         <Link to="/dashboard#sesiones" className="mobile-nav-item">
           <span className="mobile-nav-icon">📅</span>
           <span>Sesiones</span>
+        </Link>
+        <Link to="/mis-solicitudes" className="mobile-nav-item" aria-label="Mis solicitudes">
+          <span className="mobile-nav-icon">📨</span>
+          <span>Solicitudes</span>
         </Link>
         <Link to="/historial" className="mobile-nav-item active" aria-current="page">
           <span className="mobile-nav-icon">🕘</span>
