@@ -128,4 +128,4 @@ Desde la carpeta `backend`, con el entorno virtual preparado
 
 ## Commit
 
-Pendiente de crear y enlazar. Mensaje propuesto `feat: registrar asistencia y resolver justificaciones de sesiones`.
+[Ver commit de la tarea 8 df95b14](https://github.com/BrayanG123/2do_Proyeccto_IHC/commit/df95b143856372a5d5f393e0c771a2fec186f013), con el mensaje `registrar asistencia y resolver justificaciones de sesiones`.
