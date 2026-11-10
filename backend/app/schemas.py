@@ -2,7 +2,7 @@ import json
 from typing import Any, Literal
 from datetime import datetime
 import re
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, Field
 
 
 def validate_password_rules(v: str) -> str:
@@ -211,6 +211,7 @@ class SessionResponse(BaseModel):
     subject: str | None = None
     date: dt.date
     time: dt.time | None = None
+    finished_at: datetime | None = None
     modality: str
     spots: int
     participants_count: int = 0
@@ -314,3 +315,47 @@ class SessionRescheduleResponse(BaseModel):
     pending_count: int
     own_status: str | None
     responses: list[ReconfirmationResponse]
+
+
+class AttendanceUpdate(BaseModel):
+    status: Literal['presente', 'ausente']
+
+
+class JustificationCreate(BaseModel):
+    text: str = Field(min_length=3, max_length=2000)
+
+    @field_validator('text', mode='before')
+    @classmethod
+    def strip_text(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+
+class JustificationDecision(BaseModel):
+    decision: Literal['aceptar', 'rechazar']
+    reason: str = Field(min_length=3, max_length=1000)
+
+    @field_validator('reason', mode='before')
+    @classmethod
+    def strip_reason(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+
+class AttendanceHistoryResponse(BaseModel):
+    id: int
+    actor_name: str
+    action: str
+    previous_status: str | None
+    new_status: str
+    note: str | None
+    created_at: datetime
+
+
+class AttendanceResponse(BaseModel):
+    user_id: int
+    user_name: str
+    user_email: str
+    status: str
+    justification: str | None
+    justification_status: str | None
+    decision_reason: str | None
+    history: list[AttendanceHistoryResponse]

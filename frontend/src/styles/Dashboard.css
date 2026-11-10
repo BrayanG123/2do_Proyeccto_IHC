@@ -2217,3 +2217,79 @@
 .requests-list li > p { margin: 12px 0; }
 .requests-list button, .requests-modal > button { min-height: 44px; margin: 4px; }
 .requests-list button:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Asistencia y justificaciones */
+.modal.attendance-modal {
+  max-width: 660px;
+}
+
+.attendance-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.attendance-header .btn-cancel {
+  flex: 0 0 44px;
+}
+
+.attendance-modal p,
+.attendance-list span {
+  color: var(--text);
+  margin: 10px 0;
+}
+
+.attendance-modal label {
+  display: block;
+  margin-top: 14px;
+  font-weight: 600;
+}
+
+.attendance-modal textarea {
+  display: block;
+  width: 100%;
+  min-height: 90px;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid var(--text-muted);
+  border-radius: 8px;
+  font: inherit;
+  background: var(--surface2);
+  color: var(--text);
+  resize: vertical;
+}
+
+.attendance-modal button {
+  min-height: 44px;
+  margin: 6px 4px 6px 0;
+}
+
+.attendance-modal .btn-confirm-edit {
+  background: #047857;
+  color: #ffffff;
+}
+
+.attendance-modal [role="alert"] {
+  padding: 12px;
+  border: 2px solid var(--danger);
+}
+
+.attendance-modal details {
+  margin-top: 16px;
+}
+
+.attendance-modal summary {
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.attendance-history {
+  padding-left: 20px;
+}
+
+.attendance-justification {
+  padding: 10px;
+  border-left: 3px solid var(--primary);
+  background: var(--surface2);
+}

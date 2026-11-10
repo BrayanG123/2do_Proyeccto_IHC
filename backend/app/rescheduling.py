@@ -47,6 +47,8 @@ def check_schedule_edit(db, session, data):
 
 
 def reschedule_session(db, session, organizer, data):
+    if session.finished_at is not None:
+        raise HTTPException(409, 'La sesión ya finalizó.')
     if pending_reconfirmations(db, session.id).count():
         raise HTTPException(409, 'Hay reconfirmaciones pendientes. Espera las respuestas antes de reprogramar.')
     if session.status != 'abierta':

@@ -46,10 +46,10 @@ export async function buscar(page, nombre) {
   await expect(page.getByRole('heading', { name: nombre, exact: true })).toBeVisible();
 }
 
-export async function crearSesion(page, nombre = nombreUnico('Sesion'), cupos = '3') {
-  // Fecha futura en hora local, para que el recorrido no venza con el calendario.
+export async function crearSesion(page, nombre = nombreUnico('Sesion'), cupos = '3', diasDesdeHoy = 7) {
+  // Fecha relativa en hora local. Por defecto se crea una sesión dentro de una semana.
   const fecha = new Date();
-  fecha.setDate(fecha.getDate() + 7);
+  fecha.setDate(fecha.getDate() + diasDesdeHoy);
   const fechaISO = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`;
   await page.getByRole('button', { name: '+ Crear Sesión', exact: true }).click();
   await page.getByLabel('Nombre de la Sesión', { exact: true }).fill(nombre);

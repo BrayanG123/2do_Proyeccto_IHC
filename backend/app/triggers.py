@@ -18,6 +18,7 @@ ALTER TABLE sessions ADD COLUMN IF NOT EXISTS participant_emails TEXT DEFAULT '[
 UPDATE sessions SET participant_emails = '[]' WHERE participant_emails IS NULL;
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS subject VARCHAR(150);
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS time TIME;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS finished_at TIMESTAMP WITH TIME ZONE;
 
 -- Lista de espera: conservar las solicitudes existentes y ampliar sus estados.
 ALTER TABLE session_join_requests ADD COLUMN IF NOT EXISTS waitlisted_at TIMESTAMP WITH TIME ZONE;

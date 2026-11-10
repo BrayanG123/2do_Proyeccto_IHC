@@ -13,6 +13,9 @@ from app.waitlist import promote_waiting, request_view
 from app.models import SessionReschedule, SessionReconfirmation
 from app.schemas import SessionRescheduleCreate, SessionRescheduleResponse
 from app.rescheduling import check_schedule_edit, reschedule_session, confirm_reschedule, mark_withdrawn, reschedule_view
+from app.rescheduling import confirmed_participants, pending_reconfirmations
+from app.models import SessionAttendance, AttendanceHistory
+from app.schemas import AttendanceUpdate, JustificationCreate, JustificationDecision, AttendanceResponse
 
 
 
@@ -167,6 +170,7 @@ def update_session_status(
             detail="No autorizado: Solo la persona que creó la sesión puede modificar su estado."
         )
 
+    require_unfinished(session)
     if body.status == "cerrada":
         try:
             session.close_registration()
@@ -224,6 +228,7 @@ def update_session(
             detail="No autorizado: Solo el creador puede editar los datos de su sesión."
         )
 
+    require_unfinished(session)
     check_schedule_edit(db, session, data)
     if data.name is not None:
         session.name = data.name
@@ -287,6 +292,7 @@ def delete_session(
             detail="No autorizado: Solo el creador puede eliminar su sesión."
         )
 
+    require_unfinished(session)
     # El evento conserva una copia de la sesión; no queda vinculado porque la fila se elimina
     record_session_event(db, current_user.id, "eliminada", session, keep_link=False)
     db.delete(session)
@@ -419,7 +425,12 @@ def locked_session(db, session_id):
 
 def require_organizer(session, user):
     if session.creator_id != user.id:
-        raise HTTPException(403, 'Solo el organizador puede gestionar las solicitudes.')
+        raise HTTPException(403, 'Solo el organizador puede realizar esta acción.')
+
+
+def require_unfinished(session):
+    if session.finished_at is not None:
+        raise HTTPException(409, 'La sesión ya finalizó. Su asistencia y su historial deben conservarse.')
 
 
 @router.get('/requests/me', response_model=List[SessionJoinRequestResponse])
@@ -443,6 +454,7 @@ def decide_request(session_id: int, request_id: int, body: RequestDecision,
                    db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     session = locked_session(db, session_id)
     require_organizer(session, current_user)
+    require_unfinished(session)
     request = db.query(SessionJoinRequest).filter(
         SessionJoinRequest.id == request_id, SessionJoinRequest.session_id == session_id,
     ).first()
@@ -474,6 +486,7 @@ def decide_request(session_id: int, request_id: int, body: RequestDecision,
 @router.post('/{session_id}/leave', response_model=SessionResponse)
 def leave_session(session_id: int, db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     session = locked_session(db, session_id)
+    require_unfinished(session)
     request = db.query(SessionJoinRequest).filter(
         SessionJoinRequest.session_id == session_id, SessionJoinRequest.user_id == current_user.id,
     ).first()
@@ -524,3 +537,130 @@ def reconfirm_session(session_id: int, reschedule_id: int,
     confirm_reschedule(db, session_id, reschedule_id, current_user.id)
     db.commit()
     return reschedule_view(db, db.get(SessionReschedule, reschedule_id), current_user)
+
+
+# Asistencia y justificaciones. Las escrituras bloquean la misma sesión.
+@router.get('/attendance/me', response_model=List[int])
+def my_attendance_sessions(db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # La pertenencia se reconoce por cuenta, aunque luego cambie su correo.
+    return [row[0] for row in db.query(SessionAttendance.session_id).filter_by(user_id=current_user.id).all()]
+
+
+def attendance_view(db, record):
+    participant = db.get(User, record.user_id)
+    changes = db.query(AttendanceHistory, User).outerjoin(
+        User, User.id == AttendanceHistory.actor_id,
+    ).filter(AttendanceHistory.attendance_id == record.id).order_by(AttendanceHistory.id).all()
+    return {
+        'user_id': participant.id, 'user_name': participant.full_name,
+        'user_email': participant.email, 'status': record.status,
+        'justification': record.justification,
+        'justification_status': record.justification_status,
+        'decision_reason': record.decision_reason,
+        'history': [
+            {'id': change.id, 'actor_name': actor.full_name if actor else 'Cuenta eliminada',
+             'action': change.action, 'previous_status': change.previous_status,
+             'new_status': change.new_status, 'note': change.note, 'created_at': change.created_at}
+            for change, actor in changes
+        ],
+    }
+
+
+def attendance_record(db, session_id, user_id):
+    record = db.query(SessionAttendance).filter_by(session_id=session_id, user_id=user_id).first()
+    if record is None:
+        raise HTTPException(404, 'El participante no tiene un registro de asistencia en esta sesión.')
+    return record
+
+
+@router.post('/{session_id}/finish', response_model=SessionResponse)
+def finish_session(session_id: int, db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = locked_session(db, session_id)
+    require_organizer(session, current_user)
+    require_unfinished(session)
+    if session.date > dt_date.today():
+        raise HTTPException(400, 'Solo puedes finalizar una sesión de hoy o de una fecha anterior.')
+    if pending_reconfirmations(db, session_id).count():
+        raise HTTPException(409, 'Resuelve las reconfirmaciones pendientes antes de finalizar.')
+
+    # Se toma una copia de quiénes están confirmados en este momento.
+    for participant in confirmed_participants(db, session):
+        db.add(SessionAttendance(session_id=session_id, user_id=participant.id, status='sin_registrar'))
+    if session.status != 'cerrada':
+        record_session_event(db, current_user.id, 'cerrada', session)
+    session.status = 'cerrada'
+    session.finished_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(session)
+    return session
+
+
+@router.get('/{session_id}/attendance', response_model=List[AttendanceResponse])
+def list_attendance(session_id: int, db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = db.get(Session, session_id)
+    if session is None:
+        raise HTTPException(404, 'Sesión no encontrada.')
+    records = db.query(SessionAttendance).filter_by(session_id=session_id)
+    if session.creator_id != current_user.id:
+        # Cada estudiante consulta exclusivamente su resultado y su historial.
+        records = records.filter_by(user_id=current_user.id)
+        if records.first() is None:
+            raise HTTPException(403, 'Solo el organizador y los participantes registrados pueden consultar la asistencia.')
+    return [attendance_view(db, record) for record in records.order_by(SessionAttendance.id).all()]
+
+
+@router.patch('/{session_id}/attendance/{user_id}', response_model=AttendanceResponse)
+def update_attendance(session_id: int, user_id: int, body: AttendanceUpdate,
+                      db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = locked_session(db, session_id)
+    require_organizer(session, current_user)
+    record = attendance_record(db, session_id, user_id)
+    if record.status == body.status:
+        return attendance_view(db, record)
+    if record.justification_status is not None:
+        raise HTTPException(409, 'La ausencia ya tiene una justificación. Revisa su resolución en el historial.')
+    db.add(AttendanceHistory(
+        attendance_id=record.id, actor_id=current_user.id, action='asistencia',
+        previous_status=record.status, new_status=body.status,
+    ))
+    record.status = body.status
+    db.commit()
+    return attendance_view(db, record)
+
+
+@router.post('/{session_id}/attendance/justification', response_model=AttendanceResponse, status_code=201)
+def submit_justification(session_id: int, body: JustificationCreate,
+                         db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    locked_session(db, session_id)
+    record = attendance_record(db, session_id, current_user.id)
+    if record.status != 'ausente':
+        raise HTTPException(409, 'Solo puedes justificar una ausencia registrada.')
+    if record.justification_status is not None:
+        raise HTTPException(409, 'Ya presentaste una justificación para esta ausencia.')
+    record.justification = body.text
+    record.justification_status = 'pendiente'
+    db.add(AttendanceHistory(
+        attendance_id=record.id, actor_id=current_user.id, action='justificacion',
+        previous_status=None, new_status='pendiente', note=body.text,
+    ))
+    db.commit()
+    return attendance_view(db, record)
+
+
+@router.patch('/{session_id}/attendance/{user_id}/justification', response_model=AttendanceResponse)
+def decide_justification(session_id: int, user_id: int, body: JustificationDecision,
+                         db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = locked_session(db, session_id)
+    require_organizer(session, current_user)
+    record = attendance_record(db, session_id, user_id)
+    if record.justification_status != 'pendiente':
+        raise HTTPException(409, 'La justificación debe estar pendiente para resolverla.')
+    decision = 'aceptada' if body.decision == 'aceptar' else 'rechazada'
+    record.justification_status = decision
+    record.decision_reason = body.reason
+    db.add(AttendanceHistory(
+        attendance_id=record.id, actor_id=current_user.id, action='decision',
+        previous_status='pendiente', new_status=decision, note=body.reason,
+    ))
+    db.commit()
+    return attendance_view(db, record)

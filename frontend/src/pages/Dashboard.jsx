@@ -76,6 +76,22 @@ export default function Dashboard({ onlyMyRequests = false }) {
   const [requestsLoading, setRequestsLoading] = useState(false)
   const [requestsError, setRequestsError] = useState('')
   const [requestBusy, setRequestBusy] = useState(false)
+  const [attendanceSession, setAttendanceSession] = useState(null)
+  const [attendanceRows, setAttendanceRows] = useState([])
+  const [myAttendanceSessionIds, setMyAttendanceSessionIds] = useState([])
+  const [attendanceLoading, setAttendanceLoading] = useState(false)
+  const [attendanceBusy, setAttendanceBusy] = useState(false)
+  const [attendanceError, setAttendanceError] = useState('')
+  const [justificationText, setJustificationText] = useState('')
+  const [decisionReasons, setDecisionReasons] = useState({})
+
+  const attendanceLabels = {
+    sin_registrar: 'Sin registrar', presente: 'Presente', ausente: 'Ausente',
+    pendiente: 'Pendiente de revisión', aceptada: 'Aceptada', rechazada: 'Rechazada',
+  }
+  const attendanceActionLabels = {
+    asistencia: 'Registro de asistencia', justificacion: 'Justificación presentada', decision: 'Resolución de justificación',
+  }
 
   const requestLabel = (request) => ({
     pendiente: 'Pendiente de aprobación', aceptada: 'Confirmado',
@@ -121,11 +137,13 @@ export default function Dashboard({ onlyMyRequests = false }) {
       }
       if (filterOnlyAvailable) params.only_available = true
 
-      const [res, own, changes] = await Promise.all([
+      const [res, own, changes, attendance] = await Promise.all([
         api.get('/sessions/', { params }), api.get('/sessions/requests/me'), api.get('/sessions/reschedules/me'),
+        api.get('/sessions/attendance/me'),
       ])
       setMyRequests(own.data)
       setReschedules(changes.data)
+      setMyAttendanceSessionIds(attendance.data)
       if (Array.isArray(res.data)) {
         // Esta sección reúne las sesiones que tienen una solicitud de la cuenta actual.
         const requestedIds = new Set(own.data.map(request => request.session_id))
@@ -456,6 +474,48 @@ export default function Dashboard({ onlyMyRequests = false }) {
     } finally {
       setRequestBusy(false)
     }
+  }
+
+  const openAttendance = async (session) => {
+    setAttendanceSession(session)
+    setAttendanceRows([])
+    setAttendanceError('')
+    setJustificationText('')
+    setDecisionReasons({})
+    setAttendanceLoading(true)
+    try {
+      const response = await api.get(`/sessions/${session.id}/attendance`)
+      setAttendanceRows(response.data)
+    } catch (error) {
+      setAttendanceError(error?.response?.data?.detail || 'No se pudo consultar la asistencia.')
+    } finally { setAttendanceLoading(false) }
+  }
+
+  const finishStudySession = async () => {
+    setAttendanceBusy(true)
+    setAttendanceError('')
+    try {
+      const response = await api.post(`/sessions/${attendanceSession.id}/finish`)
+      await fetchSessions()
+      await openAttendance(response.data)
+    } catch (error) {
+      setAttendanceError(error?.response?.data?.detail || 'No se pudo finalizar la sesión.')
+    } finally { setAttendanceBusy(false) }
+  }
+
+  const saveAttendance = async (path, data, method = 'patch') => {
+    setAttendanceBusy(true)
+    setAttendanceError('')
+    try {
+      await api.request({ method, url: `/sessions/${attendanceSession.id}/attendance${path}`, data })
+      const response = await api.get(`/sessions/${attendanceSession.id}/attendance`)
+      setAttendanceRows(response.data)
+      setJustificationText('')
+      setDecisionReasons({})
+    } catch (error) {
+      const detail = error?.response?.data?.detail
+      setAttendanceError(Array.isArray(detail) ? detail.map(item => item.msg).join('. ') : detail || 'No se pudo guardar el cambio.')
+    } finally { setAttendanceBusy(false) }
   }
 
   const displayName = user?.first_name || user?.full_name?.split(' ')[0] || 'Estudiante'
@@ -959,13 +1019,18 @@ export default function Dashboard({ onlyMyRequests = false }) {
                 const myRequest = myRequests.find(item => item.session_id === session.id)
                 const latestChange = reschedules.find(item => item.session_id === session.id)
                 const needsReconfirmation = latestChange?.own_status === 'pendiente'
+                const hasAttendance = myAttendanceSessionIds.includes(session.id)
 
                 // Determinar el badge de estado superior coherente (IHC)
                 let statusBadgeClass = 'status-open'
                 let statusBadgeLabel = '🟢 Inscripción abierta'
                 let cardStateClass = 'session-card-open'
 
-                if (isClosed) {
+                if (session.finished_at) {
+                  statusBadgeClass = 'status-past'
+                  statusBadgeLabel = 'Sesión finalizada'
+                  cardStateClass = 'session-card-past'
+                } else if (isClosed) {
                   statusBadgeClass = 'status-closed'
                   statusBadgeLabel = '🔒 Cerrada'
                   cardStateClass = 'session-card-closed'
@@ -1040,18 +1105,25 @@ export default function Dashboard({ onlyMyRequests = false }) {
                       </section>
                     )}
 
+                    {(isCreator || hasAttendance) && (
+                      <button type="button" className="btn-toolbar-action" disabled={isCreator && !session.finished_at && sessionDate > today} onClick={() => openAttendance(session)}>
+                        {isCreator ? 'Registrar asistencia' : 'Consultar mi asistencia'}
+                      </button>
+                    )}
+
                     {/* Acciones exclusivas del creador */}
                     {isCreator && (
                       <div className="session-creator-toolbar">
                         <button type="button" className="btn-toolbar-action" disabled={isClosed} onClick={() => setSessionToReschedule(session)}>
                           Reprogramar sesión
                         </button>
-                        <button type="button" className="btn-toolbar-action" onClick={() => manageRequests(session)}>
+                        <button type="button" className="btn-toolbar-action" disabled={Boolean(session.finished_at)} onClick={() => manageRequests(session)}>
                           Gestionar solicitudes
                         </button>
                         <button
                           type="button"
                           className="btn-toolbar-action btn-edit-session"
+                          disabled={Boolean(session.finished_at)}
                           onClick={() => openEditModal(session)}
                           title="Editar los datos de esta sesión"
                         >
@@ -1060,6 +1132,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                         <button
                           type="button"
                           className="btn-toolbar-action btn-delete-session"
+                          disabled={Boolean(session.finished_at)}
                           onClick={() => setSessionToDelete(session)}
                           title="Eliminar esta sesión de estudio"
                         >
@@ -1091,6 +1164,8 @@ export default function Dashboard({ onlyMyRequests = false }) {
                             </button>
                           )}
                         </div>
+                      ) : session.finished_at && hasAttendance ? (
+                        <p role="status">Sesión finalizada. Consulta tu asistencia.</p>
                       ) : needsReconfirmation ? (
                         <div className="reschedule-notice">
                           <p role="status">Pendiente de reconfirmación. Tu cupo está reservado.</p>
@@ -1527,6 +1602,79 @@ export default function Dashboard({ onlyMyRequests = false }) {
               ))}
             </ul>
             <button type="button" className="btn-cancel" disabled={requestBusy} onClick={() => setManagedSession(null)}>Cerrar solicitudes</button>
+          </div>
+        </div>
+      )}
+      {attendanceSession && (
+        <div className="modal-overlay">
+          <div className="modal requests-modal attendance-modal" role="dialog" aria-modal="true" aria-labelledby="attendance-title">
+            <header className="attendance-header">
+              <h2 id="attendance-title">Asistencia y justificaciones</h2>
+              <button type="button" className="btn-cancel" aria-label="Cerrar asistencia" disabled={attendanceBusy || attendanceLoading} onClick={() => setAttendanceSession(null)}>✕</button>
+            </header>
+            <p>{attendanceSession.name}</p>
+            {attendanceError && <p role="alert">{attendanceError}</p>}
+            {attendanceLoading ? <p role="status">Cargando asistencia…</p> : !attendanceSession.finished_at ? (
+              <div>
+                <p>Cuando haya terminado el encuentro, finaliza la sesión para registrar presentes y ausentes.</p>
+                <p>Se cerrarán las inscripciones y se conservará la lista de participantes confirmados y su asistencia.</p>
+                <button type="button" className="btn-confirm-edit" disabled={attendanceBusy || Boolean(attendanceError)} onClick={finishStudySession}>Finalizar sesión y registrar asistencia</button>
+              </div>
+            ) : (
+              <ul className="requests-list attendance-list">
+                {attendanceRows.length === 0 && !attendanceError && <li>La sesión terminó sin participantes confirmados.</li>}
+                {attendanceRows.map(record => (
+                  <li key={record.user_id} aria-label={`Asistencia de ${record.user_email}`}>
+                    <strong>{record.user_name}</strong>
+                    <span>{record.user_email}</span>
+                    <p role="status">Asistencia · {attendanceLabels[record.status]}</p>
+                    {Number(attendanceSession.creator_id) === Number(user.id) && (
+                      <div>
+                        <button type="button" className="btn-confirm-edit" disabled={attendanceBusy || Boolean(record.justification_status)} onClick={() => saveAttendance(`/${record.user_id}`, { status: 'presente' })}>Marcar presente</button>
+                        <button type="button" className="btn-cancel" disabled={attendanceBusy || Boolean(record.justification_status)} onClick={() => saveAttendance(`/${record.user_id}`, { status: 'ausente' })}>Marcar ausente</button>
+                      </div>
+                    )}
+                    {record.justification_status && (
+                      <div className="attendance-justification">
+                        <p>Justificación · {attendanceLabels[record.justification_status]}</p>
+                        <p>{record.justification}</p>
+                        {record.decision_reason && <p>Motivo de la resolución · {record.decision_reason}</p>}
+                      </div>
+                    )}
+                    {record.user_id === Number(user.id) && record.status === 'ausente' && !record.justification_status && (
+                      <form onSubmit={event => { event.preventDefault(); saveAttendance('/justification', { text: justificationText }, 'post') }}>
+                        <label htmlFor="absence-justification">Justifica tu ausencia</label>
+                        <textarea id="absence-justification" required minLength={3} maxLength={2000} value={justificationText} onChange={event => setJustificationText(event.target.value)} />
+                        <button type="submit" className="btn-confirm-edit" disabled={attendanceBusy}>Enviar justificación</button>
+                      </form>
+                    )}
+                    {Number(attendanceSession.creator_id) === Number(user.id) && record.justification_status === 'pendiente' && (
+                      <form onSubmit={event => {
+                        event.preventDefault()
+                        saveAttendance(`/${record.user_id}/justification`, { decision: event.nativeEvent.submitter.value, reason: decisionReasons[record.user_id] || '' })
+                      }}>
+                        <label htmlFor={`decision-reason-${record.user_id}`}>Motivo de la resolución</label>
+                        <textarea id={`decision-reason-${record.user_id}`} required minLength={3} maxLength={1000} value={decisionReasons[record.user_id] || ''} onChange={event => setDecisionReasons({ ...decisionReasons, [record.user_id]: event.target.value })} />
+                        <button type="submit" value="aceptar" className="btn-confirm-edit" disabled={attendanceBusy}>Aceptar justificación</button>
+                        <button type="submit" value="rechazar" className="btn-cancel" disabled={attendanceBusy}>Rechazar justificación</button>
+                      </form>
+                    )}
+                    <details>
+                      <summary>Historial de cambios</summary>
+                      <ol className="attendance-history">
+                        {record.history.map(change => (
+                          <li key={change.id}>
+                            <p>{change.actor_name} · {new Date(change.created_at).toLocaleString('es-BO')}</p>
+                            <p>{attendanceActionLabels[change.action]} · {change.previous_status ? `${attendanceLabels[change.previous_status]} → ` : ''}{attendanceLabels[change.new_status]}</p>
+                            {change.note && <p>{change.note}</p>}
+                          </li>
+                        ))}
+                      </ol>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       )}

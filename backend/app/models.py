@@ -54,6 +54,7 @@ class Session(Base):
     name = Column(String(150), nullable=False)
     date = Column(Date, nullable=False)
     time = Column(Time, nullable=True)
+    finished_at = Column(DateTime(timezone=True), nullable=True)
     modality = Column(String(50), nullable=False)
     spots = Column(Integer, nullable=False)
     participants_count = Column(Integer, default=0, nullable=False)
@@ -122,6 +123,8 @@ class Session(Base):
         5. Cupos disponibles.
         Retorna (True, 'Permitido') o (False, 'Motivo del rechazo').
         """
+        if self.finished_at is not None:
+            return False, "La sesión ya finalizó."
         # 1. Sesión cerrada
         if self.status != "abierta":
             return False, "Una sesión cerrada no acepta nuevos participantes."
@@ -202,6 +205,39 @@ class SessionJoinRequest(Base):
     )
 
 
+
+
+class SessionAttendance(Base):
+    """Resultado de un participante confirmado al finalizar la sesión."""
+    __tablename__ = 'session_attendance'
+
+    id = Column(Integer, primary_key=True)
+    session_id = Column(Integer, ForeignKey('sessions.id', ondelete='RESTRICT'), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='RESTRICT'), nullable=False)
+    status = Column(String(20), nullable=False, default='sin_registrar')
+    justification = Column(Text, nullable=True)
+    justification_status = Column(String(20), nullable=True)
+    decision_reason = Column(Text, nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint('session_id', 'user_id', name='uq_attendance_participant'),
+        CheckConstraint("status IN ('sin_registrar', 'presente', 'ausente')", name='ck_attendance_status'),
+        CheckConstraint("justification_status IS NULL OR justification_status IN ('pendiente', 'aceptada', 'rechazada')", name='ck_justification_status'),
+    )
+
+
+class AttendanceHistory(Base):
+    """Cada cambio conserva su autor, sus estados y el texto presentado en ese momento."""
+    __tablename__ = 'attendance_history'
+
+    id = Column(Integer, primary_key=True)
+    attendance_id = Column(Integer, ForeignKey('session_attendance.id', ondelete='RESTRICT'), nullable=False, index=True)
+    actor_id = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
+    action = Column(String(30), nullable=False)
+    previous_status = Column(String(20), nullable=True)
+    new_status = Column(String(20), nullable=False)
+    note = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
 
 class SessionReschedule(Base):

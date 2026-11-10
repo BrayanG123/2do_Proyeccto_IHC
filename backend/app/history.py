@@ -39,6 +39,8 @@ def current_session_status(session: Optional[Session], reference_date: Optional[
     """
     if session is None:
         return "eliminada"
+    if session.finished_at is not None:
+        return "finalizada"
     if session.status == "cerrada":
         return "cerrada"
     today = reference_date or dt_date.today()
