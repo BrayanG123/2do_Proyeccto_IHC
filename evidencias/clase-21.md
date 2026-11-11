@@ -104,4 +104,4 @@ Si se observara esa caída con uso real, revisaría el contenido del diálogo y 
 
 ## Commit
 
-Pendiente de crear y enlazar. Mensaje propuesto `feat: medir solicitudes y mostrar el panel de analítica`.
+[Ver commit de la mejora 5d4741f](https://github.com/BrayanG123/2do_Proyeccto_IHC/commit/5d4741ff52cc79701984012bca5efd1598773f68), con el mensaje `medir solicitudes y mostrar el panel de analitica`.
