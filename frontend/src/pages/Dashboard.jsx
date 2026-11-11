@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
@@ -68,6 +68,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
   const [deletingId, setDeletingId] = useState(null)
   const [joiningSessionId, setJoiningSessionId] = useState(null)
   const [sessionToJoin, setSessionToJoin] = useState(null)
+  const requestStart = useRef(null)
   const [myRequests, setMyRequests] = useState([])
   const [reschedules, setReschedules] = useState([])
   const [sessionToReschedule, setSessionToReschedule] = useState(null)
@@ -341,6 +342,13 @@ export default function Dashboard({ onlyMyRequests = false }) {
     }
   }
 
+  const openJoinDialog = (session) => {
+    setSessionToJoin(session)
+    // Se ejecuta una vez por apertura, también si después se cancela el diálogo.
+    requestStart.current = api.post('/analytics/start', { session_id: session.id }, { timeout: 3000 })
+      .catch(error => console.warn('No se pudo registrar el inicio de la solicitud:', error.message))
+  }
+
   const solicitarUnirse = async (session) => {
     if (session.status === 'cerrada') {
       setToastMessage({
@@ -354,6 +362,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
     setJoiningSessionId(session.id)
 
     try {
+      await requestStart.current
       const res = await api.post(`/sessions/${session.id}/requests`)
       setMyRequests(prev => [...prev.filter(item => item.session_id !== session.id), res.data])
 
@@ -1219,7 +1228,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                             type="button"
                             className="btn-join-session btn-join-active"
                             disabled={joiningSessionId === session.id}
-                            onClick={() => setSessionToJoin(session)}
+                            onClick={() => openJoinDialog(session)}
                             title="Solicitar aprobación para entrar en la lista de espera"
                           >
                             Solicitar Inscribirme
@@ -1232,7 +1241,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                           <button
                             type="button"
                             className="btn-join-session btn-join-active"
-                            onClick={() => setSessionToJoin(session)}
+                            onClick={() => openJoinDialog(session)}
                             disabled={joiningSessionId === session.id}
                             title="Solicitar unirme a esta sesión de estudio"
                           >

@@ -1,0 +1,55 @@
+.analytics-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+  color: var(--text);
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.analytics-page h1, .analytics-page h2, .analytics-page p {
+  margin: 12px 0;
+}
+
+.analytics-page a {
+  color: var(--primary);
+}
+
+.analytics-refresh {
+  padding: 12px 18px;
+  margin: 16px 0;
+  min-height: 44px;
+  background: #047857;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.analytics-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.analytics-metrics article {
+  padding: 20px;
+  border: 1px solid var(--text-muted);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.analytics-metrics h2 { font-size: 1rem; }
+.analytics-metrics p { font-size: 2rem; font-weight: 700; }
+.analytics-table-wrapper { overflow-x: auto; }
+.analytics-page table { width: 100%; border-collapse: collapse; }
+.analytics-page caption { text-align: left; padding: 12px 0; }
+.analytics-page th, .analytics-page td { padding: 12px; text-align: left; border-bottom: 1px solid var(--text-muted); }
+.analytics-page td:first-child { overflow-wrap: anywhere; }

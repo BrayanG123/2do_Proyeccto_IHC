@@ -295,6 +295,33 @@ class SessionHistory(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
 
 
+
+class AnalyticsEvent(Base):
+    __tablename__ = "analytics_events"
+
+    id = Column(Integer, primary_key=True)
+    event = Column(String(50), nullable=False)
+    modality = Column(String(20), nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "event IN ('solicitud_iniciada', 'solicitud_enviada')",
+            name="ck_analytics_event"
+        ),
+        CheckConstraint(
+            "modality IN ('Presencial', 'Virtual', 'Otra')",
+            name="ck_analytics_modality"
+        ),
+    )
+
+
+
+
 def record_session_event(db, user_id: int, event_type: str, session: Session, keep_link: bool = True) -> SessionHistory:
     """
     Registra un evento del historial copiando los datos actuales de la sesión.

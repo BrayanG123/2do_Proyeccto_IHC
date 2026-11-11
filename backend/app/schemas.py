@@ -359,3 +359,24 @@ class AttendanceResponse(BaseModel):
     justification_status: str | None
     decision_reason: str | None
     history: list[AttendanceHistoryResponse]
+
+
+class AnalyticsStart(BaseModel):
+    session_id: int = Field(gt=0)
+    model_config = {"extra": "forbid"}
+
+
+class AnalyticsEventResponse(BaseModel):
+    id: int
+    event: Literal["solicitud_iniciada", "solicitud_enviada"]
+    modality: Literal["Presencial", "Virtual", "Otra"]
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class AnalyticsSummaryResponse(BaseModel):
+    iniciadas: int
+    enviadas: int
+    porcentaje_finalizacion: float
+    ultimos_eventos: list[AnalyticsEventResponse]

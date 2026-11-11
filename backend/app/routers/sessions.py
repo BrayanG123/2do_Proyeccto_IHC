@@ -15,6 +15,7 @@ from app.schemas import SessionRescheduleCreate, SessionRescheduleResponse
 from app.rescheduling import check_schedule_edit, reschedule_session, confirm_reschedule, mark_withdrawn, reschedule_view
 from app.rescheduling import confirmed_participants, pending_reconfirmations
 from app.models import SessionAttendance, AttendanceHistory
+from app.models import AnalyticsEvent
 from app.schemas import AttendanceUpdate, JustificationCreate, JustificationDecision, AttendanceResponse
 
 
@@ -390,6 +391,12 @@ def solicitar_unirse(
 
 
     db.add(solicitud)
+
+    # Solicitud y evento se confirman juntos. Un rollback revierte ambos.
+    modality = session.modality
+    if modality not in ('Presencial', 'Virtual'):
+        modality = 'Otra'
+    db.add(AnalyticsEvent(event='solicitud_enviada', modality=modality))
 
 
     try:

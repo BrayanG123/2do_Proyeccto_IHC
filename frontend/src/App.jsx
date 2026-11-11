@@ -9,6 +9,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import History from './pages/History'
+import Analytics from './pages/Analytics'
 
 export default function App() {
   return (
@@ -57,6 +58,8 @@ export default function App() {
                 </PrivateRoute>
               }
             />
+
+            <Route path="/analitica" element={<PrivateRoute><Analytics /></PrivateRoute>} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
