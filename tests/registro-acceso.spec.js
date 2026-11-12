@@ -1,13 +1,17 @@
 import { test, expect } from '@playwright/test';
-import { URL_APP, CLAVE, registrar, ingresar, salir, nombreUnico } from './apoyo.js';
+import { URL_APP, CLAVE, registrar, ingresar, salir, nombreUnico, leerAnalitica, embudo, comprobarEventos } from './apoyo.js';
 
 test('Registro: crear una cuenta, recargar e ingresar nuevamente', async ({ page }) => {
+  await registrar(page);
+  const baseline = await leerAnalitica(page);
+  await salir(page);
   const correo = await registrar(page);
   await page.reload();
   await expect(page).toHaveURL(`${URL_APP}/dashboard`);
   await expect(page.getByRole('button', { name: '+ Crear Sesión', exact: true })).toBeVisible();
   await salir(page);
   await ingresar(page, correo);
+  await comprobarEventos(page, baseline, { registro: [1, 1], acceso: [1, 1] });
 });
 
 test('Registro: rechazar confirmaciones de contraseña diferentes', async ({ page }) => {
@@ -41,9 +45,14 @@ test('Cerrar sesión: cancelar conserva el acceso y confirmar lo termina', async
 });
 
 test('Recuperación: un correo inexistente muestra un error', async ({ page }) => {
+  await registrar(page);
+  const baseline = await leerAnalitica(page);
   await page.goto(`${URL_APP}/forgot-password`);
   await page.getByLabel('Correo Electrónico').fill(`${nombreUnico('sin-cuenta').replace(/[^a-z0-9-]/gi, '')}@example.com`);
   await page.getByRole('button', { name: 'Enviar código de verificación', exact: true }).click();
   await expect(page.getByText('No existe una cuenta registrada con ese correo electrónico', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Recuperar contraseña', exact: true })).toBeVisible();
+  await comprobarEventos(page, baseline, { recuperar_acceso: [1, 0, 0, 0] });
+  const unavailable = state => embudo(state, 'recuperar_acceso').blockers.find(item => item.reason === 'recurso_no_disponible')?.count ?? 0;
+  expect(unavailable(await leerAnalitica(page))).toBeGreaterThan(unavailable(baseline));
 });

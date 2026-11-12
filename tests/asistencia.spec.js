@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { URL_APP, registrar, crearSesion, buscar } from './apoyo.js';
+import { randomUUID } from 'node:crypto';
+import { registrar, crearSesion, buscar, leerAnalitica, embudo, comprobarEventos } from './apoyo.js';
 
 // Datos reproducibles mediante los formularios reales y cuentas propias de cada prueba.
 async function prepareSession(organizer, students) {
-  await registrar(organizer);
   const created = organizer.waitForResponse(response => response.url().endsWith('/sessions/') && response.request().method() === 'POST');
   const name = await crearSesion(organizer, `Repaso con asistencia ${Date.now()}`, '2', 0);
   const session = await (await created).json();
@@ -37,6 +37,8 @@ test('Asistencia completa con presentes, ausencia, justificación aceptada e his
   await mkdir(evidence, { recursive: true });
   try {
     const [organizer, present, absent] = await Promise.all(contexts.map(context => context.newPage()));
+    await registrar(organizer);
+    const baseline = await leerAnalitica(organizer);
     const { name, members } = await prepareSession(organizer, [present, absent]);
     const attendance = organizer.getByRole('dialog', { name: 'Asistencia y justificaciones', exact: true });
     const presentRow = attendance.getByRole('listitem', { name: `Asistencia de ${members[0].email}`, exact: true });
@@ -80,6 +82,10 @@ test('Asistencia completa con presentes, ausencia, justificación aceptada e his
     await absent.getByRole('button', { name: 'Alternar tema claro/oscuro', exact: true }).filter({ visible: true }).click();
     await absent.getByRole('button', { name: 'Consultar mi asistencia', exact: true }).click();
     await absent.getByRole('dialog').screenshot({ path: resolve(evidence, '04-resultado-movil-oscuro.png'), animations: 'disabled' });
+    await comprobarEventos(organizer, baseline, {
+      finalizar_sesion: [1, 1], registrar_asistencia: [2, 2],
+      enviar_justificacion: [1, 1], resolver_justificacion: [1, 1],
+    });
   } finally {
     await Promise.allSettled(contexts.map(context => context.close()));
   }
@@ -90,6 +96,7 @@ test('Un usuario ajeno y un participante no pueden modificar la asistencia del o
   const contexts = await Promise.all([1, 2, 3].map(() => browser.newContext()));
   try {
     const [organizer, member, outsider] = await Promise.all(contexts.map(context => context.newPage()));
+    await registrar(organizer);
     const { session, name, members } = await prepareSession(organizer, [member]);
     const row = organizer.getByRole('listitem', { name: `Asistencia de ${members[0].email}`, exact: true });
     await row.getByRole('button', { name: 'Marcar presente', exact: true }).click();
@@ -98,14 +105,17 @@ test('Un usuario ajeno y un participante no pueden modificar la asistencia del o
     await buscar(outsider, name);
     await expect(outsider.getByRole('button', { name: 'Registrar asistencia', exact: true })).toHaveCount(0);
     await expect(outsider.getByRole('button', { name: 'Consultar mi asistencia', exact: true })).toHaveCount(0);
+    const baseline = await leerAnalitica(organizer);
     for (const actor of [outsider, member]) {
       const token = await actor.evaluate(() => localStorage.getItem('token'));
       const response = await actor.request.patch(`http://localhost:8000/sessions/${session.id}/attendance/${members[0].id}`, {
-        headers: { Authorization: `Bearer ${token}` }, data: { status: 'ausente' },
+        headers: { Authorization: `Bearer ${token}`, 'X-Analytics-Attempt': randomUUID() }, data: { status: 'ausente' },
       });
       expect(response.status()).toBe(403);
       expect((await response.json()).detail).toBe('Solo el organizador puede realizar esta acción.');
     }
+    const denied = state => embudo(state, 'registrar_asistencia').blockers.find(item => item.reason === 'permiso_denegado')?.count ?? 0;
+    expect(denied(await leerAnalitica(organizer)) - denied(baseline)).toBeGreaterThanOrEqual(2);
     await mkdir(resolve('evidencias/tarea-8'), { recursive: true });
     await outsider.locator('.session-card').screenshot({ path: resolve('evidencias/tarea-8/05-usuario-ajeno.png'), animations: 'disabled' });
     await organizer.getByRole('button', { name: 'Cerrar asistencia', exact: true }).click();

@@ -5,7 +5,8 @@ from typing import Optional, List
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, Time, ForeignKey
 from sqlalchemy.sql import func
 from app.database import Base
-from sqlalchemy import UniqueConstraint, CheckConstraint
+from sqlalchemy import UniqueConstraint, CheckConstraint, Index
+from app.analytics_events import EVENT_CHECK, REASON_CHECK
 
 
 class User(Base):
@@ -301,7 +302,9 @@ class AnalyticsEvent(Base):
 
     id = Column(Integer, primary_key=True)
     event = Column(String(50), nullable=False)
-    modality = Column(String(20), nullable=False)
+    modality = Column(String(20))
+    attempt_id = Column(String(36))
+    reason = Column(String(30))
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -310,13 +313,14 @@ class AnalyticsEvent(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "event IN ('solicitud_iniciada', 'solicitud_enviada')",
-            name="ck_analytics_event"
+            EVENT_CHECK, name="ck_analytics_event"
         ),
         CheckConstraint(
             "modality IN ('Presencial', 'Virtual', 'Otra')",
             name="ck_analytics_modality"
         ),
+        CheckConstraint(REASON_CHECK, name="ck_analytics_reason"),
+        Index("ix_analytics_event_attempt", "event", "attempt_id", unique=True),
     )
 
 

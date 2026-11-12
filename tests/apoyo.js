@@ -46,6 +46,28 @@ export async function buscar(page, nombre) {
   await expect(page.getByRole('heading', { name: nombre, exact: true })).toBeVisible();
 }
 
+export async function leerAnalitica(page) {
+  const token = await page.evaluate(() => localStorage.getItem('token'));
+  const response = await page.request.get('http://localhost:8000/analytics/funnels', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(response.ok()).toBeTruthy();
+  return response.json();
+}
+
+export const embudo = (analytics, flow) => analytics.funnels.find(funnel => funnel.id === flow);
+
+export async function comprobarEventos(page, baseline, deltas) {
+  await expect.poll(async () => {
+    const current = await leerAnalitica(page);
+    return Object.entries(deltas).every(([flow, expected]) => {
+      const previous = embudo(baseline, flow);
+      const actual = embudo(current, flow);
+      return expected.every((delta, index) => actual.steps[index].count - previous.steps[index].count >= delta);
+    });
+  }, { message: `Eventos persistidos de ${Object.keys(deltas).join(', ')}` }).toBe(true);
+}
+
 export async function crearSesion(page, nombre = nombreUnico('Sesion'), cupos = '3', diasDesdeHoy = 7) {
   // Fecha relativa en hora local. Por defecto se crea una sesión dentro de una semana.
   const fecha = new Date();

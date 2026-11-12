@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { URL_APP, registrar, crearSesion } from './apoyo.js';
+import { URL_APP, registrar, crearSesion, leerAnalitica, embudo, comprobarEventos } from './apoyo.js';
 
 test('Historial vacío: orientar al usuario hacia las sesiones', async ({ page }) => {
   await registrar(page);
@@ -12,6 +12,7 @@ test('Historial vacío: orientar al usuario hacia las sesiones', async ({ page }
 test('Historial: mostrar la creación, consultar detalle, filtrar y recargar', async ({ page }) => {
   await registrar(page);
   const nombre = await crearSesion(page);
+  const baseline = await leerAnalitica(page);
   await page.goto(`${URL_APP}/historial`);
   await expect(page.getByText(nombre, { exact: true })).toBeVisible();
   await page.getByRole('button').filter({ has: page.getByText(nombre, { exact: true }) }).click();
@@ -22,6 +23,9 @@ test('Historial: mostrar la creación, consultar detalle, filtrar y recargar', a
   await expect(page.getByRole('heading', { name: 'Todavía no te uniste a ninguna sesión', exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByText(nombre, { exact: true })).toBeVisible();
+  await comprobarEventos(page, baseline, { filtrar_historial: [2, 1] });
+  await expect.poll(async () => embudo(await leerAnalitica(page), 'filtrar_historial').empty_results)
+    .toBeGreaterThan(embudo(baseline, 'filtrar_historial').empty_results);
 });
 
 test('Tema: alternar oscuro y claro y conservar la elección al recargar', async ({ page }) => {

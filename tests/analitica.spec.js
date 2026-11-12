@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { mkdir } from 'node:fs/promises';
-import { resolve } from 'node:path';
-import { URL_APP, registrar, crearSesion, buscar } from './apoyo.js';
+import { URL_APP, registrar, crearSesion, buscar, leerAnalitica, embudo, comprobarEventos } from './apoyo.js';
 
-test('Dos inicios y un envío real se reflejan en el panel y persisten al recargar', async ({ browser }) => {
+test('Dos inicios y un envío real se reflejan en el panel y persisten al recargar', async ({ browser }, testInfo) => {
   test.setTimeout(120000);
   const ownerContext = await browser.newContext();
   const studentContext = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -14,10 +12,7 @@ test('Dos inicios y un envío real se reflejan en el panel y persisten al recarg
     const name = await crearSesion(owner, `Repaso para analítica ${Date.now()}`);
     await registrar(student);
     await buscar(student, name);
-    const token = await student.evaluate(() => localStorage.getItem('token'));
-    const baselineResponse = await student.request.get('http://localhost:8000/analytics/summary', { headers: { Authorization: `Bearer ${token}` } });
-    expect(baselineResponse.ok()).toBeTruthy();
-    const baseline = await baselineResponse.json();
+    const baseline = await leerAnalitica(student);
 
     // Cada apertura se registra una vez. La primera se abandona.
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -32,34 +27,44 @@ test('Dos inicios y un envío real se reflejan en el panel y persisten al recarg
     }
     await student.getByRole('button', { name: 'Enviar solicitud', exact: true }).click();
     await expect(student.getByText('Estado: Pendiente de aprobación', { exact: true })).toBeVisible();
+    await comprobarEventos(student, baseline, { solicitar_unirse: [2, 1] });
+    const waitForPanel = () => student.waitForResponse(response => response.url().endsWith('/analytics/funnels') && response.ok());
+    const loaded = waitForPanel();
     await student.goto(`${URL_APP}/analitica`);
-    await expect(student.getByTestId('started-count')).toHaveText(String(baseline.iniciadas + 2));
-    await expect(student.getByTestId('sent-count')).toHaveText(String(baseline.enviadas + 1));
-    const percentage = Math.round((baseline.enviadas + 1) * 10000 / (baseline.iniciadas + 2)) / 100;
-    await expect(student.getByTestId('completion-rate')).toHaveText(`${percentage} %`);
-    await expect(student.getByRole('cell', { name: 'solicitud_enviada', exact: true }).first()).toBeVisible();
+    const [started, sent] = embudo(await (await loaded).json(), 'solicitar_unirse').steps;
+    const formatter = new Intl.NumberFormat('es-BO');
+    await expect(student.getByTestId('solicitud_iniciada')).toHaveText(formatter.format(started.count));
+    await expect(student.getByTestId('solicitud_enviada')).toHaveText(formatter.format(sent.count));
+    await expect(student.getByTestId('drop-solicitud_enviada')).toHaveText(
+      `Caída de ${formatter.format(sent.drop_rate)} % · ${formatter.format(sent.lost)} sin avanzar`,
+    );
+    await expect(student.getByRole('table')).toBeVisible();
+    const reloaded = waitForPanel();
     await student.reload();
-    await expect(student.getByTestId('started-count')).toHaveText(String(baseline.iniciadas + 2));
-    await mkdir(resolve('evidencias/clase-21'), { recursive: true });
-    await student.screenshot({ path: resolve('evidencias/clase-21/panel-escritorio.png'), fullPage: true, animations: 'disabled' });
+    const [persisted] = embudo(await (await reloaded).json(), 'solicitar_unirse').steps;
+    expect(persisted.count).toBeGreaterThanOrEqual(started.count);
+    await expect(student.getByTestId('solicitud_iniciada')).toHaveText(formatter.format(persisted.count));
+    await student.screenshot({ path: testInfo.outputPath('panel-escritorio.png'), animations: 'disabled' });
     await student.setViewportSize({ width: 390, height: 844 });
     await student.getByRole('button', { name: 'Alternar tema claro/oscuro', exact: true }).click();
-    await student.screenshot({ path: resolve('evidencias/clase-21/panel-movil-oscuro.png'), fullPage: true, animations: 'disabled' });
+    await student.getByRole('article', { name: 'Solicitar participación' }).screenshot({
+      path: testInfo.outputPath('panel-movil-oscuro.png'), animations: 'disabled',
+    });
   } finally {
     await Promise.allSettled([ownerContext.close(), studentContext.close()]);
   }
 });
 
 test('La analítica exige iniciar sesión y sus errores permiten reintentar', async ({ page }) => {
-  const unauthenticated = await page.request.get('http://localhost:8000/analytics/summary');
+  const unauthenticated = await page.request.get('http://localhost:8000/analytics/funnels');
   expect(unauthenticated.status()).toBe(401);
   await page.goto(`${URL_APP}/analitica`);
   await expect(page).toHaveURL(`${URL_APP}/login`);
   await registrar(page);
-  await page.route('**/analytics/summary', route => route.fulfill({ status: 503, json: { detail: 'Fallo simulado' } }));
+  await page.route('**/analytics/funnels', route => route.fulfill({ status: 503, json: { detail: 'Fallo simulado' } }));
   await page.goto(`${URL_APP}/analitica`);
   await expect(page.getByRole('alert')).toHaveText('No se pudo cargar la analítica. Intenta actualizar el panel.');
-  await page.unroute('**/analytics/summary');
+  await page.unroute('**/analytics/funnels');
   await page.getByRole('button', { name: 'Actualizar panel', exact: true }).click();
-  await expect(page.getByTestId('started-count')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Embudos por flujo' })).toBeVisible();
 });

@@ -20,8 +20,9 @@ from app.schemas import (
 )
 from app.security import hash_password, verify_password, create_access_token, decode_token
 from app.utils.email_service import generate_reset_code, send_reset_code_email
+from app.analytics_tracking import TrackedRoute
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"], route_class=TrackedRoute)
 security = HTTPBearer(auto_error=False)
 
 
@@ -143,6 +144,13 @@ def send_reset_code(
     }
 
 
+def reset_code_expired(expires_at: datetime) -> bool:
+    if expires_at.tzinfo is None:
+        # SQLite devuelve sin zona la fecha que se guardó en UTC.
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) > expires_at
+
+
 @router.post("/verify-reset-code")
 def verify_reset_code(data: VerifyResetCode, db: Session = Depends(get_db)):
     """
@@ -165,7 +173,7 @@ def verify_reset_code(data: VerifyResetCode, db: Session = Depends(get_db)):
             detail="Código incorrecto o ya utilizado",
         )
 
-    if datetime.now(timezone.utc) > entry.expires_at.replace(tzinfo=timezone.utc):
+    if reset_code_expired(entry.expires_at):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El código ha expirado. Solicita uno nuevo.",
@@ -198,7 +206,7 @@ def login_with_code(data: VerifyResetCode, db: Session = Depends(get_db)):
             detail="Código incorrecto o ya utilizado",
         )
 
-    if datetime.now(timezone.utc) > entry.expires_at.replace(tzinfo=timezone.utc):
+    if reset_code_expired(entry.expires_at):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El código ha expirado. Solicita uno nuevo.",
@@ -239,7 +247,7 @@ def reset_password_with_code(data: ResetPasswordWithCode, db: Session = Depends(
             detail="Código incorrecto o ya utilizado",
         )
 
-    if datetime.now(timezone.utc) > entry.expires_at.replace(tzinfo=timezone.utc):
+    if reset_code_expired(entry.expires_at):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El código ha expirado. Solicita uno nuevo.",

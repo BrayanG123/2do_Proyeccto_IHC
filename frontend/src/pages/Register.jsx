@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
+import { attemptConfig, recordInvalid, useFormAttempt } from '../api/analytics'
 import '../styles/Auth.css'
 
 export default function Register() {
@@ -16,6 +17,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
   const { register } = useAuth()
   const navigate = useNavigate()
+  const startRegistration = useFormAttempt('registro')
 
   const rules = {
     length: form.password.length >= 8,
@@ -28,31 +30,36 @@ export default function Register() {
   const isPasswordValid = Object.values(rules).every(Boolean)
 
   const handleChange = (e) => {
+    startRegistration()
     setForm({ ...form, [e.target.name]: e.target.value })
     setError('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const attempt = startRegistration()
 
     if (!form.first_name.trim() || !form.last_name.trim()) {
+      recordInvalid(attempt)
       setError('Por favor ingresa tus nombres y apellidos')
       return
     }
 
     if (!isPasswordValid) {
+      recordInvalid(attempt)
       setError('La contraseña debe cumplir con todos los requisitos de seguridad')
       return
     }
 
     if (form.password !== form.confirm) {
+      recordInvalid(attempt)
       setError('Las contraseñas no coinciden')
       return
     }
 
     setLoading(true)
     try {
-      await register(form.first_name, form.last_name, form.email, form.password)
+      await register(form.first_name, form.last_name, form.email, form.password, attemptConfig(attempt))
       navigate('/dashboard')
     } catch (err) {
       const detail = err.response?.data?.detail
@@ -100,7 +107,7 @@ export default function Register() {
             ¿Ya tienes cuenta? <Link to="/login" className="auth-link">Inicia sesión</Link>
           </p>
 
-          <form onSubmit={handleSubmit} className="auth-form">
+          <form onSubmit={handleSubmit} onInvalid={() => recordInvalid(startRegistration())} className="auth-form">
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="first_name">Nombres</label>

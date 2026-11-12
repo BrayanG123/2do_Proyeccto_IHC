@@ -17,8 +17,8 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }, [])
 
-  const register = async (first_name, last_name, email, password) => {
-    const res = await api.post('/auth/register', { first_name, last_name, email, password })
+  const register = async (first_name, last_name, email, password, config) => {
+    const res = await api.post('/auth/register', { first_name, last_name, email, password }, config)
     const { access_token, user } = res.data
     localStorage.setItem('token', access_token)
     localStorage.setItem('user', JSON.stringify(user))
@@ -26,8 +26,8 @@ export function AuthProvider({ children }) {
     return user
   }
 
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password })
+  const login = async (email, password, config) => {
+    const res = await api.post('/auth/login', { email, password }, config)
     const { access_token, user } = res.data
     localStorage.setItem('token', access_token)
     localStorage.setItem('user', JSON.stringify(user))
@@ -51,8 +51,8 @@ export function AuthProvider({ children }) {
     return res.data
   }
 
-  const loginWithCode = async (email, code) => {
-    const res = await api.post('/auth/login-with-code', { email, code })
+  const loginWithCode = async (email, code, config) => {
+    const res = await api.post('/auth/login-with-code', { email, code }, config)
     const { access_token, user } = res.data
     localStorage.setItem('token', access_token)
     localStorage.setItem('user', JSON.stringify(user))
@@ -76,8 +76,8 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const updateProfile = async (first_name, last_name, email) => {
-    const res = await api.put('/auth/profile', { first_name, last_name, email })
+  const updateProfile = async (first_name, last_name, email, config) => {
+    const res = await api.put('/auth/profile', { first_name, last_name, email }, config)
     localStorage.setItem('user', JSON.stringify(res.data))
     setUser(res.data)
     return res.data

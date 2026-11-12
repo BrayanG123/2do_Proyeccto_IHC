@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
+import { attemptConfig, recordInvalid, useFormAttempt } from '../api/analytics'
 import '../styles/Auth.css'
 
 export default function Login() {
@@ -10,8 +11,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const startAccess = useFormAttempt('acceso')
 
   const handleChange = (e) => {
+    startAccess()
     setForm({ ...form, [e.target.name]: e.target.value })
     setError('')
   }
@@ -20,7 +23,7 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     try {
-      await login(form.email, form.password)
+      await login(form.email, form.password, attemptConfig(startAccess()))
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.detail || 'Error al iniciar sesión')
@@ -63,7 +66,7 @@ export default function Login() {
             ¿No tienes cuenta? <Link to="/register" className="auth-link">Regístrate aquí</Link>
           </p>
 
-          <form onSubmit={handleSubmit} className="auth-form">
+          <form onSubmit={handleSubmit} onInvalid={() => recordInvalid(startAccess())} className="auth-form">
             <div className="form-group">
               <label htmlFor="email">Correo electrónico</label>
               <input

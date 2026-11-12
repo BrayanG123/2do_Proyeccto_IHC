@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
 import LogoutIcon from '../components/LogoutIcon'
 import api from '../api/axios'
+import { recordSearchResult, startFlow } from '../api/analytics'
 import { getStudentInitials } from '../utils/avatar'
 import '../styles/Dashboard.css'
 import '../styles/History.css'
@@ -127,6 +128,14 @@ export default function History() {
 
   const empty = EMPTY_MESSAGES[filter]
 
+  const applyFilter = key => {
+    if (key !== filter && key !== 'todos') {
+      recordSearchResult(startFlow('filtrar_historial'), counts[key] > 0)
+    }
+    setFilter(key)
+    setExpandedId(null)
+  }
+
   return (
     <div className="dashboard-page">
       {/* Mobile Top Header */}
@@ -200,7 +209,7 @@ export default function History() {
                 role="tab"
                 aria-selected={filter === f.key}
                 className={`history-filter-btn ${filter === f.key ? 'active' : ''}`}
-                onClick={() => { setFilter(f.key); setExpandedId(null) }}
+                onClick={() => applyFilter(f.key)}
               >
                 {f.label}
                 <span className="history-filter-count">{counts[f.key]}</span>

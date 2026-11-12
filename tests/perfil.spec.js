@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { URL_APP, CLAVE, registrar, ingresar, salir } from './apoyo.js';
+import { URL_APP, CLAVE, registrar, ingresar, salir, leerAnalitica, comprobarEventos } from './apoyo.js';
 
 test.beforeEach(async ({ page }) => {
   await registrar(page);
@@ -7,12 +7,14 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Perfil: guardar nombres y conservarlos al recargar', async ({ page }) => {
+  const baseline = await leerAnalitica(page);
   await page.getByRole('button', { name: /Editar Datos/ }).click();
   await page.getByLabel('Nombres *', { exact: true }).fill('NombreEditado');
   await page.getByRole('button', { name: /Guardar Cambios/ }).click();
   await expect(page.getByText('¡Datos de perfil actualizados exitosamente!', { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'NombreEditado Automatica', exact: true })).toBeVisible();
+  await comprobarEventos(page, baseline, { editar_perfil: [1, 1] });
 });
 
 test('Perfil: cancelar los cambios conserva el nombre original', async ({ page }) => {

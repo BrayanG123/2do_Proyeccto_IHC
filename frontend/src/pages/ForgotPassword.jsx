@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
 import api from '../api/axios'
+import { attemptConfig, recordInvalid, startFlow } from '../api/analytics'
 import '../styles/Auth.css'
 import '../styles/ForgotPassword.css'
 
@@ -23,6 +24,11 @@ export default function ForgotPassword() {
   const [canResend, setCanResend] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(60)
   const codeRefs = useRef([])
+  const recovery = useRef(null)
+  const startRecovery = () => {
+    recovery.current ??= startFlow('recuperar_acceso')
+    return recovery.current
+  }
 
   // Countdown del código (10 min)
   useEffect(() => {
@@ -79,7 +85,7 @@ export default function ForgotPassword() {
     setLoading(true)
     setError('')
     try {
-      await api.post('/auth/send-reset-code', { email })
+      await api.post('/auth/send-reset-code', { email }, attemptConfig(startRecovery()))
       setMessage('Te enviamos un código de 6 dígitos. Revisa tu bandeja de entrada.')
       setStep(2)
       setCanResend(false)
@@ -126,13 +132,14 @@ export default function ForgotPassword() {
   const handleVerifyCode = async (e) => {
     e.preventDefault()
     if (fullCode.length < 6) {
+      recordInvalid(recovery.current)
       setError('Ingresa los 6 dígitos del código de verificación')
       return
     }
     setLoading(true)
     setError('')
     try {
-      await api.post('/auth/verify-reset-code', { email, code: fullCode })
+      await api.post('/auth/verify-reset-code', { email, code: fullCode }, attemptConfig(recovery.current))
       setMessage('¡Código verificado! Ahora puedes establecer tu nueva contraseña.')
       setStep(3)
     } catch (err) {
@@ -148,7 +155,7 @@ export default function ForgotPassword() {
     setError('')
     setCode(['', '', '', '', '', ''])
     try {
-      await api.post('/auth/send-reset-code', { email })
+      await api.post('/auth/send-reset-code', { email }, attemptConfig(recovery.current))
       setMessage('Nuevo código enviado. Revisa tu correo.')
       setCanResend(false)
       setCountdown(600)
@@ -165,10 +172,12 @@ export default function ForgotPassword() {
   const handleResetPassword = async (e) => {
     e.preventDefault()
     if (!isPasswordValid) {
+      recordInvalid(recovery.current)
       setError('La contraseña debe cumplir con todos los requisitos de seguridad')
       return
     }
     if (newPassword !== confirm) {
+      recordInvalid(recovery.current)
       setError('Las contraseñas no coinciden')
       return
     }
@@ -179,7 +188,7 @@ export default function ForgotPassword() {
         email,
         code: fullCode,
         new_password: newPassword,
-      })
+      }, attemptConfig(recovery.current))
       setMessage('¡Contraseña restablecida con éxito!')
       setTimeout(() => navigate('/login'), 2000)
     } catch (err) {
@@ -195,7 +204,7 @@ export default function ForgotPassword() {
     setLoading(true)
     setError('')
     try {
-      await loginWithCode(email, fullCode)
+      await loginWithCode(email, fullCode, attemptConfig(recovery.current))
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.detail || 'No se pudo iniciar sesión. Intenta de nuevo.')
@@ -260,7 +269,7 @@ export default function ForgotPassword() {
 
           {/* ── PASO 1: Email ──────────────────────────────────────────── */}
           {step === 1 && (
-            <form onSubmit={handleSendCode} className="auth-form">
+            <form onSubmit={handleSendCode} onInvalid={() => recordInvalid(startRecovery())} className="auth-form">
               <div className="form-group">
                 <label htmlFor="fp-email">Correo Electrónico</label>
                 <input
@@ -268,7 +277,7 @@ export default function ForgotPassword() {
                   type="email"
                   placeholder="correo@ejemplo.com"
                   value={email}
-                  onChange={(e) => { setEmail(e.target.value); setError('') }}
+                  onChange={(e) => { startRecovery(); setEmail(e.target.value); setError('') }}
                   required
                   autoComplete="email"
                 />
@@ -284,7 +293,7 @@ export default function ForgotPassword() {
 
           {/* ── PASO 2: Código OTP ─────────────────────────────────────── */}
           {step === 2 && (
-            <form onSubmit={handleVerifyCode} className="auth-form">
+            <form onSubmit={handleVerifyCode} onInvalid={() => recordInvalid(recovery.current)} className="auth-form">
               {/* Countdown */}
               <div className={`fp-countdown ${countdown === 0 ? 'expired' : ''}`}>
                 {countdown > 0
@@ -338,7 +347,7 @@ export default function ForgotPassword() {
               </div>
 
               <p className="fp-back-link">
-                <button type="button" className="fp-text-btn" onClick={() => setStep(1)}>
+                <button type="button" className="fp-text-btn" onClick={() => { recovery.current = null; setStep(1) }}>
                   ← Cambiar correo
                 </button>
               </p>
@@ -347,7 +356,7 @@ export default function ForgotPassword() {
 
           {/* ── PASO 3: Nueva contraseña ───────────────────────────────── */}
           {step === 3 && (
-            <form onSubmit={handleResetPassword} className="auth-form">
+            <form onSubmit={handleResetPassword} onInvalid={() => recordInvalid(recovery.current)} className="auth-form">
               <div className="form-group">
                 <label htmlFor="new-pass">Nueva Contraseña</label>
                 <input

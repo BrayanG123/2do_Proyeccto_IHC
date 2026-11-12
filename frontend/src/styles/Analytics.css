@@ -33,21 +33,57 @@
   cursor: pointer;
 }
 
-.analytics-metrics {
+.analytics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 16px;
+  margin: 18px 0 32px;
 }
 
-.analytics-metrics article {
+.analytics-funnel, .analytics-largest {
   padding: 20px;
-  border: 1px solid var(--text-muted);
+  border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
 }
 
-.analytics-metrics h2 { font-size: 1rem; }
-.analytics-metrics p { font-size: 2rem; font-weight: 700; }
+.analytics-largest {
+  margin: 0 0 24px;
+  border-inline-start: 4px solid var(--primary);
+}
+
+.analytics-largest h2, .analytics-funnel h3 {
+  font-size: 1.05rem;
+  margin: 0 0 12px;
+}
+
+.analytics-largest p:last-child, .analytics-funnel p:last-child { margin-bottom: 0; }
+.analytics-page .analytics-note { color: var(--text-muted); font-size: 0.9rem; }
+.analytics-steps, .analytics-blockers ul { padding: 0; margin: 0; list-style: none; }
+.analytics-steps li + li { margin-top: 14px; }
+.analytics-step-label, .analytics-blockers li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.analytics-step-label strong, .analytics-blockers strong { font-variant-numeric: tabular-nums; }
+.analytics-step-track {
+  height: 8px;
+  margin-top: 5px;
+  border-radius: 6px;
+  background: var(--border);
+}
+.analytics-step-track div {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+.analytics-page .analytics-drop { margin: 6px 0 0; color: var(--text-muted); font-size: 0.85rem; }
+.analytics-blockers { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 10px; }
+.analytics-blockers h4 { margin: 0 0 6px; font-size: 0.9rem; }
+.analytics-blockers li { font-size: 0.85rem; }
+.analytics-blockers li + li { margin-top: 4px; }
 .analytics-table-wrapper { overflow-x: auto; }
 .analytics-page table { width: 100%; border-collapse: collapse; }
 .analytics-page caption { text-align: left; padding: 12px 0; }

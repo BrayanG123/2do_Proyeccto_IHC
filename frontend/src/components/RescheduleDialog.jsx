@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import api from '../api/axios'
+import { attemptConfig, recordInvalid } from '../api/analytics'
 import { formatSchedule } from '../utils/schedule'
 import '../styles/Reschedule.css'
 
-export default function RescheduleDialog({ session, changes, isOrganizer, onSaved, onClose }) {
+export default function RescheduleDialog({ session, changes, isOrganizer, onSaved, onClose, attempt }) {
   const [date, setDate] = useState(session.date)
   const [time, setTime] = useState(session.time || '')
   const [reason, setReason] = useState('')
@@ -24,7 +25,7 @@ export default function RescheduleDialog({ session, changes, isOrganizer, onSave
     setSaving(true)
     setError('')
     try {
-      await api.post(`/sessions/${session.id}/reschedule`, { date, time: time || null, reason })
+      await api.post(`/sessions/${session.id}/reschedule`, { date, time: time || null, reason }, attemptConfig(attempt))
       await onSaved()
       onClose()
     } catch (error) {
@@ -44,7 +45,7 @@ export default function RescheduleDialog({ session, changes, isOrganizer, onSave
         </header>
         <p>{session.name}</p>
         {isOrganizer && (
-          <form onSubmit={saveReschedule}>
+          <form onSubmit={saveReschedule} onInvalid={() => recordInvalid(attempt)}>
             <p>Los participantes conservarán su cupo mientras confirman el cambio o se retiran.</p>
             {pendingCount > 0 && (
               <p role="status">Faltan {pendingCount} respuestas. Podrás reprogramar cuando todas estén resueltas.</p>

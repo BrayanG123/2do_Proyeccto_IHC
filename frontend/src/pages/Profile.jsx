@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
 import { getStudentInitials } from '../utils/avatar'
+import { attemptConfig, recordInvalid, startFlow } from '../api/analytics'
 import '../styles/Profile.css'
 
 export default function Profile() {
@@ -17,6 +18,7 @@ export default function Profile() {
   const [editLoading, setEditLoading] = useState(false)
   const [profileSuccessMsg, setProfileSuccessMsg] = useState('')
   const [profileErrorMsg, setProfileErrorMsg] = useState('')
+  const profileAttempt = useRef(null)
 
   // Avatar upload states
   const fileInputRef = useRef(null)
@@ -42,6 +44,7 @@ export default function Profile() {
   }, [])
 
   const handleStartEdit = () => {
+    profileAttempt.current = startFlow('editar_perfil')
     setEditFirstName(user?.first_name || '')
     setEditLastName(user?.last_name || '')
     setEditEmail(user?.email || '')
@@ -61,18 +64,20 @@ export default function Profile() {
     setProfileErrorMsg('')
 
     if (!editFirstName.trim() || !editLastName.trim()) {
+      recordInvalid(profileAttempt.current)
       setProfileErrorMsg('Nombres y apellidos son requeridos')
       return
     }
 
     if (!editEmail.trim()) {
+      recordInvalid(profileAttempt.current)
       setProfileErrorMsg('El correo electrónico es requerido')
       return
     }
 
     setEditLoading(true)
     try {
-      await updateProfile(editFirstName.trim(), editLastName.trim(), editEmail.trim())
+      await updateProfile(editFirstName.trim(), editLastName.trim(), editEmail.trim(), attemptConfig(profileAttempt.current))
       setProfileSuccessMsg('¡Datos de perfil actualizados exitosamente!')
       setIsEditing(false)
     } catch (err) {
@@ -396,7 +401,7 @@ export default function Profile() {
               )}
 
               {isEditing ? (
-                <form onSubmit={handleSaveProfile} className="edit-profile-form">
+                <form onSubmit={handleSaveProfile} onInvalid={() => recordInvalid(profileAttempt.current)} className="edit-profile-form">
                   <div className="edit-form-grid">
                     <div className="form-group">
                       <label htmlFor="editFirstName">Nombres *</label>

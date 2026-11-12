@@ -1,7 +1,8 @@
 from sqlalchemy import text
+from app.analytics_events import EVENT_CHECK, REASON_CHECK
 from app.database import engine
 
-CREATE_TRIGGERS_SQL = """
+CREATE_TRIGGERS_SQL = f"""
 ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT now();
 
 -- Garantizar que la tabla sessions cuente con la columna 'status' para transiciones de estado
@@ -27,6 +28,16 @@ ALTER TABLE session_join_requests ADD COLUMN IF NOT EXISTS confirmed_email VARCH
 ALTER TABLE session_join_requests DROP CONSTRAINT IF EXISTS ck_session_join_request_status;
 ALTER TABLE session_join_requests ADD CONSTRAINT ck_session_join_request_status
 CHECK (status IN ('pendiente', 'aceptada', 'rechazada', 'en_espera', 'retirada'));
+
+-- Analítica: conservar los eventos existentes y ampliar los datos de cada intento.
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS attempt_id VARCHAR(36);
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS reason VARCHAR(30);
+ALTER TABLE analytics_events ALTER COLUMN modality DROP NOT NULL;
+ALTER TABLE analytics_events DROP CONSTRAINT IF EXISTS ck_analytics_event;
+ALTER TABLE analytics_events ADD CONSTRAINT ck_analytics_event CHECK ({EVENT_CHECK});
+ALTER TABLE analytics_events DROP CONSTRAINT IF EXISTS ck_analytics_reason;
+ALTER TABLE analytics_events ADD CONSTRAINT ck_analytics_reason CHECK ({REASON_CHECK});
+CREATE UNIQUE INDEX IF NOT EXISTS ix_analytics_event_attempt ON analytics_events (event, attempt_id);
 
 CREATE OR REPLACE FUNCTION update_user_profile_trigger()
 RETURNS TRIGGER AS $$

@@ -1,7 +1,7 @@
 from datetime import date as dt_date, timedelta, datetime, timezone
 import json
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session as DBSession
 from sqlalchemy.exc import IntegrityError
@@ -15,7 +15,7 @@ from app.schemas import SessionRescheduleCreate, SessionRescheduleResponse
 from app.rescheduling import check_schedule_edit, reschedule_session, confirm_reschedule, mark_withdrawn, reschedule_view
 from app.rescheduling import confirmed_participants, pending_reconfirmations
 from app.models import SessionAttendance, AttendanceHistory
-from app.models import AnalyticsEvent
+from app.analytics_tracking import TrackedRoute, add_join_success, get_attempt_id
 from app.schemas import AttendanceUpdate, JustificationCreate, JustificationDecision, AttendanceResponse
 
 
@@ -23,7 +23,7 @@ from app.schemas import AttendanceUpdate, JustificationCreate, JustificationDeci
 
 
 
-router = APIRouter(prefix="/sessions", tags=["Sesiones"])
+router = APIRouter(prefix="/sessions", tags=["Sesiones"], route_class=TrackedRoute)
 
 
 @router.post("/", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
@@ -324,7 +324,8 @@ def join_session(
 def solicitar_unirse(
     session_id: int,
     db: DBSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    request: Request = None,
 ):
     
     session = (
@@ -392,14 +393,10 @@ def solicitar_unirse(
 
     db.add(solicitud)
 
-    # Solicitud y evento se confirman juntos. Un rollback revierte ambos.
-    modality = session.modality
-    if modality not in ('Presencial', 'Virtual'):
-        modality = 'Otra'
-    db.add(AnalyticsEvent(event='solicitud_enviada', modality=modality))
-
-
     try:
+        # Solicitud y evento se confirman juntos. Un rollback revierte ambos.
+        db.flush()
+        add_join_success(db, session, get_attempt_id(request))
         db.commit()
     except IntegrityError as exc:
         db.rollback()

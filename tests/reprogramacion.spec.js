@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { registrar, crearSesion, buscar } from './apoyo.js';
+import { registrar, crearSesion, buscar, leerAnalitica, comprobarEventos } from './apoyo.js';
 
 test('Reprogramar, reservar dos cupos, reconfirmar y promover al primero en espera', async ({ browser }) => {
   test.setTimeout(120000);
@@ -17,6 +17,7 @@ test('Reprogramar, reservar dos cupos, reconfirmar y promover al primero en espe
     const correo1 = await registrar(estudiante1);
     const correo2 = await registrar(estudiante2);
     const correoSuplente = await registrar(suplente);
+    const baseline = await leerAnalitica(organizador);
 
     const solicitar = async (page) => {
       await buscar(page, nombre);
@@ -104,6 +105,9 @@ test('Reprogramar, reservar dos cupos, reconfirmar y promover al primero en espe
     await organizador.getByRole('button', { name: 'Reprogramar sesión', exact: true }).click();
     await expect(dialogo.getByLabel('Nueva hora', { exact: true })).toHaveValue('19:00:00');
     await dialogo.screenshot({ path: resolve(evidence, '05-reprogramar-movil-oscuro.png'), animations: 'disabled' });
+    await comprobarEventos(organizador, baseline, {
+      gestionar_solicitudes: [3, 3], reprogramar: [1, 1], reconfirmar: [1, 1], retirarse: [1, 1],
+    });
   } finally {
     await Promise.allSettled(contexts.map(context => context.close()));
   }

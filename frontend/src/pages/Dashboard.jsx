@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
 import api from '../api/axios'
+import { attemptConfig, recordInvalid, recordSearchResult, startFlow } from '../api/analytics'
 import { getStudentInitials } from '../utils/avatar'
 import LogoutIcon from '../components/LogoutIcon'
 import RescheduleDialog from '../components/RescheduleDialog'
@@ -68,7 +69,10 @@ export default function Dashboard({ onlyMyRequests = false }) {
   const [deletingId, setDeletingId] = useState(null)
   const [joiningSessionId, setJoiningSessionId] = useState(null)
   const [sessionToJoin, setSessionToJoin] = useState(null)
-  const requestStart = useRef(null)
+  const attempts = useRef({})
+  const searchMeasurement = useRef(null)
+  const sessionsFetchId = useRef(0)
+  const justificationDecisions = useRef({})
   const [myRequests, setMyRequests] = useState([])
   const [reschedules, setReschedules] = useState([])
   const [sessionToReschedule, setSessionToReschedule] = useState(null)
@@ -122,6 +126,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
 
   // Consulta de sesiones en la BD con todos los filtros combinables
   const fetchSessions = useCallback(async () => {
+    const fetchId = ++sessionsFetchId.current
     setLoadingSessions(true)
     setSessionsLoadError('')
     try {
@@ -137,24 +142,39 @@ export default function Dashboard({ onlyMyRequests = false }) {
         }
       }
       if (filterOnlyAvailable) params.only_available = true
+      const signature = Object.keys(params).length ? JSON.stringify(params) : ''
+      if (!signature) {
+        searchMeasurement.current = null
+      } else if (searchMeasurement.current?.signature !== signature) {
+        searchMeasurement.current = { signature, attempt: startFlow('buscar_sesiones'), finished: false }
+      }
+      const search = searchMeasurement.current
+      const config = search?.finished ? undefined : attemptConfig(search?.attempt)
 
       const [res, own, changes, attendance] = await Promise.all([
-        api.get('/sessions/', { params }), api.get('/sessions/requests/me'), api.get('/sessions/reschedules/me'),
+        api.get('/sessions/', { params, ...config }), api.get('/sessions/requests/me'), api.get('/sessions/reschedules/me'),
         api.get('/sessions/attendance/me'),
       ])
+      if (fetchId !== sessionsFetchId.current) return
       setMyRequests(own.data)
       setReschedules(changes.data)
       setMyAttendanceSessionIds(attendance.data)
       if (Array.isArray(res.data)) {
         // Esta sección reúne las sesiones que tienen una solicitud de la cuenta actual.
         const requestedIds = new Set(own.data.map(request => request.session_id))
-        setSessions(onlyMyRequests ? res.data.filter(session => requestedIds.has(session.id)) : res.data)
+        const results = onlyMyRequests ? res.data.filter(session => requestedIds.has(session.id)) : res.data
+        setSessions(results)
+        if (search && !search.finished) {
+          recordSearchResult(search.attempt, results.length > 0)
+          search.finished = true
+        }
       }
     } catch (err) {
+      if (fetchId !== sessionsFetchId.current) return
       console.warn('Error al cargar sesiones filtradas:', err)
       setSessionsLoadError('No se pudieron cargar las sesiones. Intenta nuevamente.')
     } finally {
-      setLoadingSessions(false)
+      if (fetchId === sessionsFetchId.current) setLoadingSessions(false)
     }
   }, [debouncedSearch, filterSubject, filterModality, filterDate, filterDateFrom, filterDateTo, filterOnlyAvailable, onlyMyRequests])
 
@@ -197,10 +217,12 @@ export default function Dashboard({ onlyMyRequests = false }) {
     setSessionError('')
 
     if (!sessionForm.name.trim() || !sessionForm.date || !sessionForm.modality || !sessionForm.spots) {
+      recordInvalid(attempts.current.create)
       setSessionError('Por favor completa todos los campos obligatorios.')
       return
     }
     if (parseInt(sessionForm.spots) < 1) {
+      recordInvalid(attempts.current.create)
       setSessionError('Los cupos deben ser al menos 1.')
       return
     }
@@ -208,6 +230,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
     let finalSubject = sessionForm.subject
     if (sessionForm.subject === '__OTRO__') {
       if (!customSubjectName.trim()) {
+        recordInvalid(attempts.current.create)
         setSessionError('Por favor ingresa el nombre de la nueva materia.')
         return
       }
@@ -235,7 +258,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
         time: sessionForm.time || null,
         modality: sessionForm.modality,
         spots: parseInt(sessionForm.spots),
-      })
+      }, attemptConfig(attempts.current.create))
       setSessions((prev) => [res.data, ...prev])
       setSessionForm({ name: '', subject: '', date: '', time: '', modality: 'Presencial', spots: '' })
       setCustomSubjectName('')
@@ -253,8 +276,16 @@ export default function Dashboard({ onlyMyRequests = false }) {
     }
   }
 
+  const openCreateForm = () => {
+    attempts.current.create = startFlow('crear_sesion')
+    setShowSessionForm(true)
+    setSessionError('')
+    setCustomSubjectName('')
+  }
+
   // 1. EDITAR: Abrir modal y enviar actualización PUT /sessions/{id}
   const openEditModal = (session) => {
+    attempts.current.edit = startFlow('editar_sesion')
     setEditingSession(session)
     setEditForm({
       name: session.name,
@@ -275,6 +306,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
     let finalSubject = editForm.subject
     if (editForm.subject === '__OTRO__') {
       if (!editCustomSubjectName.trim()) {
+        recordInvalid(attempts.current.edit)
         setToastMessage({ type: 'error', text: '⚠️ Por favor ingresa el nombre de la materia.' })
         setTimeout(() => setToastMessage(null), 4000)
         return
@@ -303,7 +335,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
         modality: editForm.modality,
         spots: parseInt(editForm.spots),
         status: editForm.status,
-      })
+      }, attemptConfig(attempts.current.edit))
       setSessions((prev) => prev.map((s) => (s.id === editingSession.id ? res.data : s)))
       setEditingSession(null)
       setToastMessage({
@@ -325,7 +357,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
     if (!sessionToDelete) return
     setDeletingId(sessionToDelete.id)
     try {
-      await api.delete(`/sessions/${sessionToDelete.id}`)
+      await api.delete(`/sessions/${sessionToDelete.id}`, attemptConfig(attempts.current.delete))
       setSessions((prev) => prev.filter((s) => s.id !== sessionToDelete.id))
       setToastMessage({
         type: 'success',
@@ -342,15 +374,25 @@ export default function Dashboard({ onlyMyRequests = false }) {
     }
   }
 
+  const openDeleteDialog = (session) => {
+    attempts.current.delete = startFlow('eliminar_sesion')
+    setSessionToDelete(session)
+  }
+
+  const openRescheduleDialog = (session) => {
+    const isOrganizer = Number(session.creator_id) === Number(user.id)
+    attempts.current.reschedule = isOrganizer ? startFlow('reprogramar') : null
+    setSessionToReschedule(session)
+  }
+
   const openJoinDialog = (session) => {
     setSessionToJoin(session)
-    // Se ejecuta una vez por apertura, también si después se cancela el diálogo.
-    requestStart.current = api.post('/analytics/start', { session_id: session.id }, { timeout: 3000 })
-      .catch(error => console.warn('No se pudo registrar el inicio de la solicitud:', error.message))
+    attempts.current.join = startFlow('solicitar_unirse', session.id)
   }
 
   const solicitarUnirse = async (session) => {
     if (session.status === 'cerrada') {
+      recordInvalid(attempts.current.join)
       setToastMessage({
         type: 'error',
         text: 'Esta sesion esta cerrada y no acepta solicitudes'
@@ -362,8 +404,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
     setJoiningSessionId(session.id)
 
     try {
-      await requestStart.current
-      const res = await api.post(`/sessions/${session.id}/requests`)
+      const res = await api.post(`/sessions/${session.id}/requests`, undefined, attemptConfig(attempts.current.join))
       setMyRequests(prev => [...prev.filter(item => item.session_id !== session.id), res.data])
 
       setToastMessage({
@@ -406,9 +447,10 @@ export default function Dashboard({ onlyMyRequests = false }) {
 
   // Acción: Cerrar inscripciones (Transición abierta -> cerrada)
   const handleCloseRegistration = async (sessionId, sessionName) => {
+    const attempt = startFlow('cerrar_inscripciones')
     setClosingSessionId(sessionId)
     try {
-      const res = await api.patch(`/sessions/${sessionId}/close`)
+      const res = await api.patch(`/sessions/${sessionId}/close`, undefined, attemptConfig(attempt))
       // Actualización reactiva del estado local
       setSessions((prev) =>
         prev.map((s) => (s.id === sessionId ? res.data : s))
@@ -436,12 +478,13 @@ export default function Dashboard({ onlyMyRequests = false }) {
   }
 
   const manageRequests = async (session) => {
+    attempts.current.manage = startFlow('gestionar_solicitudes')
     setManagedSession(session)
     setManagedRequests([])
     setRequestsError('')
     setRequestsLoading(true)
     try {
-      const res = await api.get(`/sessions/${session.id}/requests`)
+      const res = await api.get(`/sessions/${session.id}/requests`, attemptConfig(attempts.current.manage))
       setManagedRequests(res.data)
     } catch (error) {
       setRequestsError(error?.response?.data?.detail || 'No se pudieron cargar las solicitudes.')
@@ -449,10 +492,12 @@ export default function Dashboard({ onlyMyRequests = false }) {
   }
 
   const decideRequest = async (request, decision) => {
+    attempts.current.manage ??= startFlow('gestionar_solicitudes')
     setRequestBusy(true)
     setRequestsError('')
     try {
-      await api.patch(`/sessions/${managedSession.id}/requests/${request.id}`, { decision })
+      await api.patch(`/sessions/${managedSession.id}/requests/${request.id}`, { decision }, attemptConfig(attempts.current.manage))
+      attempts.current.manage = null
       const res = await api.get(`/sessions/${managedSession.id}/requests`)
       setManagedRequests(res.data)
       await fetchSessions()
@@ -462,9 +507,10 @@ export default function Dashboard({ onlyMyRequests = false }) {
   }
 
   const leaveSession = async (session) => {
+    const attempt = startFlow('retirarse')
     setRequestBusy(true)
     try {
-      await api.post(`/sessions/${session.id}/leave`)
+      await api.post(`/sessions/${session.id}/leave`, undefined, attemptConfig(attempt))
       await fetchSessions()
       setToastMessage({ type: 'success', text: `Saliste de "${session.name}". Si había una lista de espera y la sesión sigue abierta, el primer estudiante fue confirmado.` })
     } catch (error) {
@@ -473,9 +519,10 @@ export default function Dashboard({ onlyMyRequests = false }) {
   }
 
   const confirmNewSchedule = async (session, change) => {
+    const attempt = startFlow('reconfirmar')
     setRequestBusy(true)
     try {
-      await api.post(`/sessions/${session.id}/reschedules/${change.id}/confirm`)
+      await api.post(`/sessions/${session.id}/reschedules/${change.id}/confirm`, undefined, attemptConfig(attempt))
       await fetchSessions()
       setToastMessage({ type: 'success', text: 'Confirmaste tu asistencia al nuevo encuentro.' })
     } catch (error) {
@@ -486,6 +533,10 @@ export default function Dashboard({ onlyMyRequests = false }) {
   }
 
   const openAttendance = async (session) => {
+    const canFinish = Number(session.creator_id) === Number(user.id) && !session.finished_at
+    attempts.current.finish = canFinish ? startFlow('finalizar_sesion') : null
+    attempts.current.justify = null
+    justificationDecisions.current = {}
     setAttendanceSession(session)
     setAttendanceRows([])
     setAttendanceError('')
@@ -493,7 +544,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
     setDecisionReasons({})
     setAttendanceLoading(true)
     try {
-      const response = await api.get(`/sessions/${session.id}/attendance`)
+      const response = await api.get(`/sessions/${session.id}/attendance`, attemptConfig(attempts.current.finish))
       setAttendanceRows(response.data)
     } catch (error) {
       setAttendanceError(error?.response?.data?.detail || 'No se pudo consultar la asistencia.')
@@ -504,7 +555,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
     setAttendanceBusy(true)
     setAttendanceError('')
     try {
-      const response = await api.post(`/sessions/${attendanceSession.id}/finish`)
+      const response = await api.post(`/sessions/${attendanceSession.id}/finish`, undefined, attemptConfig(attempts.current.finish))
       await fetchSessions()
       await openAttendance(response.data)
     } catch (error) {
@@ -512,15 +563,27 @@ export default function Dashboard({ onlyMyRequests = false }) {
     } finally { setAttendanceBusy(false) }
   }
 
-  const saveAttendance = async (path, data, method = 'patch') => {
+  const startJustification = () => {
+    attempts.current.justify ??= startFlow('enviar_justificacion')
+    return attempts.current.justify
+  }
+
+  const startDecision = userId => {
+    justificationDecisions.current[userId] ??= startFlow('resolver_justificacion')
+    return justificationDecisions.current[userId]
+  }
+
+  const saveAttendance = async (path, data, { method = 'patch', attempt = startFlow('registrar_asistencia') } = {}) => {
     setAttendanceBusy(true)
     setAttendanceError('')
     try {
-      await api.request({ method, url: `/sessions/${attendanceSession.id}/attendance${path}`, data })
+      await api.request({ method, url: `/sessions/${attendanceSession.id}/attendance${path}`, data, ...attemptConfig(attempt) })
       const response = await api.get(`/sessions/${attendanceSession.id}/attendance`)
       setAttendanceRows(response.data)
       setJustificationText('')
       setDecisionReasons({})
+      attempts.current.justify = null
+      justificationDecisions.current = {}
     } catch (error) {
       const detail = error?.response?.data?.detail
       setAttendanceError(Array.isArray(detail) ? detail.map(item => item.msg).join('. ') : detail || 'No se pudo guardar el cambio.')
@@ -668,7 +731,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
             {!onlyMyRequests && <button
               id="btn-crear-sesion"
               className="btn-create-session"
-              onClick={() => { setShowSessionForm(true); setSessionError(''); setCustomSubjectName('') }}
+              onClick={openCreateForm}
             >
               + Crear Sesión
             </button>}
@@ -869,7 +932,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                   >✕</button>
                 </div>
 
-                <form className="session-form" onSubmit={handleSaveSession}>
+                <form className="session-form" onSubmit={handleSaveSession} onInvalid={() => recordInvalid(attempts.current.create)}>
                   <div className="session-form-group">
                     <label htmlFor="session-name">Nombre de la Sesión</label>
                     <input
@@ -1110,7 +1173,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                         <p>Nuevo · {formatSchedule(latestChange.new_date, latestChange.new_time)}</p>
                         <p>{latestChange.reason}</p>
                         {isCreator && <p role="status">{latestChange.pending_count} {latestChange.pending_count === 1 ? 'respuesta pendiente' : 'respuestas pendientes'}</p>}
-                        <button type="button" className="btn-toolbar-action" onClick={() => setSessionToReschedule(session)}>Ver reprogramaciones</button>
+                        <button type="button" className="btn-toolbar-action" onClick={() => openRescheduleDialog(session)}>Ver reprogramaciones</button>
                       </section>
                     )}
 
@@ -1123,7 +1186,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                     {/* Acciones exclusivas del creador */}
                     {isCreator && (
                       <div className="session-creator-toolbar">
-                        <button type="button" className="btn-toolbar-action" disabled={isClosed} onClick={() => setSessionToReschedule(session)}>
+                        <button type="button" className="btn-toolbar-action" disabled={isClosed} onClick={() => openRescheduleDialog(session)}>
                           Reprogramar sesión
                         </button>
                         <button type="button" className="btn-toolbar-action" disabled={Boolean(session.finished_at)} onClick={() => manageRequests(session)}>
@@ -1142,7 +1205,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                           type="button"
                           className="btn-toolbar-action btn-delete-session"
                           disabled={Boolean(session.finished_at)}
-                          onClick={() => setSessionToDelete(session)}
+                          onClick={() => openDeleteDialog(session)}
                           title="Eliminar esta sesión de estudio"
                         >
                           🗑️ Eliminar
@@ -1322,7 +1385,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                 ✕
               </button>
             </div>
-            <form onSubmit={handleUpdateSession} className="edit-session-form">
+            <form onSubmit={handleUpdateSession} onInvalid={() => recordInvalid(attempts.current.edit)} className="edit-session-form">
               <div className="form-group">
                 <label>Nombre de la sesión</label>
                 <input
@@ -1581,6 +1644,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
       {sessionToReschedule && (
         <RescheduleDialog
           session={sessionToReschedule}
+          attempt={attempts.current.reschedule}
           changes={reschedules.filter(change => change.session_id === sessionToReschedule.id)}
           isOrganizer={Number(sessionToReschedule.creator_id) === Number(user.id)}
           onSaved={fetchSessions}
@@ -1651,19 +1715,29 @@ export default function Dashboard({ onlyMyRequests = false }) {
                       </div>
                     )}
                     {record.user_id === Number(user.id) && record.status === 'ausente' && !record.justification_status && (
-                      <form onSubmit={event => { event.preventDefault(); saveAttendance('/justification', { text: justificationText }, 'post') }}>
+                      <form onInvalid={() => recordInvalid(startJustification())} onSubmit={event => {
+                        event.preventDefault()
+                        saveAttendance('/justification', { text: justificationText }, { method: 'post', attempt: startJustification() })
+                      }}>
                         <label htmlFor="absence-justification">Justifica tu ausencia</label>
-                        <textarea id="absence-justification" required minLength={3} maxLength={2000} value={justificationText} onChange={event => setJustificationText(event.target.value)} />
+                        <textarea id="absence-justification" required minLength={3} maxLength={2000} value={justificationText} onChange={event => {
+                          startJustification()
+                          setJustificationText(event.target.value)
+                        }} />
                         <button type="submit" className="btn-confirm-edit" disabled={attendanceBusy}>Enviar justificación</button>
                       </form>
                     )}
                     {Number(attendanceSession.creator_id) === Number(user.id) && record.justification_status === 'pendiente' && (
-                      <form onSubmit={event => {
+                      <form onInvalid={() => recordInvalid(startDecision(record.user_id))} onSubmit={event => {
                         event.preventDefault()
-                        saveAttendance(`/${record.user_id}/justification`, { decision: event.nativeEvent.submitter.value, reason: decisionReasons[record.user_id] || '' })
+                        const decision = { decision: event.nativeEvent.submitter.value, reason: decisionReasons[record.user_id] || '' }
+                        saveAttendance(`/${record.user_id}/justification`, decision, { attempt: startDecision(record.user_id) })
                       }}>
                         <label htmlFor={`decision-reason-${record.user_id}`}>Motivo de la resolución</label>
-                        <textarea id={`decision-reason-${record.user_id}`} required minLength={3} maxLength={1000} value={decisionReasons[record.user_id] || ''} onChange={event => setDecisionReasons({ ...decisionReasons, [record.user_id]: event.target.value })} />
+                        <textarea id={`decision-reason-${record.user_id}`} required minLength={3} maxLength={1000} value={decisionReasons[record.user_id] || ''} onChange={event => {
+                          startDecision(record.user_id)
+                          setDecisionReasons({ ...decisionReasons, [record.user_id]: event.target.value })
+                        }} />
                         <button type="submit" value="aceptar" className="btn-confirm-edit" disabled={attendanceBusy}>Aceptar justificación</button>
                         <button type="submit" value="rechazar" className="btn-cancel" disabled={attendanceBusy}>Rechazar justificación</button>
                       </form>

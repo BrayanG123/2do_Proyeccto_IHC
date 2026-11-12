@@ -1,23 +1,31 @@
 import { test, expect } from '@playwright/test';
-import { URL_APP, registrar, crearSesion, buscar, nombreUnico, salir } from './apoyo.js';
+import { URL_APP, registrar, crearSesion, buscar, nombreUnico, salir, leerAnalitica, embudo, comprobarEventos } from './apoyo.js';
 
 test.beforeEach(async ({ page }) => { await registrar(page); });
 
 test('Crear sesión: los campos vacíos impiden guardar', async ({ page }) => {
+  const baseline = await leerAnalitica(page);
   await page.getByRole('button', { name: '+ Crear Sesión', exact: true }).click();
   await page.getByRole('button', { name: '💾 Guardar', exact: true }).click();
   await expect(page.getByLabel('Nombre de la Sesión', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Nombre de la Sesión', { exact: true })).toBeFocused();
   expect(await page.getByLabel('Nombre de la Sesión', { exact: true }).evaluate(campo => campo.validity.valueMissing)).toBe(true);
+  await comprobarEventos(page, baseline, { crear_sesion: [1, 0] });
+  const invalid = state => embudo(state, 'crear_sesion').blockers.find(item => item.reason === 'validacion_fallida')?.count ?? 0;
+  await expect.poll(async () => invalid(await leerAnalitica(page)) - invalid(baseline)).toBeGreaterThanOrEqual(1);
 });
 
 test('Buscar: mostrar estado vacío y restablecer filtros', async ({ page }) => {
+  const baseline = await leerAnalitica(page);
   const nombre = await crearSesion(page);
   await page.getByPlaceholder('Buscar sesiones por nombre...').fill(nombreUnico('No existe'));
   await expect(page.getByRole('heading', { name: 'No se encontraron sesiones coincidentes', exact: true })).toBeVisible();
   await page.getByRole('button', { name: /Restablecer todos los filtros/ }).click();
   await expect(page.getByPlaceholder('Buscar sesiones por nombre...')).toHaveValue('');
   await expect(page.getByRole('heading', { name: nombre, exact: true })).toBeVisible();
+  await comprobarEventos(page, baseline, { crear_sesion: [1, 1], buscar_sesiones: [2, 1] });
+  await expect.poll(async () => embudo(await leerAnalitica(page), 'buscar_sesiones').empty_results)
+    .toBeGreaterThan(embudo(baseline, 'buscar_sesiones').empty_results);
 });
 
 test('Filtros: una sesión presencial se oculta en Virtual y vuelve en Presencial', async ({ page }) => {
@@ -30,6 +38,7 @@ test('Filtros: una sesión presencial se oculta en Virtual y vuelve en Presencia
 
 test('Editar sesión: guardar el nombre nuevo y conservarlo al recargar', async ({ page }) => {
   await crearSesion(page);
+  const baseline = await leerAnalitica(page);
   await page.getByRole('button', { name: /Editar/ }).click();
   const nuevoNombre = nombreUnico('Editada');
   // El formulario de edición no asocia sus etiquetas; se identifica por su texto de ayuda.
@@ -39,6 +48,7 @@ test('Editar sesión: guardar el nombre nuevo y conservarlo al recargar', async 
   await buscar(page, nuevoNombre);
   await page.reload();
   await buscar(page, nuevoNombre);
+  await comprobarEventos(page, baseline, { editar_sesion: [1, 1] });
 });
 
 test('Editar sesión: cancelar conserva el nombre original', async ({ page }) => {
@@ -52,6 +62,7 @@ test('Editar sesión: cancelar conserva el nombre original', async ({ page }) =>
 
 test('Eliminar sesión: cancelar conserva la sesión y confirmar la elimina', async ({ page }) => {
   const nombre = await crearSesion(page);
+  const baseline = await leerAnalitica(page);
   await page.getByRole('button', { name: '🗑️ Eliminar', exact: true }).click();
   await page.getByRole('button', { name: 'Cancelar', exact: true }).click();
   await expect(page.getByRole('heading', { name: nombre, exact: true })).toBeVisible();
@@ -61,10 +72,12 @@ test('Eliminar sesión: cancelar conserva la sesión y confirmar la elimina', as
   await page.reload();
   await page.getByPlaceholder('Buscar sesiones por nombre...').fill(nombre);
   await expect(page.getByRole('heading', { name: 'No se encontraron sesiones coincidentes', exact: true })).toBeVisible();
+  await comprobarEventos(page, baseline, { eliminar_sesion: [2, 1] });
 });
 
 test('Cerrar inscripciones: persiste el estado y otro usuario no puede solicitar unirse', async ({ page }) => {
   const nombre = await crearSesion(page);
+  const baseline = await leerAnalitica(page);
   await page.getByRole('button', { name: /Cerrar inscripciones/ }).click();
   await expect(page.getByText('🔒 Cerrada', { exact: true })).toBeVisible();
   await page.reload();
@@ -74,6 +87,7 @@ test('Cerrar inscripciones: persiste el estado y otro usuario no puede solicitar
   await registrar(page);
   await buscar(page, nombre);
   await expect(page.getByRole('button', { name: '⛔ Inscripción cerrada', exact: true })).toBeDisabled();
+  await comprobarEventos(page, baseline, { cerrar_inscripciones: [1, 1] });
 });
 
 test('Solicitar unirse: cancelar no envía y confirmar muestra la solicitud enviada', async ({ page }) => {
