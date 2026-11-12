@@ -13,7 +13,7 @@ import '../styles/History.css'
 const FILTERS = [
   { key: 'todos', label: 'Todas', types: null },
   { key: 'unido', label: 'Me uní', types: ['unido'] },
-  { key: 'creada', label: 'Organicé', types: ['creada', 'cerrada', 'eliminada'] },
+  { key: 'creada', label: 'Organicé', types: ['creada', 'cerrada', 'eliminada', 'cancelada'] },
 ]
 
 // Carga cognitiva: cada tipo de evento se reconoce por ícono y verbo, sin recordar otras pantallas
@@ -21,6 +21,7 @@ const EVENT_META = {
   unido: { icon: '✅', verb: 'Te uniste a', tone: 'joined' },
   creada: { icon: '✨', verb: 'Creaste', tone: 'created' },
   cerrada: { icon: '🔒', verb: 'Cerraste las inscripciones de', tone: 'closed' },
+  cancelada: { icon: '⊘', verb: 'Cancelaste', tone: 'closed' },
   eliminada: { icon: '🗑️', verb: 'Eliminaste', tone: 'deleted' },
 }
 
@@ -28,6 +29,7 @@ const STATUS_META = {
   abierta: { label: 'Inscripción abierta', className: 'status-open' },
   cerrada: { label: 'Inscripción cerrada', className: 'status-closed' },
   finalizada: { label: 'Finalizada', className: 'status-finished' },
+  cancelada: { label: 'Sesión cancelada', className: 'status-closed' },
   eliminada: { label: 'Sesión eliminada', className: 'status-deleted' },
 }
 

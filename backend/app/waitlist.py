@@ -30,7 +30,7 @@ def request_view(db, request):
     position = None
     if request.status == 'en_espera':
         queue = waiting_requests(db, request.session_id)
-        position = next(i + 1 for i, item in enumerate(queue) if item.id == request.id)
+        position = next((i + 1 for i, item in enumerate(queue) if item.id == request.id), None)
     return {
         'id': request.id, 'session_id': request.session_id,
         'user_id': request.user_id, 'status': request.status,

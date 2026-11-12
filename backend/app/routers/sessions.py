@@ -2,7 +2,7 @@ from datetime import date as dt_date, timedelta, datetime, timezone
 import json
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from sqlalchemy import func
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session as DBSession
 from sqlalchemy.exc import IntegrityError
 from app.database import get_db
@@ -16,7 +16,7 @@ from app.rescheduling import check_schedule_edit, reschedule_session, confirm_re
 from app.rescheduling import confirmed_participants, pending_reconfirmations
 from app.models import SessionAttendance, AttendanceHistory
 from app.analytics_tracking import TrackedRoute, add_join_success, get_attempt_id
-from app.schemas import AttendanceUpdate, JustificationCreate, JustificationDecision, AttendanceResponse
+from app.schemas import AttendanceUpdate, JustificationCreate, JustificationDecision, AttendanceResponse, SessionCancellationCreate
 
 
 
@@ -24,6 +24,7 @@ from app.schemas import AttendanceUpdate, JustificationCreate, JustificationDeci
 
 
 router = APIRouter(prefix="/sessions", tags=["Sesiones"], route_class=TrackedRoute)
+BOLIVIA_TIME = timezone(timedelta(hours=-4))
 
 
 @router.post("/", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
@@ -127,6 +128,7 @@ def close_session_registration(
             detail="No autorizado: Solo la persona que creó la sesión puede cerrar sus inscripciones."
         )
 
+    require_not_cancelled(session)
     try:
         session.close_registration()
     except ValueError as e:
@@ -341,6 +343,7 @@ def solicitar_unirse(
             detail="Sesión no encontrada."
         )
 
+    require_not_cancelled(session)
 
     if session.creator_id is None:
         raise HTTPException(
@@ -433,8 +436,68 @@ def require_organizer(session, user):
 
 
 def require_unfinished(session):
+    require_not_cancelled(session)
     if session.finished_at is not None:
         raise HTTPException(409, 'La sesión ya finalizó. Su asistencia y su historial deben conservarse.')
+
+
+def require_not_cancelled(session):
+    if session.status == 'cancelada':
+        raise HTTPException(409, 'La sesión está cancelada.')
+
+
+@router.post('/{session_id}/cancel', response_model=SessionResponse)
+def cancel_session(session_id: int, body: SessionCancellationCreate,
+                   db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session = locked_session(db, session_id)
+    require_organizer(session, current_user)
+    require_unfinished(session)
+    cancelled_at = datetime.now(timezone.utc)
+    if session.date <= cancelled_at.astimezone(BOLIVIA_TIME).date():
+        raise HTTPException(409, 'Solo puedes cancelar antes del día de la sesión.')
+
+    requests = db.query(SessionJoinRequest).filter_by(session_id=session_id).all()
+    for request in requests:
+        if request.status in ('aceptada', 'pendiente', 'en_espera'):
+            request.status = 'cancelada'
+
+    # Algunas inscripciones antiguas solo tienen correo y todavía no tienen solicitud.
+    legacy_participants = db.query(User.id, User.email).filter(
+        func.lower(User.email).in_(session.get_participant_emails_list()),
+        User.id.not_in([request.user_id for request in requests]),
+        User.id != current_user.id,
+    )
+    for user_id, email in legacy_participants:
+        db.add(SessionJoinRequest(
+            session_id=session_id, user_id=user_id, status='cancelada', confirmed_email=email,
+        ))
+
+    for response in pending_reconfirmations(db, session_id):
+        response.status = 'cancelada'
+        response.responded_at = cancelled_at
+
+    session.status = 'cancelada'
+    session.cancelled_at = cancelled_at
+    session.cancellation_reason = body.reason
+    session.participant_emails = '[]'
+    session.participants_count = 0
+    record_session_event(db, current_user.id, 'cancelada', session)
+    db.commit()
+    db.refresh(session)
+    return session
+
+
+@router.get('/cancellations/me', response_model=dict[int, str])
+def my_cancellations(db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    affected_sessions = select(SessionJoinRequest.session_id).where(
+        SessionJoinRequest.user_id == current_user.id, SessionJoinRequest.status == 'cancelada',
+    )
+    cancellations = db.query(Session.id, Session.cancellation_reason).filter(
+        Session.status == 'cancelada',
+        Session.cancellation_reason.is_not(None),
+        or_(Session.creator_id == current_user.id, Session.id.in_(affected_sessions)),
+    )
+    return {session_id: reason for session_id, reason in cancellations}
 
 
 @router.get('/requests/me', response_model=List[SessionJoinRequestResponse])
@@ -529,6 +592,7 @@ def create_reschedule(session_id: int, body: SessionRescheduleCreate,
                       db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     session = locked_session(db, session_id)
     require_organizer(session, current_user)
+    require_not_cancelled(session)
     change = reschedule_session(db, session, current_user, body)
     db.commit()
     return reschedule_view(db, change, current_user)
@@ -537,7 +601,7 @@ def create_reschedule(session_id: int, body: SessionRescheduleCreate,
 @router.post('/{session_id}/reschedules/{reschedule_id}/confirm', response_model=SessionRescheduleResponse)
 def reconfirm_session(session_id: int, reschedule_id: int,
                       db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    locked_session(db, session_id)
+    require_not_cancelled(locked_session(db, session_id))
     confirm_reschedule(db, session_id, reschedule_id, current_user.id)
     db.commit()
     return reschedule_view(db, db.get(SessionReschedule, reschedule_id), current_user)
@@ -604,6 +668,7 @@ def list_attendance(session_id: int, db: DBSession = Depends(get_db), current_us
     session = db.get(Session, session_id)
     if session is None:
         raise HTTPException(404, 'Sesión no encontrada.')
+    require_not_cancelled(session)
     records = db.query(SessionAttendance).filter_by(session_id=session_id)
     if session.creator_id != current_user.id:
         # Cada estudiante consulta exclusivamente su resultado y su historial.
@@ -618,6 +683,7 @@ def update_attendance(session_id: int, user_id: int, body: AttendanceUpdate,
                       db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     session = locked_session(db, session_id)
     require_organizer(session, current_user)
+    require_not_cancelled(session)
     record = attendance_record(db, session_id, user_id)
     if record.status == body.status:
         return attendance_view(db, record)
@@ -635,7 +701,7 @@ def update_attendance(session_id: int, user_id: int, body: AttendanceUpdate,
 @router.post('/{session_id}/attendance/justification', response_model=AttendanceResponse, status_code=201)
 def submit_justification(session_id: int, body: JustificationCreate,
                          db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    locked_session(db, session_id)
+    require_not_cancelled(locked_session(db, session_id))
     record = attendance_record(db, session_id, current_user.id)
     if record.status != 'ausente':
         raise HTTPException(409, 'Solo puedes justificar una ausencia registrada.')
@@ -656,6 +722,7 @@ def decide_justification(session_id: int, user_id: int, body: JustificationDecis
                          db: DBSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     session = locked_session(db, session_id)
     require_organizer(session, current_user)
+    require_not_cancelled(session)
     record = attendance_record(db, session_id, user_id)
     if record.justification_status != 'pendiente':
         raise HTTPException(409, 'La justificación debe estar pendiente para resolverla.')

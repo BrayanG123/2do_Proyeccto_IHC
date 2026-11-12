@@ -7,7 +7,8 @@ import { attemptConfig, recordInvalid, recordSearchResult, startFlow } from '../
 import { getStudentInitials } from '../utils/avatar'
 import LogoutIcon from '../components/LogoutIcon'
 import RescheduleDialog from '../components/RescheduleDialog'
-import { formatSchedule } from '../utils/schedule'
+import CancelSessionDialog from '../components/CancelSessionDialog'
+import { formatSchedule, todayInBolivia } from '../utils/schedule'
 import '../styles/Dashboard.css'
 
 function joinSessionName(session) {
@@ -66,6 +67,8 @@ export default function Dashboard({ onlyMyRequests = false }) {
   const [editCustomSubjectName, setEditCustomSubjectName] = useState('')
   const [editSaving, setEditSaving] = useState(false)
   const [sessionToDelete, setSessionToDelete] = useState(null)
+  const [sessionToCancel, setSessionToCancel] = useState(null)
+  const [cancellationReasons, setCancellationReasons] = useState({})
   const [deletingId, setDeletingId] = useState(null)
   const [joiningSessionId, setJoiningSessionId] = useState(null)
   const [sessionToJoin, setSessionToJoin] = useState(null)
@@ -100,8 +103,8 @@ export default function Dashboard({ onlyMyRequests = false }) {
 
   const requestLabel = (request) => ({
     pendiente: 'Pendiente de aprobación', aceptada: 'Confirmado',
-    en_espera: `En espera · posición ${request.queue_position}`,
-    rechazada: 'Solicitud rechazada', retirada: 'Saliste de la sesión',
+    en_espera: request.queue_position == null ? 'En espera' : `En espera · posición ${request.queue_position}`,
+    rechazada: 'Solicitud rechazada', retirada: 'Saliste de la sesión', cancelada: 'Cancelada',
   }[request.status])
 
   // Debounce para la búsqueda por texto (300ms)
@@ -151,14 +154,15 @@ export default function Dashboard({ onlyMyRequests = false }) {
       const search = searchMeasurement.current
       const config = search?.finished ? undefined : attemptConfig(search?.attempt)
 
-      const [res, own, changes, attendance] = await Promise.all([
+      const [res, own, changes, attendance, cancellations] = await Promise.all([
         api.get('/sessions/', { params, ...config }), api.get('/sessions/requests/me'), api.get('/sessions/reschedules/me'),
-        api.get('/sessions/attendance/me'),
+        api.get('/sessions/attendance/me'), api.get('/sessions/cancellations/me'),
       ])
       if (fetchId !== sessionsFetchId.current) return
       setMyRequests(own.data)
       setReschedules(changes.data)
       setMyAttendanceSessionIds(attendance.data)
+      setCancellationReasons(cancellations.data)
       if (Array.isArray(res.data)) {
         // Esta sección reúne las sesiones que tienen una solicitud de la cuenta actual.
         const requestedIds = new Set(own.data.map(request => request.session_id))
@@ -379,6 +383,18 @@ export default function Dashboard({ onlyMyRequests = false }) {
     setSessionToDelete(session)
   }
 
+  const openCancelDialog = (session) => {
+    attempts.current.cancel = startFlow('cancelar_sesion')
+    setSessionToCancel(session)
+  }
+
+  const handleSessionCancelled = () => {
+    setSessionToCancel(null)
+    setToastMessage({ type: 'success', text: 'Sesión cancelada. El motivo ya está disponible para las personas afectadas.' })
+    setTimeout(() => setToastMessage(null), 4500)
+    void fetchSessions()
+  }
+
   const openRescheduleDialog = (session) => {
     const isOrganizer = Number(session.creator_id) === Number(user.id)
     attempts.current.reschedule = isOrganizer ? startFlow('reprogramar') : null
@@ -478,7 +494,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
   }
 
   const manageRequests = async (session) => {
-    attempts.current.manage = startFlow('gestionar_solicitudes')
+    attempts.current.manage = session.status === 'cancelada' ? null : startFlow('gestionar_solicitudes')
     setManagedSession(session)
     setManagedRequests([])
     setRequestsError('')
@@ -591,6 +607,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
   }
 
   const displayName = user?.first_name || user?.full_name?.split(' ')[0] || 'Estudiante'
+  const cancellationCutoff = todayInBolivia()
   const studentInitials = useMemo(() => getStudentInitials(user), [user])
 
   const modalityColor = (m) => {
@@ -704,7 +721,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
           </div>
           <div className="stat-card">
             <div className="stat-value stat-open">
-              {sessions.filter(s => s.status !== 'cerrada').length}
+              {sessions.filter(s => s.status === 'abierta').length}
             </div>
             <div className="stat-label">Inscripción Abierta</div>
           </div>
@@ -1066,6 +1083,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
             <div className="sessions-grid">
               {sessions.map((session) => {
                 const isClosed = session.status === 'cerrada'
+                const isCancelled = session.status === 'cancelada'
                 // Validación por correo electrónico: solo quien creó la sesión puede cerrarla
                 const isCreator = Boolean(
                   user && user.email && (
@@ -1092,13 +1110,19 @@ export default function Dashboard({ onlyMyRequests = false }) {
                 const latestChange = reschedules.find(item => item.session_id === session.id)
                 const needsReconfirmation = latestChange?.own_status === 'pendiente'
                 const hasAttendance = myAttendanceSessionIds.includes(session.id)
+                const canCancel = Number(session.creator_id) === Number(user.id) &&
+                  !isCancelled && !session.finished_at && session.date > cancellationCutoff
 
                 // Determinar el badge de estado superior coherente (IHC)
                 let statusBadgeClass = 'status-open'
                 let statusBadgeLabel = '🟢 Inscripción abierta'
                 let cardStateClass = 'session-card-open'
 
-                if (session.finished_at) {
+                if (isCancelled) {
+                  statusBadgeClass = 'status-cancelled'
+                  statusBadgeLabel = 'Sesión cancelada'
+                  cardStateClass = 'session-card-cancelled'
+                } else if (session.finished_at) {
                   statusBadgeClass = 'status-past'
                   statusBadgeLabel = 'Sesión finalizada'
                   cardStateClass = 'session-card-past'
@@ -1155,7 +1179,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                       </div>
                     )}
 
-                    <div className="session-spots">
+                    {!isCancelled && <div className="session-spots">
                       👥 <strong>{session.participants_count || 0} / {session.spots}</strong> participantes
                       {isClosed && <span className="session-spots-closed-pill"> (Cupo cerrado)</span>}
                       {!isClosed && !isFull && ((session.spots || 0) - (session.participants_count || 0) === 1) && (
@@ -1164,9 +1188,9 @@ export default function Dashboard({ onlyMyRequests = false }) {
                       {!isClosed && !isFull && ((session.spots || 0) - (session.participants_count || 0) > 1) && (
                         <span className="session-spots-available-pill"> ({((session.spots || 0) - (session.participants_count || 0))} cupos libres)</span>
                       )}
-                    </div>
+                    </div>}
 
-                    {latestChange && (
+                    {!isCancelled && latestChange && (
                       <section className="reschedule-notice" aria-label="Cambio de fecha">
                         <strong>Sesión reprogramada</strong>
                         <p>Anterior · {formatSchedule(latestChange.old_date, latestChange.old_time)}</p>
@@ -1177,14 +1201,14 @@ export default function Dashboard({ onlyMyRequests = false }) {
                       </section>
                     )}
 
-                    {(isCreator || hasAttendance) && (
+                    {!isCancelled && (isCreator || hasAttendance) && (
                       <button type="button" className="btn-toolbar-action" disabled={isCreator && !session.finished_at && sessionDate > today} onClick={() => openAttendance(session)}>
                         {isCreator ? 'Registrar asistencia' : 'Consultar mi asistencia'}
                       </button>
                     )}
 
                     {/* Acciones exclusivas del creador */}
-                    {isCreator && (
+                    {isCreator && !isCancelled && (
                       <div className="session-creator-toolbar">
                         <button type="button" className="btn-toolbar-action" disabled={isClosed} onClick={() => openRescheduleDialog(session)}>
                           Reprogramar sesión
@@ -1201,6 +1225,11 @@ export default function Dashboard({ onlyMyRequests = false }) {
                         >
                           ✏️ Editar
                         </button>
+                        {canCancel && (
+                          <button type="button" className="btn-toolbar-action btn-cancel-session" onClick={() => openCancelDialog(session)}>
+                            Cancelar sesión
+                          </button>
+                        )}
                         <button
                           type="button"
                           className="btn-toolbar-action btn-delete-session"
@@ -1215,7 +1244,21 @@ export default function Dashboard({ onlyMyRequests = false }) {
 
                     <div className="session-card-footer">
                       {/* Caso 1: Creador de la sesión (no puede unirse a su propia sesión) */}
-                      {isCreator ? (
+                      {isCancelled ? (
+                        <div className="session-cancellation-notice">
+                          {myRequest && <p role="status">Estado: {requestLabel(myRequest)}</p>}
+                          {cancellationReasons[session.id] && (
+                            <div>
+                              <strong>Motivo de cancelación</strong>
+                              <p className="session-cancellation-reason">{cancellationReasons[session.id]}</p>
+                            </div>
+                          )}
+                          <p>Esta sesión ya no admite solicitudes ni asistencia.</p>
+                          {Number(session.creator_id) === Number(user.id) && (
+                            <button type="button" className="btn-toolbar-action" onClick={() => manageRequests(session)}>Ver solicitudes</button>
+                          )}
+                        </div>
+                      ) : isCreator ? (
                         <div className="session-creator-footer-box">
                           <div className="creator-notice-badge">
                             👤 Eres el organizador de esta sesión
@@ -1651,11 +1694,23 @@ export default function Dashboard({ onlyMyRequests = false }) {
           onClose={() => setSessionToReschedule(null)}
         />
       )}
+      {sessionToCancel && (
+        <CancelSessionDialog
+          session={sessionToCancel}
+          attempt={attempts.current.cancel}
+          onClose={() => setSessionToCancel(null)}
+          onCancelled={handleSessionCancelled}
+        />
+      )}
       {managedSession && (
         <div className="modal-overlay">
           <div className="modal requests-modal" role="dialog" aria-modal="true" aria-labelledby="requests-title">
             <h2 id="requests-title">Solicitudes de {managedSession.name}</h2>
-            <p>Aceptar confirma al estudiante si hay cupo. Si está llena, entra al final de la lista de espera.</p>
+            {managedSession.status === 'cancelada' ? (
+              <p>Las solicitudes activas quedaron canceladas.</p>
+            ) : (
+              <p>Aceptar confirma al estudiante si hay cupo. Si está llena, entra al final de la lista de espera.</p>
+            )}
             {requestsLoading && <p role="status">Cargando solicitudes...</p>}
             {requestsError && <p role="alert">{requestsError}</p>}
             {!requestsLoading && !requestsError && managedRequests.length === 0 && <p>No hay solicitudes todavía.</p>}

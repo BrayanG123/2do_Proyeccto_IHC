@@ -10,7 +10,7 @@ HISTORY_FILTERS = {
     "todos": None,
     "unido": ("unido",),
     # Sesiones que la persona organizó: su creación y lo que hizo con ellas después
-    "creada": ("creada", "cerrada", "eliminada"),
+    "creada": ("creada", "cerrada", "eliminada", "cancelada"),
 }
 
 
@@ -35,10 +35,12 @@ def get_user_history(db, user_id: int, tipo: str = "todos") -> List[SessionHisto
 def current_session_status(session: Optional[Session], reference_date: Optional[dt_date] = None) -> str:
     """
     Resultado actual de la sesión involucrada en un evento:
-    'eliminada' si ya no existe, 'cerrada', 'finalizada' si su fecha pasó, o 'abierta'.
+    Puede estar eliminada, cancelada, cerrada, finalizada o abierta.
     """
     if session is None:
         return "eliminada"
+    if session.status == "cancelada":
+        return "cancelada"
     if session.finished_at is not None:
         return "finalizada"
     if session.status == "cerrada":

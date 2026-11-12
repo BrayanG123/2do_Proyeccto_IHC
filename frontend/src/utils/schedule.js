@@ -4,3 +4,12 @@ export function formatSchedule(date, time) {
   })
   return time ? `${formattedDate} · ${time.slice(0, 5)}` : formattedDate
 }
+
+const boliviaDate = new Intl.DateTimeFormat('en', {
+  timeZone: 'America/La_Paz', year: 'numeric', month: '2-digit', day: '2-digit',
+})
+
+export function todayInBolivia() {
+  const parts = Object.fromEntries(boliviaDate.formatToParts().map(({ type, value }) => [type, value]))
+  return `${parts.year}-${parts.month}-${parts.day}`
+}

@@ -1116,6 +1116,20 @@
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
+.session-status-badge.status-cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+[data-theme="dark"] .session-status-badge.status-cancelled {
+  color: #fca5a5;
+}
+
+.session-card-cancelled {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
 [data-theme="dark"] .session-status-badge.status-closed {
   background: rgba(239, 68, 68, 0.18);
   color: #f87171;
@@ -1348,6 +1362,7 @@
 /* Barra de herramientas del creador (Editar / Eliminar) */
 .session-creator-toolbar {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 6px;
   padding-top: 8px;
@@ -1381,6 +1396,36 @@
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
   border-color: #ef4444;
+}
+
+.btn-cancel-session {
+  min-height: 44px;
+}
+
+.btn-cancel-session:hover {
+  border-color: var(--danger);
+}
+
+.session-cancellation-notice {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding: 14px;
+  border-inline-start: 3px solid var(--danger);
+  border-radius: 6px;
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.session-cancellation-reason {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-top: 4px;
+}
+
+.session-cancellation-notice .btn-toolbar-action {
+  min-height: 44px;
 }
 
 .session-spots-closed-pill {
@@ -1491,6 +1536,73 @@
   max-width: 480px;
   width: 90%;
   animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal.cancel-session-dialog {
+  width: min(480px, calc(100% - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  color: var(--text);
+}
+
+.cancel-session-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.cancel-session-summary {
+  display: grid;
+  gap: 2px;
+  margin: 14px 0;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: var(--surface2);
+  overflow-wrap: anywhere;
+}
+
+.cancel-session-dialog label {
+  display: block;
+  margin-top: 16px;
+  font-weight: 600;
+}
+
+.cancel-session-dialog textarea {
+  display: block;
+  width: 100%;
+  min-height: 104px;
+  margin-top: 6px;
+  padding: 10px;
+  border: 1px solid var(--text-muted);
+  border-radius: 8px;
+  font: inherit;
+  background: var(--input-bg);
+  color: var(--text);
+  resize: vertical;
+}
+
+.cancel-session-dialog .modal-actions {
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.cancel-session-dialog button {
+  min-height: 44px;
+}
+
+.cancel-session-dialog .btn-danger-confirm {
+  background: #b91c1c;
+}
+
+.cancel-session-dialog .btn-danger-confirm:hover:not(:disabled) {
+  background: #991b1b;
+}
+
+.cancel-session-error {
+  margin-top: 10px;
+  color: var(--text);
+  border-inline-start: 3px solid var(--danger);
+  padding-inline-start: 8px;
 }
 
 @keyframes modalPopIn {

@@ -20,6 +20,8 @@ UPDATE sessions SET participant_emails = '[]' WHERE participant_emails IS NULL;
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS subject VARCHAR(150);
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS time TIME;
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS finished_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS cancellation_reason TEXT;
 
 -- Lista de espera: conservar las solicitudes existentes y ampliar sus estados.
 ALTER TABLE session_join_requests ADD COLUMN IF NOT EXISTS waitlisted_at TIMESTAMP WITH TIME ZONE;
@@ -27,7 +29,11 @@ ALTER TABLE session_join_requests ADD COLUMN IF NOT EXISTS wait_order INTEGER;
 ALTER TABLE session_join_requests ADD COLUMN IF NOT EXISTS confirmed_email VARCHAR(150);
 ALTER TABLE session_join_requests DROP CONSTRAINT IF EXISTS ck_session_join_request_status;
 ALTER TABLE session_join_requests ADD CONSTRAINT ck_session_join_request_status
-CHECK (status IN ('pendiente', 'aceptada', 'rechazada', 'en_espera', 'retirada'));
+CHECK (status IN ('pendiente', 'aceptada', 'rechazada', 'en_espera', 'retirada', 'cancelada'));
+
+ALTER TABLE session_reconfirmations DROP CONSTRAINT IF EXISTS ck_reconfirmation_status;
+ALTER TABLE session_reconfirmations ADD CONSTRAINT ck_reconfirmation_status
+CHECK (status IN ('pendiente', 'confirmada', 'retirada', 'cancelada'));
 
 -- Analítica: conservar los eventos existentes y ampliar los datos de cada intento.
 ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS attempt_id VARCHAR(36);

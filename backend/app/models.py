@@ -56,6 +56,8 @@ class Session(Base):
     date = Column(Date, nullable=False)
     time = Column(Time, nullable=True)
     finished_at = Column(DateTime(timezone=True), nullable=True)
+    cancelled_at = Column(DateTime(timezone=True), nullable=True)
+    cancellation_reason = Column(Text, nullable=True)
     modality = Column(String(50), nullable=False)
     spots = Column(Integer, nullable=False)
     participants_count = Column(Integer, default=0, nullable=False)
@@ -110,6 +112,8 @@ class Session(Base):
         """
         if self.status == "abierta":
             raise ValueError("La sesión ya se encuentra con inscripciones abiertas.")
+        if self.status == "cancelada":
+            raise ValueError("La sesión está cancelada.")
         self.status = "abierta"
         return self
 
@@ -124,6 +128,8 @@ class Session(Base):
         5. Cupos disponibles.
         Retorna (True, 'Permitido') o (False, 'Motivo del rechazo').
         """
+        if self.status == "cancelada":
+            return False, "La sesión está cancelada."
         if self.finished_at is not None:
             return False, "La sesión ya finalizó."
         # 1. Sesión cerrada
@@ -200,7 +206,7 @@ class SessionJoinRequest(Base):
             name="uq_session_join_request_user"
         ),
         CheckConstraint(
-            "status IN ('pendiente', 'aceptada', 'rechazada', 'en_espera', 'retirada')",
+            "status IN ('pendiente', 'aceptada', 'rechazada', 'en_espera', 'retirada', 'cancelada')",
             name="ck_session_join_request_status"
         ),
     )
@@ -268,12 +274,12 @@ class SessionReconfirmation(Base):
 
     __table_args__ = (
         UniqueConstraint('reschedule_id', 'user_id', name='uq_reconfirmation_participant'),
-        CheckConstraint("status IN ('pendiente', 'confirmada', 'retirada')", name='ck_reconfirmation_status'),
+        CheckConstraint("status IN ('pendiente', 'confirmada', 'retirada', 'cancelada')", name='ck_reconfirmation_status'),
     )
 
 
 # ── HISTORIAL DE PARTICIPACIÓN (Issue #12 / #13) ───────────
-HISTORY_EVENT_TYPES = ("unido", "creada", "cerrada", "eliminada")
+HISTORY_EVENT_TYPES = ("unido", "creada", "cerrada", "eliminada", "cancelada")
 
 
 class SessionHistory(Base):

@@ -172,6 +172,12 @@ class SessionStatusUpdate(BaseModel):
     status: str
 
 
+class SessionCancellationCreate(BaseModel):
+    model_config = {"extra": "forbid", "str_strip_whitespace": True}
+
+    reason: str = Field(min_length=1, max_length=1000)
+
+
 class SessionUpdate(BaseModel):
     name: str | None = None
     subject: str | None = None
@@ -212,6 +218,7 @@ class SessionResponse(BaseModel):
     date: dt.date
     time: dt.time | None = None
     finished_at: datetime | None = None
+    cancelled_at: datetime | None = None
     modality: str
     spots: int
     participants_count: int = 0
