@@ -1182,10 +1182,10 @@ export default function Dashboard({ onlyMyRequests = false }) {
                     {!isCancelled && <div className="session-spots">
                       👥 <strong>{session.participants_count || 0} / {session.spots}</strong> participantes
                       {isClosed && <span className="session-spots-closed-pill"> (Cupo cerrado)</span>}
-                      {!isClosed && !isFull && ((session.spots || 0) - (session.participants_count || 0) === 1) && (
+                      {!isClosed && !isPastDate && !session.finished_at && !isFull && ((session.spots || 0) - (session.participants_count || 0) === 1) && (
                         <span className="session-spots-urgency-pill"> ⚠️ ¡Último cupo disponible!</span>
                       )}
-                      {!isClosed && !isFull && ((session.spots || 0) - (session.participants_count || 0) > 1) && (
+                      {!isClosed && !isPastDate && !session.finished_at && !isFull && ((session.spots || 0) - (session.participants_count || 0) > 1) && (
                         <span className="session-spots-available-pill"> ({((session.spots || 0) - (session.participants_count || 0))} cupos libres)</span>
                       )}
                     </div>}
