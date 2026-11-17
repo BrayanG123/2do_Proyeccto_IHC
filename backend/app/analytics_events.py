@@ -70,6 +70,12 @@ FUNNELS = {
     'cancelar_sesion': Funnel('Cancelar sesión', (
         ('cancelacion_iniciada', 'Cancelación iniciada'), ('sesion_cancelada', 'Sesión cancelada'),
     )),
+    'descargar_datos': Funnel('Descargar mis datos', (
+        ('descarga_datos_iniciada', 'Descarga iniciada'), ('datos_descargados', 'Archivo entregado'),
+    )),
+    'eliminar_cuenta': Funnel('Eliminar cuenta', (
+        ('eliminacion_cuenta_iniciada', 'Confirmación abierta'), ('cuenta_eliminada', 'Cuenta eliminada'),
+    )),
 }
 
 BLOCKING_REASONS = {

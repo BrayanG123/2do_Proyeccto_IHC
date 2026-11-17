@@ -764,3 +764,102 @@
     grid-template-columns: 1fr;
   }
 }
+.account-data {
+  margin-top: 24px;
+}
+
+.account-data p, .account-delete-dialog p {
+  margin: 8px 0;
+}
+
+.account-data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.account-data .btn-cancel {
+  flex: 0 1 auto;
+  min-height: 44px;
+}
+
+.account-data-profile {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 16px;
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+}
+
+.account-data-profile dt, .account-data-detail summary {
+  font-weight: 600;
+}
+
+.account-data-detail {
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+}
+
+.account-data-detail summary {
+  cursor: pointer;
+}
+
+.account-data-detail pre {
+  max-height: 20rem;
+  padding: 12px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--surface2);
+  border-radius: 8px;
+}
+
+.account-data-delete {
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding-top: 20px;
+}
+
+.modal.account-delete-dialog {
+  width: min(490px, calc(100% - 32px));
+  max-width: 490px;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  overflow: auto;
+  color: var(--text);
+}
+
+.account-delete-dialog::backdrop {
+  background: rgb(0 0 0 / 60%);
+}
+
+.account-delete-dialog label {
+  display: block;
+  margin: 16px 0 4px;
+  font-weight: 600;
+}
+
+.account-delete-dialog input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.account-confirm-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.account-data-error {
+  border-inline-start: 3px solid var(--danger);
+  padding-inline-start: 10px;
+}

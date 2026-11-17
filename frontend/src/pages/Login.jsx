@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
@@ -11,7 +11,12 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const [accountDeleted] = useState(() => sessionStorage.getItem('accountDeleted') === 'true')
   const startAccess = useFormAttempt('acceso')
+
+  useEffect(() => {
+    if (accountDeleted) sessionStorage.removeItem('accountDeleted')
+  }, [accountDeleted])
 
   const handleChange = (e) => {
     startAccess()
@@ -62,6 +67,7 @@ export default function Login() {
           </div>
 
           <h1 className="auth-title">Iniciar sesión</h1>
+          {accountDeleted && <p className="auth-success" role="status">Tu cuenta fue eliminada.</p>}
           <p className="auth-subtitle">
             ¿No tienes cuenta? <Link to="/register" className="auth-link">Regístrate aquí</Link>
           </p>

@@ -10,6 +10,7 @@ from app.models import Session, User, Subject, filter_sessions_query, record_ses
 from app.schemas import SessionCreate, SessionResponse, SessionStatusUpdate, SessionUpdate, SessionJoinRequestResponse, RequestDecision
 from app.routers.auth import get_current_user
 from app.waitlist import promote_waiting, request_view
+from app.session_cancellation import BOLIVIA_TIME, apply_cancellation
 from app.models import SessionReschedule, SessionReconfirmation
 from app.schemas import SessionRescheduleCreate, SessionRescheduleResponse
 from app.rescheduling import check_schedule_edit, reschedule_session, confirm_reschedule, mark_withdrawn, reschedule_view
@@ -24,7 +25,6 @@ from app.schemas import AttendanceUpdate, JustificationCreate, JustificationDeci
 
 
 router = APIRouter(prefix="/sessions", tags=["Sesiones"], route_class=TrackedRoute)
-BOLIVIA_TIME = timezone(timedelta(hours=-4))
 
 
 @router.post("/", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
@@ -456,31 +456,7 @@ def cancel_session(session_id: int, body: SessionCancellationCreate,
     if session.date <= cancelled_at.astimezone(BOLIVIA_TIME).date():
         raise HTTPException(409, 'Solo puedes cancelar antes del día de la sesión.')
 
-    requests = db.query(SessionJoinRequest).filter_by(session_id=session_id).all()
-    for request in requests:
-        if request.status in ('aceptada', 'pendiente', 'en_espera'):
-            request.status = 'cancelada'
-
-    # Algunas inscripciones antiguas solo tienen correo y todavía no tienen solicitud.
-    legacy_participants = db.query(User.id, User.email).filter(
-        func.lower(User.email).in_(session.get_participant_emails_list()),
-        User.id.not_in([request.user_id for request in requests]),
-        User.id != current_user.id,
-    )
-    for user_id, email in legacy_participants:
-        db.add(SessionJoinRequest(
-            session_id=session_id, user_id=user_id, status='cancelada', confirmed_email=email,
-        ))
-
-    for response in pending_reconfirmations(db, session_id):
-        response.status = 'cancelada'
-        response.responded_at = cancelled_at
-
-    session.status = 'cancelada'
-    session.cancelled_at = cancelled_at
-    session.cancellation_reason = body.reason
-    session.participant_emails = '[]'
-    session.participants_count = 0
+    apply_cancellation(db, session, body.reason, cancelled_at)
     record_session_event(db, current_user.id, 'cancelada', session)
     db.commit()
     db.refresh(session)

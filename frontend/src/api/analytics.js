@@ -10,7 +10,7 @@ export function attemptConfig(attempt) {
 function observe(attempt, result) {
   if (!attempt) return
   const endpoint = publicFlows.has(attempt.flow) ? '/analytics/public-observations' : '/analytics/observations'
-  void api.post(endpoint, { flow: attempt.flow, attempt_id: attempt.id, result }, { timeout: 3000 })
+  return api.post(endpoint, { flow: attempt.flow, attempt_id: attempt.id, result }, { timeout: 3000 })
     .catch(() => console.warn('No se pudo guardar una observación de analítica.'))
 }
 
@@ -21,7 +21,7 @@ export function startFlow(flow, sessionId) {
     void api.post('/analytics/start', { session_id: sessionId }, { ...attemptConfig(attempt), timeout: 3000 })
       .catch(() => console.warn('No se pudo guardar el inicio de la solicitud.'))
   } else {
-    observe(attempt, 'inicio')
+    attempt.ready = observe(attempt, 'inicio')
   }
   return attempt
 }

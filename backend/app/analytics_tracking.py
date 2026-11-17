@@ -24,6 +24,8 @@ ROUTE_EVENTS = {
     ('POST', '/auth/reset-password-with-code'): ('recuperar_acceso', 'acceso_recuperado'),
     ('POST', '/auth/login-with-code'): ('recuperar_acceso', 'acceso_recuperado'),
     ('PUT', '/auth/profile'): ('editar_perfil', 'perfil_actualizado'),
+    ('GET', '/auth/me/data/download'): ('descargar_datos', 'datos_descargados'),
+    ('DELETE', '/auth/me'): ('eliminar_cuenta', 'cuenta_eliminada'),
     ('GET', '/sessions/'): ('buscar_sesiones', None),
     ('POST', '/sessions/'): ('crear_sesion', 'sesion_creada'),
     ('PUT', '/sessions/{session_id}'): ('editar_sesion', 'sesion_editada'),

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import AccountData from '../components/AccountData'
 import ThemeToggle from '../components/ThemeToggle'
 import { getStudentInitials } from '../utils/avatar'
 import { attemptConfig, recordInvalid, startFlow } from '../api/analytics'
@@ -649,6 +650,11 @@ export default function Profile() {
             </form>
           </section>
         </div>
+        <AccountData onAccountDeleted={() => {
+          logout()
+          sessionStorage.setItem('accountDeleted', 'true')
+          window.location.replace('/login')
+        }} />
       </main>
 
       {/* Mobile Bottom Navigation (< 768px) */}

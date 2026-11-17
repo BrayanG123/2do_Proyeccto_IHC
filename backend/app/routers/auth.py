@@ -1,7 +1,9 @@
 import base64
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File, BackgroundTasks, Response
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.database import get_db
@@ -21,6 +23,8 @@ from app.schemas import (
 from app.security import hash_password, verify_password, create_access_token, decode_token
 from app.utils.email_service import generate_reset_code, send_reset_code_email
 from app.analytics_tracking import TrackedRoute
+from app.account_data import delete_account, export_account
+from pydantic import BaseModel, Field
 
 router = APIRouter(prefix="/auth", tags=["auth"], route_class=TrackedRoute)
 security = HTTPBearer(auto_error=False)
@@ -268,6 +272,38 @@ def reset_password_with_code(data: ResetPasswordWithCode, db: Session = Depends(
 def get_me(current_user: User = Depends(get_current_user)):
     """Devuelve el usuario autenticado a partir del token."""
     return current_user
+
+
+@router.get("/me/data")
+def get_my_data(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return JSONResponse(jsonable_encoder(export_account(db, current_user)), headers={"Cache-Control": "no-store"})
+
+
+@router.get("/me/data/download")
+def download_my_data(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return JSONResponse(jsonable_encoder(export_account(db, current_user)), headers={
+        "Cache-Control": "no-store",
+        "Content-Disposition": 'attachment; filename="mis-datos-studymatch.json"',
+    })
+
+
+class AccountDeletion(BaseModel):
+    model_config = {"extra": "forbid"}
+
+    password: str = Field(min_length=1)
+
+
+@router.delete("/me", status_code=204)
+def delete_my_account(data: AccountDeletion, current_user: User = Depends(get_current_user),
+                      db: Session = Depends(get_db)):
+    account = db.query(User).filter_by(id=current_user.id).populate_existing().with_for_update().first()
+    if account is None:
+        raise HTTPException(404, "La cuenta ya no está disponible.")
+    if not verify_password(data.password, account.hashed_password):
+        raise HTTPException(403, "La contraseña es incorrecta. Revisa lo que escribiste e inténtalo de nuevo.")
+    delete_account(db, account)
+    db.commit()
+    return Response(status_code=204)
 
 
 @router.post("/change-password")
