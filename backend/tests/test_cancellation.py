@@ -26,7 +26,7 @@ def test_cancel_transitions_active_requests_and_limits_reason_to_affected_people
     assert cancelled['status'] == 'cancelada'
     assert cancelled['cancelled_at'] is not None
     assert cancelled['participants_count'] == 0
-    assert cancelled['participant_emails'] == []
+    assert api.db.get(Session, api.sid).get_participant_emails_list() == []
     assert 'cancellation_reason' not in cancelled
 
     requests = api.call('GET', f'/{api.sid}/requests').json()

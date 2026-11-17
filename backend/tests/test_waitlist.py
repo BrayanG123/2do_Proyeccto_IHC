@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from app.database import Base, get_db
-from app.models import User, SessionHistory
+from app.models import Session, User, SessionHistory
 from app.routers.auth import get_current_user
 from app.routers.sessions import router
 
@@ -59,7 +59,8 @@ def test_fifo_segun_entrada_a_espera_y_sin_sobrepasar_cupo(api):
     assert api.call('GET', '/requests/me', 4).json()[0]['queue_position'] == 1
     sessions = api.call('GET', '/').json()
     assert sessions[0]['participants_count'] == 1
-    assert sessions[0]['participant_emails'] == ['u3@example.com']
+    assert 'participant_emails' not in sessions[0]
+    assert api.db.get(Session, api.sid).get_participant_emails_list() == ['u3@example.com']
     assert api.db.query(SessionHistory).filter_by(user_id=3, event_type='unido').count() == 1
     assert api.call('POST', f'/{api.sid}/leave', 2).status_code == 409
 

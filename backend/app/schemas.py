@@ -1,5 +1,4 @@
-import json
-from typing import Any, Literal
+from typing import Literal
 from datetime import datetime
 import re
 from pydantic import BaseModel, EmailStr, field_validator, Field
@@ -222,29 +221,18 @@ class SessionResponse(BaseModel):
     modality: str
     spots: int
     participants_count: int = 0
-    participant_emails: list[str] = []
     status: str = "abierta"
     creator_id: int | None = None
     creator_name: str | None = None
-    creator_email: str | None = None
     created_at: datetime | None = None
-
-    @field_validator("participant_emails", mode="before")
-    @classmethod
-    def parse_participant_emails(cls, v: Any) -> list[str]:
-        if isinstance(v, list):
-            return [str(item).strip().lower() for item in v if str(item).strip()]
-        if isinstance(v, str):
-            try:
-                data = json.loads(v)
-                if isinstance(data, list):
-                    return [str(item).strip().lower() for item in data if str(item).strip()]
-            except Exception:
-                return [item.strip().lower() for item in v.split(",") if item.strip()]
-        return []
 
     class Config:
         from_attributes = True
+
+
+class SessionListing(SessionResponse):
+    is_creator: bool = False
+    is_enrolled: bool = False
 
 
 # ── HISTORIAL (Issue #14) ─────────────────────────────────

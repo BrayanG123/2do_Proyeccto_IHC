@@ -2,13 +2,14 @@ from datetime import date as dt_date, timedelta, datetime, timezone
 import json
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session as DBSession
 from sqlalchemy.exc import IntegrityError
 from app.database import get_db
 from app.models import Session, User, Subject, filter_sessions_query, record_session_event, SessionJoinRequest
-from app.schemas import SessionCreate, SessionResponse, SessionStatusUpdate, SessionUpdate, SessionJoinRequestResponse, RequestDecision
-from app.routers.auth import get_current_user
+from app.schemas import SessionCreate, SessionListing, SessionResponse, SessionStatusUpdate, SessionUpdate, SessionJoinRequestResponse, RequestDecision
+from app.routers.auth import get_current_user, security
 from app.waitlist import promote_waiting, request_view
 from app.session_cancellation import BOLIVIA_TIME, apply_cancellation
 from app.models import SessionReschedule, SessionReconfirmation
@@ -40,7 +41,7 @@ def create_session(
     creator_display = (
         current_user.full_name
         or f"{current_user.first_name or ''} {current_user.last_name or ''}".strip()
-        or current_user.email
+        or "Organizador"
     )
     subject_val = data.subject.strip() if data.subject and data.subject.strip() else None
 
@@ -70,7 +71,14 @@ def create_session(
     return new_session
 
 
-@router.get("/", response_model=List[SessionResponse])
+def optional_session_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+    db: DBSession = Depends(get_db),
+):
+    return get_current_user(credentials=credentials, token=None, db=db) if credentials else None
+
+
+@router.get("/", response_model=List[SessionListing])
 def get_sessions(
     search: Optional[str] = Query(None, description="Buscar por nombre de sesión"),
     subject: Optional[str] = Query(None, description="Filtrar por materia"),
@@ -79,12 +87,13 @@ def get_sessions(
     date_from: Optional[dt_date] = Query(None, description="Fecha inicio para rango"),
     date_to: Optional[dt_date] = Query(None, description="Fecha fin para rango"),
     only_available: bool = Query(False, description="Solo sesiones abiertas, con cupos y fecha futura"),
-    db: DBSession = Depends(get_db)
+    db: DBSession = Depends(get_db),
+    viewer: User | None = Depends(optional_session_user),
 ):
     """
     Devuelve las sesiones guardadas en la BD aplicando los filtros combinables por base de datos.
     """
-    return filter_sessions_query(
+    sessions = filter_sessions_query(
         db=db,
         search=search,
         subject=subject,
@@ -94,6 +103,15 @@ def get_sessions(
         date_to=date_to,
         only_available=only_available
     )
+    listings = [SessionListing.model_validate(session) for session in sessions]
+    if viewer:
+        email = viewer.email.strip().lower()
+        for session, listing in zip(sessions, listings):
+            listing.is_creator = session.creator_id == viewer.id or (
+                session.creator_id is None and (session.creator_email or '').strip().lower() == email
+            )
+            listing.is_enrolled = session.is_user_registered(email)
+    return listings
 
 
 @router.patch("/{session_id}/close", response_model=SessionResponse)

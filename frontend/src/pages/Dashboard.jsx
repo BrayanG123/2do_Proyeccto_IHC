@@ -340,7 +340,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
         spots: parseInt(editForm.spots),
         status: editForm.status,
       }, attemptConfig(attempts.current.edit))
-      setSessions((prev) => prev.map((s) => (s.id === editingSession.id ? res.data : s)))
+      setSessions((prev) => prev.map((s) => (s.id === editingSession.id ? { ...s, ...res.data } : s)))
       setEditingSession(null)
       setToastMessage({
         type: 'success',
@@ -469,7 +469,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
       const res = await api.patch(`/sessions/${sessionId}/close`, undefined, attemptConfig(attempt))
       // Actualización reactiva del estado local
       setSessions((prev) =>
-        prev.map((s) => (s.id === sessionId ? res.data : s))
+        prev.map((s) => (s.id === sessionId ? { ...s, ...res.data } : s))
       )
       setToastMessage({
         type: 'success',
@@ -1084,19 +1084,8 @@ export default function Dashboard({ onlyMyRequests = false }) {
               {sessions.map((session) => {
                 const isClosed = session.status === 'cerrada'
                 const isCancelled = session.status === 'cancelada'
-                // Validación por correo electrónico: solo quien creó la sesión puede cerrarla
-                const isCreator = Boolean(
-                  user && user.email && (
-                    (session.creator_email && session.creator_email.trim().toLowerCase() === user.email.trim().toLowerCase()) ||
-                    (session.creator_id && Number(session.creator_id) === Number(user.id))
-                  )
-                )
-
-                // Verifica si el usuario actual ya se encuentra inscrito
-                const isEnrolled = Boolean(
-                  user && user.email && Array.isArray(session.participant_emails) &&
-                  session.participant_emails.map((e) => String(e).toLowerCase().trim()).includes(user.email.trim().toLowerCase())
-                )
+                const isCreator = session.is_creator || session.creator_id === user.id
+                const isEnrolled = session.is_enrolled
 
                 // Verifica si la fecha de la sesión ya pasó (comparación local)
                 const today = new Date()

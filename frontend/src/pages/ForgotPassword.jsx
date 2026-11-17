@@ -409,7 +409,7 @@ export default function ForgotPassword() {
                 onClick={handleSkip}
                 style={{ marginTop: '10px' }}
               >
-                Omitir y volver al login
+                Iniciar sesión con el código
               </button>
             </form>
           )}

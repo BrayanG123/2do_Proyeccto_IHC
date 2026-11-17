@@ -32,7 +32,8 @@ def test_two_responses_reserved_seats_and_exactly_one_promotion(api):
     left = api.call('POST', f'/{api.sid}/leave', 3)
     assert left.status_code == 200
     assert left.json()['participants_count'] == 2
-    assert set(left.json()['participant_emails']) == {'u2@example.com', 'u4@example.com'}
+    assert 'participant_emails' not in left.json()
+    assert set(api.db.get(Session, api.sid).get_participant_emails_list()) == {'u2@example.com', 'u4@example.com'}
     assert api.call('POST', f'/{api.sid}/leave', 3).status_code == 409
     assert api.call('POST', f'/{api.sid}/reschedules/{rid}/confirm', 3).status_code == 409
     assert api.call('POST', f'/{api.sid}/reschedules/{rid}/confirm', 2).status_code == 409
