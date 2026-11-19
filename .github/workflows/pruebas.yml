@@ -84,6 +84,7 @@ jobs:
           git merge-base --is-ancestor "$FORK_BASE" HEAD
           diff-cover test-results/cobertura/backend.xml test-results/cobertura/frontend/cobertura-coverage.xml \
             --compare-branch="$FORK_BASE" \
+            --ignore-staged --ignore-unstaged \
             --format=html:test-results/cobertura/diff.html,markdown:test-results/cobertura/diff.md,json:test-results/cobertura/diff.json
           cat test-results/cobertura/diff.md >> "$GITHUB_STEP_SUMMARY"
           python - <<'PY'
@@ -91,9 +92,11 @@ jobs:
           from pathlib import Path
 
           report = json.loads(Path("test-results/cobertura/diff.json").read_text(encoding="utf-8"))
+          if not report["total_num_lines"]:
+              raise SystemExit("El reporte no midió líneas ejecutables del fork.")
           missing = report["total_num_violations"]
           if missing:
-              print(f"::warning::Meta de cobertura del 100 % pendiente. Líneas sin cobertura: {missing}.")
+              raise SystemExit(f"El fork debe alcanzar el 100 % de cobertura. Líneas sin cobertura: {missing}.")
           PY
 
       - name: Publicar reportes de pruebas y cobertura

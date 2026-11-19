@@ -407,16 +407,6 @@ export default function Dashboard({ onlyMyRequests = false }) {
   }
 
   const solicitarUnirse = async (session) => {
-    if (session.status === 'cerrada') {
-      recordInvalid(attempts.current.join)
-      setToastMessage({
-        type: 'error',
-        text: 'Esta sesion esta cerrada y no acepta solicitudes'
-      })
-      setTimeout(() => setToastMessage(null), 4500)
-      return false
-    }
-
     setJoiningSessionId(session.id)
 
     try {

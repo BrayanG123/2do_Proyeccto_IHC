@@ -1,8 +1,32 @@
 # StudyMatch 📚🤝
 
+[![Pruebas y cobertura](https://github.com/BrayanG123/2do_Proyeccto_IHC/actions/workflows/pruebas.yml/badge.svg?branch=main&event=push)](https://github.com/BrayanG123/2do_Proyeccto_IHC/actions/workflows/pruebas.yml?query=branch%3Amain)
+
 **Compañeros | Sesiones de Estudio**
 
 Plataforma para conectar estudiantes, organizar sesiones de estudio y encontrar compañeros por materia.
+
+## Pruebas automáticas y cobertura
+
+Cada `push` y pull request ejecuta las pruebas unitarias del backend y del frontend, y las pruebas E2E en Chromium. GitHub Actions levanta PostgreSQL 17 con una comprobación de salud. FastAPI carga el catálogo de materias al iniciar y las pruebas crean sus propias cuentas y sesiones.
+
+El [registro de cobertura](evidencias/cobertura.md) documenta el **100 % de las líneas ejecutables añadidas o modificadas en el fork** (1376 de 1376). GitHub Actions comprueba ese mínimo en cada ejecución. Abre la ejecución más reciente de [Actions para `main`](https://github.com/BrayanG123/2do_Proyeccto_IHC/actions/workflows/pruebas.yml?query=branch%3Amain) y descarga **reportes-pruebas-y-cobertura** para consultar `diff.html`, los reportes por aplicación y el informe de Playwright.
+
+Para repetir la cobertura desde la raíz con Python 3.12 y Node.js 24, ejecuta en Bash con el entorno virtual activo:
+
+```bash
+python -m pip install -r backend/requirements-ci.txt
+npm ci --prefix frontend
+mkdir -p test-results/cobertura
+export COVERAGE_FILE=test-results/cobertura/.coverage
+PYTHONPATH=backend python -m coverage run --source=backend/app,seed -m pytest backend/tests
+python -m coverage xml -o test-results/cobertura/backend.xml
+npm --prefix frontend run test:coverage
+diff-cover test-results/cobertura/backend.xml test-results/cobertura/frontend/cobertura-coverage.xml \
+  --compare-branch=ff495ba6fc9214b2376aba0429fe4c8a3b52c136 \
+  --ignore-staged --ignore-unstaged --fail-under=100 \
+  --format=html:test-results/cobertura/diff.html,markdown:test-results/cobertura/diff.md
+```
 
 ---
 
