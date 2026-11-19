@@ -11,7 +11,7 @@
   margin-bottom: 6px;
 }
 .history-breadcrumb a {
-  color: var(--secondary);
+  color: var(--accent-text);
   text-decoration: none;
   font-weight: 600;
 }
@@ -48,7 +48,7 @@
   border: none;
   border-radius: 10px;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-on-tinted-surface);
   font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
@@ -74,9 +74,9 @@
 }
 .history-filter-btn.active .history-filter-count {
   background: var(--primary);
-  color: #ffffff;
+  color: var(--palette-white);
 }
-[data-theme="dark"] .history-filter-btn.active .history-filter-count { color: #091124; }
+[data-theme="dark"] .history-filter-btn.active .history-filter-count { color: var(--palette-night-base); }
 
 /* Lista de eventos */
 .history-list {
@@ -162,13 +162,13 @@
   white-space: nowrap;
   border: 1px solid transparent;
 }
-.status-open { background: rgba(16, 185, 129, 0.12); color: #047857; border-color: rgba(16, 185, 129, 0.35); }
-.status-closed { background: rgba(239, 68, 68, 0.1); color: #b91c1c; border-color: rgba(239, 68, 68, 0.3); }
-.status-finished { background: var(--surface2); color: var(--text-muted); border-color: var(--border); }
+.status-open { background: var(--palette-positive-500-alpha-12); color: var(--palette-positive-700); border-color: var(--palette-positive-500-alpha-35); }
+.status-closed { background: var(--palette-negative-500-alpha-10); color: var(--palette-negative-700); border-color: var(--palette-negative-500-alpha-30); }
+.status-finished { background: var(--surface2); color: var(--text-on-tinted-surface); border-color: var(--border); }
 .status-deleted { background: transparent; color: var(--text-muted); border-color: var(--border); border-style: dashed; }
 
-[data-theme="dark"] .status-open { color: #34d399; }
-[data-theme="dark"] .status-closed { color: #f87171; }
+[data-theme="dark"] .status-open { color: var(--palette-positive-400); }
+[data-theme="dark"] .status-closed { color: var(--palette-negative-400); }
 
 .history-chevron {
   color: var(--text-muted);
@@ -234,13 +234,13 @@
   padding: 14px 28px;
   border: none;
   border-radius: var(--radius);
-  background: linear-gradient(135deg, #1e4b87, #00b4d8);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--palette-brand-navy), var(--palette-brand-cyan));
+  color: var(--palette-white);
   font-family: 'Inter', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(30, 75, 135, 0.25);
+  box-shadow: 0 6px 18px var(--palette-brand-navy-alpha-25);
   transition: transform 0.15s ease, filter 0.2s ease;
 }
 .history-cta:hover { filter: brightness(1.08); transform: translateY(-1px); }

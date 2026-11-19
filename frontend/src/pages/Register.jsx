@@ -74,7 +74,7 @@ export default function Register() {
   }
 
   return (
-    <div className="auth-page">
+    <main className="auth-page">
       <div className="auth-left">
         <Link to="/" className="auth-logo-badge">
           <img src="/logo.png" alt="StudyMatch" className="auth-logo" />
@@ -212,6 +212,6 @@ export default function Register() {
           </form>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

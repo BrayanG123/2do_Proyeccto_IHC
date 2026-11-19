@@ -8,6 +8,7 @@ import { getStudentInitials } from '../utils/avatar'
 import LogoutIcon from '../components/LogoutIcon'
 import RescheduleDialog from '../components/RescheduleDialog'
 import CancelSessionDialog from '../components/CancelSessionDialog'
+import SessionDialog from '../components/SessionDialog'
 import { formatSchedule, todayInBolivia } from '../utils/schedule'
 import '../styles/Dashboard.css'
 
@@ -776,6 +777,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
                 <select
                   id="select-filter-subject"
                   className="filter-select"
+                  aria-label="Filtrar por materia"
                   value={filterSubject}
                   onChange={(e) => setFilterSubject(e.target.value)}
                 >
@@ -810,7 +812,7 @@ export default function Dashboard({ onlyMyRequests = false }) {
 
               {/* Filtro por Fecha */}
               <div className="filter-group">
-                <label className="filter-label">Fecha:</label>
+                <label className="filter-label" htmlFor="select-filter-date">Fecha:</label>
                 <select
                   id="select-filter-date"
                   className="filter-select date-select"
@@ -928,135 +930,133 @@ export default function Dashboard({ onlyMyRequests = false }) {
 
           {/* Formulario modal de nueva sesión */}
           {showSessionForm && (
-            <div className="session-modal-overlay" onClick={() => setShowSessionForm(false)}>
-              <div className="session-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="session-modal-header">
-                  <h3>📅 Nueva Sesión de Estudio</h3>
-                  <button
-                    className="session-modal-close"
-                    onClick={() => setShowSessionForm(false)}
-                    aria-label="Cerrar"
-                  >✕</button>
+            <SessionDialog className="session-modal" labelledBy="create-session-title" onClose={() => setShowSessionForm(false)}>
+              <div className="session-modal-header">
+                <h3 id="create-session-title">📅 Nueva Sesión de Estudio</h3>
+                <button
+                  className="session-modal-close"
+                  onClick={() => setShowSessionForm(false)}
+                  aria-label="Cerrar"
+                >✕</button>
+              </div>
+
+              <form className="session-form" onSubmit={handleSaveSession} onInvalid={() => recordInvalid(attempts.current.create)}>
+                <div className="session-form-group">
+                  <label htmlFor="session-name">Nombre de la Sesión</label>
+                  <input
+                    id="session-name"
+                    type="text"
+                    placeholder="Ej: Repaso Vectores Capítulo 3"
+                    value={sessionForm.name}
+                    onChange={(e) => setSessionForm((p) => ({ ...p, name: e.target.value }))}
+                    maxLength={150}
+                    required
+                  />
                 </div>
 
-                <form className="session-form" onSubmit={handleSaveSession} onInvalid={() => recordInvalid(attempts.current.create)}>
-                  <div className="session-form-group">
-                    <label htmlFor="session-name">Nombre de la Sesión</label>
+                <div className="session-form-group">
+                  <label htmlFor="session-subject-select">Materia asociada</label>
+                  <select
+                    id="session-subject-select"
+                    value={sessionForm.subject}
+                    onChange={(e) => setSessionForm((p) => ({ ...p, subject: e.target.value }))}
+                    required
+                  >
+                    <option value="">-- Selecciona una materia --</option>
+                    {subjects.map((sub) => (
+                      <option key={sub.id || sub.code} value={sub.name}>
+                        {sub.emoji ? `${sub.emoji} ` : ''}{sub.name}
+                      </option>
+                    ))}
+                    <option value="__OTRO__">➕ Otra materia...</option>
+                  </select>
+                </div>
+
+                {sessionForm.subject === '__OTRO__' && (
+                  <div className="session-form-group custom-subject-group">
+                    <label htmlFor="custom-subject-input">Nombre de la nueva materia</label>
                     <input
-                      id="session-name"
+                      id="custom-subject-input"
                       type="text"
-                      placeholder="Ej: Repaso Vectores Capítulo 3"
-                      value={sessionForm.name}
-                      onChange={(e) => setSessionForm((p) => ({ ...p, name: e.target.value }))}
-                      maxLength={150}
+                      placeholder="Ej: Robótica Móvil, Cálculo III..."
+                      value={customSubjectName}
+                      onChange={(e) => setCustomSubjectName(e.target.value)}
+                      required
+                      minLength={3}
+                    />
+                    <small className="form-help-text">
+                      💡 Se registrará automáticamente en la base de datos para futuras sesiones y filtros.
+                    </small>
+                  </div>
+                )}
+
+                <div className="session-form-row">
+                  <div className="session-form-group">
+                    <label htmlFor="session-date">Fecha</label>
+                    <input
+                      id="session-date"
+                      type="date"
+                      value={sessionForm.date}
+                      onChange={(e) => setSessionForm((p) => ({ ...p, date: e.target.value }))}
                       required
                     />
                   </div>
 
                   <div className="session-form-group">
-                    <label htmlFor="session-subject-select">Materia asociada</label>
+                    <label htmlFor="session-time">Hora opcional</label>
+                    <input id="session-time" type="time" step="1" value={sessionForm.time} onChange={e => setSessionForm(p => ({ ...p, time: e.target.value }))} />
+                  </div>
+
+                  <div className="session-form-group">
+                    <label htmlFor="session-modality">Modalidad</label>
                     <select
-                      id="session-subject-select"
-                      value={sessionForm.subject}
-                      onChange={(e) => setSessionForm((p) => ({ ...p, subject: e.target.value }))}
-                      required
+                      id="session-modality"
+                      value={sessionForm.modality}
+                      onChange={(e) => setSessionForm((p) => ({ ...p, modality: e.target.value }))}
                     >
-                      <option value="">-- Selecciona una materia --</option>
-                      {subjects.map((sub) => (
-                        <option key={sub.id || sub.code} value={sub.name}>
-                          {sub.emoji ? `${sub.emoji} ` : ''}{sub.name}
-                        </option>
-                      ))}
-                      <option value="__OTRO__">➕ Otra materia...</option>
+                      <option value="Presencial">Presencial</option>
+                      <option value="Virtual">Virtual</option>
+                      <option value="Híbrida">Híbrida</option>
                     </select>
                   </div>
+                </div>
 
-                  {sessionForm.subject === '__OTRO__' && (
-                    <div className="session-form-group custom-subject-group">
-                      <label htmlFor="custom-subject-input">Nombre de la nueva materia</label>
-                      <input
-                        id="custom-subject-input"
-                        type="text"
-                        placeholder="Ej: Robótica Móvil, Cálculo III..."
-                        value={customSubjectName}
-                        onChange={(e) => setCustomSubjectName(e.target.value)}
-                        required
-                        minLength={3}
-                      />
-                      <small className="form-help-text">
-                        💡 Se registrará automáticamente en la base de datos para futuras sesiones y filtros.
-                      </small>
-                    </div>
-                  )}
+                <div className="session-form-group">
+                  <label htmlFor="session-spots">Cupos disponibles</label>
+                  <input
+                    id="session-spots"
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="Ej: 10"
+                    value={sessionForm.spots}
+                    onChange={(e) => setSessionForm((p) => ({ ...p, spots: e.target.value }))}
+                    required
+                  />
+                </div>
 
-                  <div className="session-form-row">
-                    <div className="session-form-group">
-                      <label htmlFor="session-date">Fecha</label>
-                      <input
-                        id="session-date"
-                        type="date"
-                        value={sessionForm.date}
-                        onChange={(e) => setSessionForm((p) => ({ ...p, date: e.target.value }))}
-                        required
-                      />
-                    </div>
+                {sessionError && (
+                  <p className="session-form-error">⚠️ {sessionError}</p>
+                )}
 
-                    <div className="session-form-group">
-                      <label htmlFor="session-time">Hora opcional</label>
-                      <input id="session-time" type="time" step="1" value={sessionForm.time} onChange={e => setSessionForm(p => ({ ...p, time: e.target.value }))} />
-                    </div>
-
-                    <div className="session-form-group">
-                      <label htmlFor="session-modality">Modalidad</label>
-                      <select
-                        id="session-modality"
-                        value={sessionForm.modality}
-                        onChange={(e) => setSessionForm((p) => ({ ...p, modality: e.target.value }))}
-                      >
-                        <option value="Presencial">Presencial</option>
-                        <option value="Virtual">Virtual</option>
-                        <option value="Híbrida">Híbrida</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="session-form-group">
-                    <label htmlFor="session-spots">Cupos disponibles</label>
-                    <input
-                      id="session-spots"
-                      type="number"
-                      min="1"
-                      max="100"
-                      placeholder="Ej: 10"
-                      value={sessionForm.spots}
-                      onChange={(e) => setSessionForm((p) => ({ ...p, spots: e.target.value }))}
-                      required
-                    />
-                  </div>
-
-                  {sessionError && (
-                    <p className="session-form-error">⚠️ {sessionError}</p>
-                  )}
-
-                  <div className="session-form-actions">
-                    <button
-                      type="button"
-                      className="btn-cancel"
-                      onClick={() => setShowSessionForm(false)}
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn-save-session"
-                      disabled={sessionSaving}
-                    >
-                      {sessionSaving ? 'Guardando...' : '💾 Guardar'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
+                <div className="session-form-actions">
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={() => setShowSessionForm(false)}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-save-session"
+                    disabled={sessionSaving}
+                  >
+                    {sessionSaving ? 'Guardando...' : '💾 Guardar'}
+                  </button>
+                </div>
+              </form>
+            </SessionDialog>
           )}
 
           {sessionsLoadError ? (
@@ -1395,145 +1395,151 @@ export default function Dashboard({ onlyMyRequests = false }) {
 
       {/* Modal para Editar Sesión */}
       {editingSession && (
-        <div className="modal-overlay" onClick={() => setEditingSession(null)}>
-          <div className="modal edit-session-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header-row">
-              <h3>✏️ Editar Sesión de Estudio</h3>
-              <button
-                type="button"
-                className="btn-modal-close-icon"
-                onClick={() => setEditingSession(null)}
-              >
-                ✕
-              </button>
+        <SessionDialog className="modal edit-session-modal" labelledBy="edit-session-title" onClose={() => setEditingSession(null)}>
+          <div className="modal-header-row">
+            <h3 id="edit-session-title">✏️ Editar Sesión de Estudio</h3>
+            <button
+              type="button"
+              className="btn-modal-close-icon"
+              aria-label="Cerrar edición"
+              onClick={() => setEditingSession(null)}
+            >
+              ✕
+            </button>
+          </div>
+          <form onSubmit={handleUpdateSession} onInvalid={() => recordInvalid(attempts.current.edit)} className="edit-session-form">
+            <div className="form-group">
+              <label htmlFor="edit-session-name">Nombre de la sesión</label>
+              <input
+                id="edit-session-name"
+                type="text"
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                placeholder="Ej: Repaso examen final..."
+                required
+                minLength={3}
+              />
             </div>
-            <form onSubmit={handleUpdateSession} onInvalid={() => recordInvalid(attempts.current.edit)} className="edit-session-form">
-              <div className="form-group">
-                <label>Nombre de la sesión</label>
+
+            <div className="form-group" style={{ marginTop: '10px' }}>
+              <label htmlFor="edit-session-subject">Materia asociada</label>
+              <select
+                id="edit-session-subject"
+                value={editForm.subject}
+                onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })}
+                required
+              >
+                <option value="">-- Selecciona una materia --</option>
+                {subjects.map((sub) => (
+                  <option key={sub.id || sub.code} value={sub.name}>
+                    {sub.emoji ? `${sub.emoji} ` : ''}{sub.name}
+                  </option>
+                ))}
+                <option value="__OTRO__">➕ Otra materia...</option>
+              </select>
+            </div>
+
+            {editForm.subject === '__OTRO__' && (
+              <div className="form-group custom-subject-group">
+                <label htmlFor="edit-custom-subject">Nombre de la nueva materia</label>
                 <input
+                  id="edit-custom-subject"
                   type="text"
-                  value={editForm.name}
-                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  placeholder="Ej: Repaso examen final..."
+                  placeholder="Ej: Robótica Móvil, Cálculo III..."
+                  value={editCustomSubjectName}
+                  onChange={(e) => setEditCustomSubjectName(e.target.value)}
                   required
                   minLength={3}
                 />
-              </div>
-
-              <div className="form-group" style={{ marginTop: '10px' }}>
-                <label>Materia asociada</label>
-                <select
-                  value={editForm.subject}
-                  onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })}
-                  required
-                >
-                  <option value="">-- Selecciona una materia --</option>
-                  {subjects.map((sub) => (
-                    <option key={sub.id || sub.code} value={sub.name}>
-                      {sub.emoji ? `${sub.emoji} ` : ''}{sub.name}
-                    </option>
-                  ))}
-                  <option value="__OTRO__">➕ Otra materia...</option>
-                </select>
-              </div>
-
-              {editForm.subject === '__OTRO__' && (
-                <div className="form-group custom-subject-group">
-                  <label>Nombre de la nueva materia</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Robótica Móvil, Cálculo III..."
-                    value={editCustomSubjectName}
-                    onChange={(e) => setEditCustomSubjectName(e.target.value)}
-                    required
-                    minLength={3}
-                  />
-                  <small className="form-help-text">
-                    💡 Se registrará automáticamente en la base de datos para futuras sesiones y filtros.
-                  </small>
-                </div>
-              )}
-
-              <div className="form-row-edit">
-                <div className="form-group">
-                  <label htmlFor="edit-session-date">Fecha</label>
-                  <input
-                    id="edit-session-date"
-                    type="date"
-                    disabled={editingSession.participants_count > 0}
-                    value={editForm.date}
-                    onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                    required
-                  />
-                  {editingSession.participants_count > 0 && <small>Para cambiar el encuentro, usa Reprogramar sesión.</small>}
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="edit-session-time">Hora opcional</label>
-                  <input id="edit-session-time" type="time" step="1" disabled={editingSession.participants_count > 0} value={editForm.time} onChange={e => setEditForm({ ...editForm, time: e.target.value })} />
-                </div>
-
-                <div className="form-group">
-                  <label>Modalidad</label>
-                  <select
-                    value={editForm.modality}
-                    onChange={(e) => setEditForm({ ...editForm, modality: e.target.value })}
-                  >
-                    <option value="Presencial">Presencial</option>
-                    <option value="Virtual">Virtual</option>
-                    <option value="Híbrida">Híbrida</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Cupos totales</label>
-                  <input
-                    type="number"
-                    min={editingSession.participants_count || 1}
-                    value={editForm.spots}
-                    onChange={(e) => setEditForm({ ...editForm, spots: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group edit-status-group" style={{ marginTop: '14px' }}>
-                <label>Estado de inscripción</label>
-                <select
-                  value={editForm.status}
-                  onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                  className="edit-status-select"
-                >
-                  <option value="abierta">🟢 Inscripción abierta (Acepta nuevos participantes)</option>
-                  <option value="cerrada">🔒 Inscripción cerrada (No acepta nuevos participantes)</option>
-                </select>
-                <small style={{ display: 'block', marginTop: '4px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  {editForm.status === 'abierta'
-                    ? '✔️ La sesión volverá a aceptar nuevos inscritos.'
-                    : '⛔ La sesión quedará bloqueada para nuevos inscritos.'}
+                <small className="form-help-text">
+                  💡 Se registrará automáticamente en la base de datos para futuras sesiones y filtros.
                 </small>
               </div>
+            )}
 
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  className="btn-cancel"
-                  onClick={() => setEditingSession(null)}
-                  disabled={editSaving}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="btn-confirm-edit"
-                  disabled={editSaving}
-                >
-                  {editSaving ? 'Guardando...' : '💾 Guardar Cambios'}
-                </button>
+            <div className="form-row-edit">
+              <div className="form-group">
+                <label htmlFor="edit-session-date">Fecha</label>
+                <input
+                  id="edit-session-date"
+                  type="date"
+                  disabled={editingSession.participants_count > 0}
+                  value={editForm.date}
+                  onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
+                  required
+                />
+                {editingSession.participants_count > 0 && <small>Para cambiar el encuentro, usa Reprogramar sesión.</small>}
               </div>
-            </form>
-          </div>
-        </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-session-time">Hora opcional</label>
+                <input id="edit-session-time" type="time" step="1" disabled={editingSession.participants_count > 0} value={editForm.time} onChange={e => setEditForm({ ...editForm, time: e.target.value })} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-session-modality">Modalidad</label>
+                <select
+                  id="edit-session-modality"
+                  value={editForm.modality}
+                  onChange={(e) => setEditForm({ ...editForm, modality: e.target.value })}
+                >
+                  <option value="Presencial">Presencial</option>
+                  <option value="Virtual">Virtual</option>
+                  <option value="Híbrida">Híbrida</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-session-spots">Cupos totales</label>
+                <input
+                  id="edit-session-spots"
+                  type="number"
+                  min={editingSession.participants_count || 1}
+                  value={editForm.spots}
+                  onChange={(e) => setEditForm({ ...editForm, spots: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group edit-status-group" style={{ marginTop: '14px' }}>
+              <label htmlFor="edit-session-status">Estado de inscripción</label>
+              <select
+                id="edit-session-status"
+                aria-describedby="edit-session-status-help"
+                value={editForm.status}
+                onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                className="edit-status-select"
+              >
+                <option value="abierta">🟢 Inscripción abierta (Acepta nuevos participantes)</option>
+                <option value="cerrada">🔒 Inscripción cerrada (No acepta nuevos participantes)</option>
+              </select>
+              <small id="edit-session-status-help" style={{ display: 'block', marginTop: '4px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                {editForm.status === 'abierta'
+                  ? '✔️ La sesión volverá a aceptar nuevos inscritos.'
+                  : '⛔ La sesión quedará bloqueada para nuevos inscritos.'}
+              </small>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={() => setEditingSession(null)}
+                disabled={editSaving}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="btn-confirm-edit"
+                disabled={editSaving}
+              >
+                {editSaving ? 'Guardando...' : '💾 Guardar Cambios'}
+              </button>
+            </div>
+          </form>
+        </SessionDialog>
       )}
 
       {/* Modal de Confirmación para Eliminar Sesión */}
@@ -1582,84 +1588,76 @@ export default function Dashboard({ onlyMyRequests = false }) {
       )}
 
       {sessionToJoin && (
-        <div className="modal-overlay" onClick={() => setSessionToJoin(null)}>
-          <div
-            className="modal modal-join-confirm"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="join-title"
-            aria-describedby="join-request-explanation"
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(event) => {
-              if (event.key === 'Escape') setSessionToJoin(null)
-            }}
-          >
-            <div className="modal-header-row">
-              <h3 id="join-title">Solicitar participar</h3>
-              <button
-                type="button"
-                className="btn-modal-close-icon"
-                onClick={() => setSessionToJoin(null)}
-                aria-label="Cerrar ventana"
-                autoFocus
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="join-session-summary-card">
-              <h4 className="join-session-name">{joinSessionName(sessionToJoin)}</h4>
-              <p className="join-subject">{sessionToJoin.subject || 'General'}</p>
-              <dl className="join-session-details-grid">
-                <div>
-                  <dt>Fecha</dt>
-                  <dd>
-                    {new Date(sessionToJoin.date + 'T00:00:00').toLocaleDateString('es-BO', {
-                      day: 'numeric', month: 'long', year: 'numeric',
-                    })}
-                    {sessionToJoin.time ? ` · ${sessionToJoin.time.slice(0, 5)}` : ''}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Modalidad</dt>
-                  <dd>{sessionToJoin.modality}</dd>
-                </div>
-              </dl>
-              <p className="join-availability">
-                {Math.max(0, sessionToJoin.spots - (sessionToJoin.participants_count || 0))} de {sessionToJoin.spots} cupos disponibles
-              </p>
-            </div>
-
-            <p className="join-request-explanation" id="join-request-explanation">
-              {(sessionToJoin.participants_count || 0) >= sessionToJoin.spots
-                ? 'La sesión está llena. Si el organizador te acepta, entrarás en la lista de espera.'
-                : 'Tu solicitud quedará pendiente hasta que el organizador la acepte.'}
-            </p>
-
-            {(sessionToJoin.creator_name || sessionToJoin.location) && (
-              <details className="join-extra-details">
-                <summary>Ver más detalles</summary>
-                {sessionToJoin.creator_name && <p>Organiza {sessionToJoin.creator_name}</p>}
-                {sessionToJoin.location && <p>Ubicación o enlace · {sessionToJoin.location}</p>}
-              </details>
-            )}
-
-            <div className="modal-actions">
-              <button type="button" className="btn-cancel" onClick={() => setSessionToJoin(null)}>
-                Cancelar
-              </button>
-              <button
-                type="button"
-                id="btn-confirm-join-submit"
-                className="btn-confirm-join"
-                onClick={handleConfirmJoin}
-                disabled={joiningSessionId === sessionToJoin.id}
-              >
-                {joiningSessionId === sessionToJoin.id ? 'Enviando solicitud…' : 'Enviar solicitud'}
-              </button>
-            </div>
+        <SessionDialog
+          className="modal modal-join-confirm"
+          labelledBy="join-title"
+          describedBy="join-request-explanation"
+          onClose={() => setSessionToJoin(null)}
+        >
+          <div className="modal-header-row">
+            <h3 id="join-title">Solicitar participar</h3>
+            <button
+              type="button"
+              className="btn-modal-close-icon"
+              onClick={() => setSessionToJoin(null)}
+              aria-label="Cerrar ventana"
+            >
+              ✕
+            </button>
           </div>
-        </div>
+
+          <div className="join-session-summary-card">
+            <h4 className="join-session-name">{joinSessionName(sessionToJoin)}</h4>
+            <p className="join-subject">{sessionToJoin.subject || 'General'}</p>
+            <dl className="join-session-details-grid">
+              <div>
+                <dt>Fecha</dt>
+                <dd>
+                  {new Date(sessionToJoin.date + 'T00:00:00').toLocaleDateString('es-BO', {
+                    day: 'numeric', month: 'long', year: 'numeric',
+                  })}
+                  {sessionToJoin.time ? ` · ${sessionToJoin.time.slice(0, 5)}` : ''}
+                </dd>
+              </div>
+              <div>
+                <dt>Modalidad</dt>
+                <dd>{sessionToJoin.modality}</dd>
+              </div>
+            </dl>
+            <p className="join-availability">
+              {Math.max(0, sessionToJoin.spots - (sessionToJoin.participants_count || 0))} de {sessionToJoin.spots} cupos disponibles
+            </p>
+          </div>
+
+          <p className="join-request-explanation" id="join-request-explanation">
+            {(sessionToJoin.participants_count || 0) >= sessionToJoin.spots
+              ? 'La sesión está llena. Si el organizador te acepta, entrarás en la lista de espera.'
+              : 'Tu solicitud quedará pendiente hasta que el organizador la acepte.'}
+          </p>
+
+          {(sessionToJoin.creator_name || sessionToJoin.location) && (
+            <details className="join-extra-details">
+              <summary>Ver más detalles</summary>
+              {sessionToJoin.creator_name && <p>Organiza {sessionToJoin.creator_name}</p>}
+              {sessionToJoin.location && <p>Ubicación o enlace · {sessionToJoin.location}</p>}
+            </details>
+          )}
+
+          <div className="modal-actions">
+            <button type="button" className="btn-cancel" onClick={() => setSessionToJoin(null)}>
+              Cancelar
+            </button>
+            <button
+              type="button"
+              id="btn-confirm-join-submit"
+              className="btn-confirm-join"
+              onClick={handleConfirmJoin}
+              disabled={joiningSessionId === sessionToJoin.id}
+            >
+              {joiningSessionId === sessionToJoin.id ? 'Enviando solicitud…' : 'Enviar solicitud'}
+            </button>
+          </div>
+        </SessionDialog>
       )}
 
       {/* Logout confirm modal */}

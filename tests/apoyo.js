@@ -74,11 +74,13 @@ export async function crearSesion(page, nombre = nombreUnico('Sesion'), cupos = 
   fecha.setDate(fecha.getDate() + diasDesdeHoy);
   const fechaISO = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`;
   await page.getByRole('button', { name: '+ Crear Sesión', exact: true }).click();
-  await page.getByLabel('Nombre de la Sesión', { exact: true }).fill(nombre);
-  await page.getByLabel('Materia asociada', { exact: true }).selectOption('Programación II');
-  await page.getByLabel('Fecha', { exact: true }).fill(fechaISO);
-  await page.getByLabel('Cupos disponibles', { exact: true }).fill(cupos);
-  await page.getByRole('button', { name: '💾 Guardar', exact: true }).click();
+  const dialogo = page.getByRole('dialog', { name: /Nueva Sesión de Estudio/ });
+  await dialogo.getByLabel('Nombre de la Sesión', { exact: true }).fill(nombre);
+  await dialogo.getByLabel('Materia asociada', { exact: true }).selectOption('Programación II');
+  await dialogo.getByLabel('Fecha', { exact: true }).fill(fechaISO);
+  await dialogo.getByLabel('Cupos disponibles', { exact: true }).fill(cupos);
+  await dialogo.getByRole('button', { name: '💾 Guardar', exact: true }).click();
+  await expect(dialogo).toBeHidden();
   await buscar(page, nombre);
   await expect(page.getByRole('button', { name: /Editar/, exact: false })).toHaveCount(1);
   return nombre;

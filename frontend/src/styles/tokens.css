@@ -1,0 +1,223 @@
+/* StudyMatch. Los nombres de color también existen en Variables de Figma. */
+/* La paleta fija conserva los colores originales de la interfaz.
+   Los roles que cambian con el tema se declaran debajo. */
+:root {
+  /* Identidad y acentos de la interfaz */
+  --palette-brand-navy: #1e4b87;
+  --palette-brand-navy-alpha-35: rgba(30, 75, 135, 0.35);
+  --palette-brand-navy-alpha-25: rgba(30, 75, 135, 0.25);
+  --palette-brand-navy-alpha-20: rgba(30, 75, 135, 0.2);
+  --palette-brand-navy-alpha-12: rgba(30, 75, 135, 0.12);
+  --palette-brand-navy-alpha-10: rgba(30, 75, 135, 0.1);
+  --palette-brand-navy-alpha-8: rgba(30, 75, 135, 0.08);
+  --palette-brand-navy-deep: #153763;
+  --palette-brand-cyan: #00b4d8;
+  --palette-brand-cyan-alpha-35: rgba(0, 180, 216, 0.35);
+  --palette-brand-cyan-alpha-30: rgba(0, 180, 216, 0.3);
+  --palette-brand-cyan-alpha-25: rgba(0, 180, 216, 0.25);
+  --palette-brand-cyan-alpha-20: rgba(0, 180, 216, 0.2);
+  --palette-brand-cyan-alpha-18: rgba(0, 180, 216, 0.18);
+  --palette-brand-cyan-alpha-12: rgba(0, 180, 216, 0.12);
+  --palette-brand-cyan-alpha-10: rgba(0, 180, 216, 0.1);
+  --palette-brand-cyan-alpha-7: rgba(0, 180, 216, 0.07);
+  --palette-brand-blue: #0284c7;
+  --palette-brand-blue-deep: #0369a1;
+  --palette-brand-sky: #38bdf8;
+  --palette-brand-sky-alpha-30: rgba(56, 189, 248, 0.3);
+  --palette-brand-sky-alpha-25: rgba(56, 189, 248, 0.25);
+  --palette-brand-sky-alpha-16: rgba(56, 189, 248, 0.16);
+  --palette-brand-sky-alpha-15: rgba(56, 189, 248, 0.15);
+  --palette-brand-sky-alpha-12: rgba(56, 189, 248, 0.12);
+  --palette-brand-sky-alpha-10: rgba(56, 189, 248, 0.1);
+  --palette-brand-sky-soft: #7dd3fc;
+  --palette-brand-night: #0d274c;
+  --palette-brand-night-alt: #0e2448;
+  --palette-indigo-700-alpha-25: rgba(79, 70, 229, 0.25);
+  --palette-indigo-700-alpha-15: rgba(79, 70, 229, 0.15);
+  --palette-indigo-700-alpha-10: rgba(79, 70, 229, 0.1);
+  --palette-indigo-500: #6366f1;
+  --palette-indigo-500-alpha-25: rgba(99, 102, 241, 0.25);
+  --palette-indigo-500-alpha-18: rgba(99, 102, 241, 0.18);
+  --palette-indigo-500-alpha-15: rgba(99, 102, 241, 0.15);
+  --palette-indigo-500-alpha-12: rgba(99, 102, 241, 0.12);
+  --palette-indigo-500-alpha-10: rgba(99, 102, 241, 0.1);
+  --palette-indigo-500-alpha-8: rgba(99, 102, 241, 0.08);
+  --palette-indigo-500-alpha-6: rgba(99, 102, 241, 0.06);
+  --palette-indigo-400: #818cf8;
+
+  /* Superficies, texto y sombras */
+  --palette-black-alpha-60: rgba(0, 0, 0, 0.6);
+  --palette-black-alpha-55: rgba(0, 0, 0, 0.55);
+  --palette-black-alpha-50: rgba(0, 0, 0, 0.5);
+  --palette-black-alpha-45: rgba(0, 0, 0, 0.45);
+  --palette-black-alpha-25: rgba(0, 0, 0, 0.25);
+  --palette-black-alpha-18: rgba(0, 0, 0, 0.18);
+  --palette-black-alpha-4: rgba(0, 0, 0, 0.04);
+  --palette-ink-deep: #04101e;
+  --palette-black-navy: #060d1a;
+  --palette-night-base: #091124;
+  --palette-night-base-alpha-88: rgba(9, 17, 36, 0.88);
+  --palette-ink: #0f172a;
+  --palette-night-surface: #0f1d38;
+  --palette-night-raised: #142446;
+  --palette-slate-600: #475569;
+  --palette-slate-500: #64748b;
+  --palette-slate-400: #94a3b8;
+  --palette-slate-400-alpha-35: rgba(148, 163, 184, 0.35);
+  --palette-slate-400-alpha-25: rgba(148, 163, 184, 0.25);
+  --palette-slate-400-alpha-18: rgba(148, 163, 184, 0.18);
+  --palette-slate-400-alpha-15: rgba(148, 163, 184, 0.15);
+  --palette-slate-400-alpha-12: rgba(148, 163, 184, 0.12);
+  --palette-slate-400-alpha-4: rgba(148, 163, 184, 0.04);
+  --palette-slate-300: #cbd5e1;
+  --palette-slate-200: #e2e8f0;
+  --palette-slate-100: #f1f5f9;
+  --palette-slate-50: #f8fafc;
+  --palette-white: #ffffff;
+  --palette-white-alpha-90: rgba(255, 255, 255, 0.9);
+  --palette-white-alpha-88: rgba(255, 255, 255, 0.88);
+  --palette-white-alpha-30: rgba(255, 255, 255, 0.3);
+  --palette-white-alpha-5: rgba(255, 255, 255, 0.05);
+
+  /* Estados, validación y acciones */
+  --palette-positive-900: #064e3b;
+  --palette-positive-800: #065f46;
+  --palette-positive-700: #047857;
+  --palette-positive-600: #059669;
+  --palette-positive-500: #10b981;
+  --palette-positive-500-alpha-40: rgba(16, 185, 129, 0.4);
+  --palette-positive-500-alpha-35: rgba(16, 185, 129, 0.35);
+  --palette-positive-500-alpha-30: rgba(16, 185, 129, 0.3);
+  --palette-positive-500-alpha-25: rgba(16, 185, 129, 0.25);
+  --palette-positive-500-alpha-20: rgba(16, 185, 129, 0.2);
+  --palette-positive-500-alpha-18: rgba(16, 185, 129, 0.18);
+  --palette-positive-500-alpha-16: rgba(16, 185, 129, 0.16);
+  --palette-positive-500-alpha-15: rgba(16, 185, 129, 0.15);
+  --palette-positive-500-alpha-12: rgba(16, 185, 129, 0.12);
+  --palette-positive-500-alpha-10: rgba(16, 185, 129, 0.1);
+  --palette-positive-500-alpha-8: rgba(16, 185, 129, 0.08);
+  --palette-positive-500-alpha-4: rgba(16, 185, 129, 0.04);
+  --palette-positive-400: #34d399;
+  --palette-positive-400-alpha-40: rgba(52, 211, 153, 0.4);
+  --palette-positive-400-alpha-35: rgba(52, 211, 153, 0.35);
+  --palette-positive-400-alpha-30: rgba(52, 211, 153, 0.3);
+  --palette-positive-400-alpha-15: rgba(52, 211, 153, 0.15);
+  --palette-positive-300: #6ee7b7;
+  --palette-positive-200: #a7f3d0;
+  --palette-positive-50: #ecfdf5;
+  --palette-verified-500: #22c55e;
+  --palette-verified-500-alpha-15: rgba(34, 197, 94, 0.15);
+  --palette-negative-900: #7f1d1d;
+  --palette-negative-800: #991b1b;
+  --palette-negative-700: #b91c1c;
+  --palette-negative-600: #dc2626;
+  --palette-negative-600-alpha-10: rgba(220, 38, 38, 0.1);
+  --palette-negative-500: #ef4444;
+  --palette-negative-500-alpha-60: rgba(239, 68, 68, 0.6);
+  --palette-negative-500-alpha-45: rgba(239, 68, 68, 0.45);
+  --palette-negative-500-alpha-35: rgba(239, 68, 68, 0.35);
+  --palette-negative-500-alpha-30: rgba(239, 68, 68, 0.3);
+  --palette-negative-500-alpha-25: rgba(239, 68, 68, 0.25);
+  --palette-negative-500-alpha-18: rgba(239, 68, 68, 0.18);
+  --palette-negative-500-alpha-12: rgba(239, 68, 68, 0.12);
+  --palette-negative-500-alpha-10: rgba(239, 68, 68, 0.1);
+  --palette-negative-500-alpha-8: rgba(239, 68, 68, 0.08);
+  --palette-negative-500-alpha-6: rgba(239, 68, 68, 0.06);
+  --palette-negative-500-alpha-3: rgba(239, 68, 68, 0.03);
+  --palette-negative-400: #f87171;
+  --palette-negative-400-alpha-40: rgba(248, 113, 113, 0.4);
+  --palette-negative-400-alpha-35: rgba(248, 113, 113, 0.35);
+  --palette-negative-300: #fca5a5;
+  --palette-negative-200: #fecaca;
+  --palette-negative-50: #fef2f2;
+  --palette-warning-800: #92400e;
+  --palette-warning-600: #d97706;
+  --palette-warning-500: #f59e0b;
+  --palette-warning-500-alpha-35: rgba(245, 158, 11, 0.35);
+  --palette-warning-500-alpha-30: rgba(245, 158, 11, 0.3);
+  --palette-warning-500-alpha-25: rgba(245, 158, 11, 0.25);
+  --palette-warning-500-alpha-18: rgba(245, 158, 11, 0.18);
+  --palette-warning-500-alpha-15: rgba(245, 158, 11, 0.15);
+  --palette-warning-500-alpha-12: rgba(245, 158, 11, 0.12);
+  --palette-warning-400: #fbbf24;
+  --palette-accent-600: #ea580c;
+  --palette-accent-500: #f97316;
+}
+
+/* ── MODO CLARO (Default - Identidad StudyMatch) ── */
+:root, [data-theme="light"] {
+  --primary: var(--palette-brand-navy);          /* Azul Marino de StudyMatch */
+  --primary-dark: var(--palette-brand-navy-deep);     /* Azul Marino profundo */
+  --primary-light: var(--palette-brand-cyan);    /* Turquesa / Cian vibrante del logo */
+  --secondary: var(--palette-brand-blue);        /* Azul cielo */
+  --accent-warm: var(--palette-warning-500);      /* Ámbar cálido del apretón de manos */
+  --accent-orange: var(--palette-accent-600);
+
+  --success: var(--palette-positive-500);
+  --danger: var(--palette-negative-500);
+  --warning: var(--palette-warning-500);
+
+  --bg: var(--palette-slate-50);               /* Fondo claro y limpio */
+  --surface: var(--palette-white);          /* Tarjetas blancas puras */
+  --surface2: var(--palette-slate-100);         /* Superficie secundaria */
+  --border: var(--palette-slate-200);           /* Bordes suaves */
+
+  --text: var(--palette-ink);             /* Texto oscuro de alto contraste */
+  --text-muted: var(--palette-slate-500);       /* Texto secundario gris pizarra */
+  --text-on-tinted-surface: var(--palette-slate-600);
+  --accent-text: var(--palette-brand-blue-deep);
+  --positive-text: var(--palette-positive-700);
+  --negative-text: var(--palette-negative-700);
+  --warning-text: var(--palette-warning-800);
+  --text-on-primary: var(--palette-white);
+
+  --radius: 12px;
+  --radius-lg: 20px;
+  --shadow: 0 4px 20px var(--palette-brand-navy-alpha-8);
+  --shadow-lg: 0 10px 30px var(--palette-brand-navy-alpha-12);
+  --shadow-glow: 0 0 30px var(--palette-brand-cyan-alpha-18);
+
+  --nav-bg: var(--palette-white-alpha-90);
+  --card-hero-bg: var(--palette-white);
+  --logo-pill-bg: transparent;
+  --logo-pill-border: transparent;
+  --input-bg: var(--palette-white);
+}
+
+/* ── MODO OSCURO (Deep Oceanic Navy) ── */
+[data-theme="dark"] {
+  --primary: var(--palette-brand-sky);          /* Cian / Sky contrastante */
+  --primary-dark: var(--palette-brand-blue);
+  --primary-light: var(--palette-brand-sky-soft);
+  --secondary: var(--palette-brand-cyan);
+  --accent-warm: var(--palette-warning-400);
+  --accent-orange: var(--palette-accent-500);
+
+  --success: var(--palette-positive-400);
+  --danger: var(--palette-negative-400);
+  --warning: var(--palette-warning-400);
+
+  --bg: var(--palette-night-base);               /* Azul marino noche profundo */
+  --surface: var(--palette-night-surface);          /* Superficie navy elegante */
+  --surface2: var(--palette-night-raised);
+  --border: var(--palette-brand-sky-alpha-16);
+
+  --text: var(--palette-slate-50);
+  --text-muted: var(--palette-slate-400);
+  --text-on-tinted-surface: var(--palette-slate-400);
+  --accent-text: var(--palette-brand-sky);
+  --positive-text: var(--palette-positive-400);
+  --negative-text: var(--palette-negative-400);
+  --warning-text: var(--palette-warning-400);
+  --text-on-primary: var(--palette-ink-deep);
+
+  --shadow: 0 4px 24px var(--palette-black-alpha-45);
+  --shadow-lg: 0 12px 36px var(--palette-black-alpha-55);
+  --shadow-glow: 0 0 35px var(--palette-brand-cyan-alpha-25);
+
+  --nav-bg: var(--palette-night-base-alpha-88);
+  --card-hero-bg: var(--palette-night-surface);
+  --logo-pill-bg: var(--palette-white);     /* Píldora blanca en dark mode para máxima nitidez */
+  --logo-pill-border: var(--palette-brand-sky-alpha-25);
+  --input-bg: var(--palette-night-raised);
+}

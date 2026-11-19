@@ -15,6 +15,16 @@ Plataforma para conectar estudiantes, organizar sesiones de estudio y encontrar 
 - [Diapositivas](presentacion/diapositivas%20-%20StudyMatch.pptx)
 - [Video de demostración](presentacion/video.mp4)
 
+## Demo en Azure
+
+[Abrir StudyMatch](https://studymatch-ihc-demo.mangomushroom-148b7629.eastus2.azurecontainerapps.io)
+
+El `Dockerfile` de la raíz compila React y lo sirve junto con FastAPI. La API está bajo `/api` y la demo usa una base PostgreSQL con datos ficticios.
+
+## Accesibilidad
+
+La [evidencia de accesibilidad](evidencias/accesibilidad.md) reúne los resultados de Lighthouse antes y después, las correcciones y las comprobaciones de contraste y teclado.
+
 ## Pruebas automáticas y cobertura
 
 Cada `push` y pull request ejecuta las pruebas unitarias del backend y del frontend, y las pruebas E2E en Chromium. GitHub Actions levanta PostgreSQL 17 con una comprobación de salud. FastAPI carga el catálogo de materias al iniciar y las pruebas crean sus propias cuentas y sesiones.
@@ -168,6 +178,18 @@ npm run dev
 | ORM | SQLAlchemy |
 | Autenticación | JWT (python-jose) |
 | Seguridad | bcrypt (passlib) |
+
+## Tokens de diseño
+
+[tokens.css](frontend/src/styles/tokens.css) centraliza los colores de StudyMatch.
+Los roles como `--primary`, `--surface` y `--text` cambian entre los temas claro y
+oscuro. Los tokens `--palette-*` conservan los colores y transparencias que se
+mantienen fijos, como algunos tonos de sombras y degradados.
+
+Los nombres coinciden con las variables de [StudyMatch en Figma](https://www.figma.com/design/zpO4TBs4ErFzndROtLRVy9/StudyMatch?node-id=6-2).
+Para cambiar un color compartido, actualiza el token correspondiente en ambos
+lugares y revisa los dos temas. La tabla de componentes y sus archivos está
+en el [informe de defensa](presentacion/Informe%20StudyMatch.pdf).
 
 ---
 

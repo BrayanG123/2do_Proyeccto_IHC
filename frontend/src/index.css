@@ -1,73 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "./styles/tokens.css";
 
 /* ── RESET & BASE ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ── MODO CLARO (Default - Identidad StudyMatch) ── */
-:root, [data-theme="light"] {
-  --primary: #1e4b87;          /* Azul Marino de StudyMatch */
-  --primary-dark: #153763;     /* Azul Marino profundo */
-  --primary-light: #00b4d8;    /* Turquesa / Cian vibrante del logo */
-  --secondary: #0284c7;        /* Azul cielo */
-  --accent-warm: #f59e0b;      /* Ámbar cálido del apretón de manos */
-  --accent-orange: #ea580c;
-
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-
-  --bg: #f8fafc;               /* Fondo claro y limpio */
-  --surface: #ffffff;          /* Tarjetas blancas puras */
-  --surface2: #f1f5f9;         /* Superficie secundaria */
-  --border: #e2e8f0;           /* Bordes suaves */
-
-  --text: #0f172a;             /* Texto oscuro de alto contraste */
-  --text-muted: #64748b;       /* Texto secundario gris pizarra */
-
-  --radius: 12px;
-  --radius-lg: 20px;
-  --shadow: 0 4px 20px rgba(30, 75, 135, 0.08);
-  --shadow-lg: 0 10px 30px rgba(30, 75, 135, 0.12);
-  --shadow-glow: 0 0 30px rgba(0, 180, 216, 0.18);
-
-  --nav-bg: rgba(255, 255, 255, 0.9);
-  --card-hero-bg: #ffffff;
-  --logo-pill-bg: transparent;
-  --logo-pill-border: transparent;
-  --input-bg: #ffffff;
-}
-
-/* ── MODO OSCURO (Deep Oceanic Navy) ── */
-[data-theme="dark"] {
-  --primary: #38bdf8;          /* Cian / Sky contrastante */
-  --primary-dark: #0284c7;
-  --primary-light: #7dd3fc;
-  --secondary: #00b4d8;
-  --accent-warm: #fbbf24;
-  --accent-orange: #f97316;
-
-  --success: #34d399;
-  --danger: #f87171;
-  --warning: #fbbf24;
-
-  --bg: #091124;               /* Azul marino noche profundo */
-  --surface: #0f1d38;          /* Superficie navy elegante */
-  --surface2: #142446;
-  --border: rgba(56, 189, 248, 0.16);
-
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
-
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.55);
-  --shadow-glow: 0 0 35px rgba(0, 180, 216, 0.25);
-
-  --nav-bg: rgba(9, 17, 36, 0.88);
-  --card-hero-bg: #0f1d38;
-  --logo-pill-bg: #ffffff;     /* Píldora blanca en dark mode para máxima nitidez */
-  --logo-pill-border: rgba(56, 189, 248, 0.25);
-  --input-bg: #142446;
-}
 
 html { scroll-behavior: smooth; }
 
@@ -102,14 +37,14 @@ body {
 
 /* ── GRADIENT TEXT (Navy to Cyan) ── */
 .gradient-text {
-  background: linear-gradient(135deg, #1e4b87 0%, #00b4d8 100%);
+  background: linear-gradient(135deg, var(--palette-brand-navy) 0%, var(--palette-brand-cyan) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 [data-theme="dark"] .gradient-text {
-  background: linear-gradient(135deg, #38bdf8 0%, #00b4d8 100%);
+  background: linear-gradient(135deg, var(--palette-brand-sky) 0%, var(--palette-brand-cyan) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -155,8 +90,8 @@ body {
 
 /* ── BUTTONS ── */
 .btn-primary {
-  background: #1e4b87;
-  color: #fff;
+  background: var(--palette-brand-navy);
+  color: var(--palette-white);
   padding: 10px 22px;
   border-radius: var(--radius);
   text-decoration: none;
@@ -164,17 +99,17 @@ body {
   font-size: 0.9rem;
   transition: all 0.2s ease;
   display: inline-block;
-  box-shadow: 0 4px 14px rgba(30, 75, 135, 0.25);
+  box-shadow: 0 4px 14px var(--palette-brand-navy-alpha-25);
 }
 .btn-primary:hover {
-  background: #153763;
+  background: var(--palette-brand-navy-deep);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(30, 75, 135, 0.35);
+  box-shadow: 0 6px 18px var(--palette-brand-navy-alpha-35);
 }
 
 [data-theme="dark"] .btn-primary {
-  background: linear-gradient(135deg, #0284c7, #00b4d8);
-  color: #04101e;
+  background: linear-gradient(135deg, var(--palette-brand-blue), var(--palette-brand-cyan));
+  color: var(--palette-ink-deep);
   font-weight: 700;
 }
 [data-theme="dark"] .btn-primary:hover {
@@ -194,7 +129,7 @@ body {
   display: inline-block;
 }
 .btn-outline:hover {
-  border-color: #00b4d8;
-  color: #00b4d8;
+  border-color: var(--palette-brand-cyan);
+  color: var(--palette-brand-cyan);
   transform: translateY(-1px);
 }

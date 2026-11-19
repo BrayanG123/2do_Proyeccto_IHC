@@ -28,65 +28,67 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="hero">
-        <div className="hero-content">
-          <div className="hero-badge">🎓 Plataforma de Estudio Colaborativo</div>
-          <h1 className="hero-title">
-            Encuentra tu <span className="gradient-text">compañero</span> de estudio ideal
-          </h1>
-          <p className="hero-subtitle">
-            StudyMatch conecta estudiantes para organizar sesiones de estudio,
-            compartir recursos y alcanzar juntos sus metas académicas.
-          </p>
-          <div className="hero-buttons">
-            <Link to="/register" className="btn-hero-primary">
-              Comenzar gratis →
-            </Link>
-            <Link to="/login" className="btn-hero-secondary">
-              Ya tengo cuenta
-            </Link>
+      <main className="home-main">
+        {/* Hero */}
+        <section className="hero">
+          <div className="hero-content">
+            <div className="hero-badge">🎓 Plataforma de Estudio Colaborativo</div>
+            <h1 className="hero-title">
+              Encuentra tu <span className="gradient-text">compañero</span> de estudio ideal
+            </h1>
+            <p className="hero-subtitle">
+              StudyMatch conecta estudiantes para organizar sesiones de estudio,
+              compartir recursos y alcanzar juntos sus metas académicas.
+            </p>
+            <div className="hero-buttons">
+              <Link to="/register" className="btn-hero-primary">
+                Comenzar gratis →
+              </Link>
+              <Link to="/login" className="btn-hero-secondary">
+                Ya tengo cuenta
+              </Link>
+            </div>
           </div>
-        </div>
-        <div className="hero-visual">
-          <div className="floating-card card-1">
-            <span className="card-emoji">📚</span>
-            <span>Matemáticas</span>
-            <span className="card-count">12 estudiantes</span>
+          <div className="hero-visual">
+            <div className="floating-card card-1">
+              <span className="card-emoji">📚</span>
+              <span>Matemáticas</span>
+              <span className="card-count">12 estudiantes</span>
+            </div>
+            <div className="floating-card card-2">
+              <span className="card-emoji">💻</span>
+              <span>Programación</span>
+              <span className="card-count">28 estudiantes</span>
+            </div>
+            <div className="floating-card card-3">
+              <span className="card-emoji">🧪</span>
+              <span>Química</span>
+              <span className="card-count">9 estudiantes</span>
+            </div>
           </div>
-          <div className="floating-card card-2">
-            <span className="card-emoji">💻</span>
-            <span>Programación</span>
-            <span className="card-count">28 estudiantes</span>
-          </div>
-          <div className="floating-card card-3">
-            <span className="card-emoji">🧪</span>
-            <span>Química</span>
-            <span className="card-count">9 estudiantes</span>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Features */}
-      <section className="features-container">
-        <div className="features">
-          <div className="feature-card">
-            <div className="feature-icon">🤝</div>
-            <h3>Conecta con compañeros</h3>
-            <p>Encuentra estudiantes de tu misma materia y nivel académico.</p>
+        {/* Features */}
+        <section className="features-container">
+          <div className="features">
+            <div className="feature-card">
+              <div className="feature-icon">🤝</div>
+              <h2>Conecta con compañeros</h2>
+              <p>Encuentra estudiantes de tu misma materia y nivel académico.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">📅</div>
+              <h2>Organiza sesiones</h2>
+              <p>Agenda sesiones de estudio en grupo y recibe recordatorios.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">🚀</div>
+              <h2>Mejora tu rendimiento</h2>
+              <p>Estudiar en equipo potencia el aprendizaje y la comprensión.</p>
+            </div>
           </div>
-          <div className="feature-card">
-            <div className="feature-icon">📅</div>
-            <h3>Organiza sesiones</h3>
-            <p>Agenda sesiones de estudio en grupo y recibe recordatorios.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">🚀</div>
-            <h3>Mejora tu rendimiento</h3>
-            <p>Estudiar en equipo potencia el aprendizaje y la comprensión.</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       {/* Footer */}
       <footer className="home-footer">

@@ -1,0 +1,2903 @@
+{
+  "antes": {
+    "lighthouse": "13.6.0",
+    "browser": "Chrome/157.0.8103.79",
+    "mode": "snapshot",
+    "phase": "antes",
+    "runs": [
+      {
+        "name": "Inicio",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/",
+        "score": 90,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.home-page > section.hero > div.hero-content > div.hero-badge",
+                "label": "🎓 Plataforma de Estudio Colaborativo",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.51 (foreground color: #0284c7, background color: #daf2f8, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div#root > div.home-page > footer.home-footer > p",
+                "label": "© 2026 StudyMatch · Compañeros | Sesiones de Estudio",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 10.6pt (14.08px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "heading-order",
+            "title": "Heading elements are not in a sequentially-descending order",
+            "nodes": [
+              {
+                "selector": "section.features-container > div.features > div.feature-card > h3",
+                "label": "Conecta con compañeros",
+                "summary": "Fix any of the following:\n  Heading order invalid"
+              }
+            ]
+          },
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Iniciar sesión",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/login",
+        "score": 93,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.auth-right > div.auth-card > p.auth-subtitle > a.auth-link",
+                "label": "Regístrate aquí",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.09 (foreground color: #0284c7, background color: #ffffff, font size: 11.4pt (15.2px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.auth-card > form.auth-form > div.forgot-link > a.auth-link",
+                "label": "¿Olvidaste tu contraseña?",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.09 (foreground color: #0284c7, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Registro",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/register",
+        "score": 93,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.auth-right > div.auth-card > p.auth-subtitle > a.auth-link",
+                "label": "Inicia sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.09 (foreground color: #0284c7, background color: #ffffff, font size: 11.4pt (15.2px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "form.auth-form > div.password-requirements > div.req-item > span",
+                "label": "Al menos 8 caracteres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "form.auth-form > div.password-requirements > div.req-item > span",
+                "label": "Al menos 1 letra mayúscula (A-Z)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "form.auth-form > div.password-requirements > div.req-item > span",
+                "label": "Al menos 1 letra minúscula (a-z)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "form.auth-form > div.password-requirements > div.req-item > span",
+                "label": "Al menos 1 número (0-9)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "form.auth-form > div.password-requirements > div.req-item > span",
+                "label": "Al menos 1 carácter especial (@, $, !, %, *, #, etc.)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Recuperar acceso",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/forgot-password",
+        "score": 93,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.auth-card > form.auth-form > p.fp-back-link > a.auth-link",
+                "label": "← Volver al login",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.09 (foreground color: #0284c7, background color: #ffffff, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Panel de sesiones",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 91,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "🏫 Presencial",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "💻 Virtual",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-filter-container > div.filter-results-status > span.filter-results-badge",
+                "label": "📋 6 sesiones encontradas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.36 (foreground color: #64748b, background color: #f5f5f5, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-1",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "PRESENCIAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.2 (foreground color: #10b981, background color: #dbf5ec, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-2",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.83 (foreground color: #d97706, background color: #fef0da, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-3",
+                "label": "👥 CUPOS LLENOS",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.9 (foreground color: #d97706, background color: #fef3e2, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-3",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-6",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Elena Flores",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Crear sesión",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 91,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "🏫 Presencial",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "💻 Virtual",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-filter-container > div.filter-results-status > span.filter-results-badge",
+                "label": "📋 6 sesiones encontradas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.36 (foreground color: #64748b, background color: #f5f5f5, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-1",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "PRESENCIAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.2 (foreground color: #10b981, background color: #dbf5ec, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-2",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.83 (foreground color: #d97706, background color: #fef0da, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-3",
+                "label": "👥 CUPOS LLENOS",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.9 (foreground color: #d97706, background color: #fef3e2, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-3",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-6",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Elena Flores",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Editar sesión",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 85,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "🏫 Presencial",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "💻 Virtual",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-filter-container > div.filter-results-status > span.filter-results-badge",
+                "label": "📋 6 sesiones encontradas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.36 (foreground color: #64748b, background color: #f5f5f5, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-1",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "PRESENCIAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.2 (foreground color: #10b981, background color: #dbf5ec, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-2",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.83 (foreground color: #d97706, background color: #fef0da, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-3",
+                "label": "👥 CUPOS LLENOS",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.9 (foreground color: #d97706, background color: #fef3e2, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-3",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-6",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Elena Flores",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "label",
+            "title": "Form elements do not have associated labels",
+            "nodes": [
+              {
+                "selector": "form.edit-session-form > div.form-row-edit > div.form-group > input",
+                "label": "form.edit-session-form > div.form-row-edit > div.form-group > input",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.modal > form.edit-session-form > div.form-group > select",
+                "label": "-- Selecciona una materia --\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura d…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "form.edit-session-form > div.form-row-edit > div.form-group > select",
+                "label": "Presencial\nVirtual\nHíbrida",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.modal > form.edit-session-form > div.form-group > select.edit-status-select",
+                "label": "🟢 Inscripción abierta (Acepta nuevos participantes)\n🔒 Inscripción cerrada (No a…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Gestionar solicitudes",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 92,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "🏫 Presencial",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "💻 Virtual",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-filter-container > div.filter-results-status > span.filter-results-badge",
+                "label": "📋 6 sesiones encontradas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.36 (foreground color: #64748b, background color: #f5f5f5, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-1",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "PRESENCIAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.2 (foreground color: #10b981, background color: #dbf5ec, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-2",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.83 (foreground color: #d97706, background color: #fef0da, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-3",
+                "label": "👥 CUPOS LLENOS",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.9 (foreground color: #d97706, background color: #fef3e2, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-3",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-6",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Elena Flores",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Historial",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/historial",
+        "score": 97,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "header.dashboard-header > div > p.history-breadcrumb > a",
+                "label": "Dashboard",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.91 (foreground color: #0284c7, background color: #f8fafc, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.dashboard-page > main.dashboard-main > div.history-filters > button.history-filter-btn",
+                "label": "Me uní\n0",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 11.4pt (15.2px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.dashboard-page > main.dashboard-main > div.history-filters > button.history-filter-btn",
+                "label": "Organicé\n3",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 11.4pt (15.2px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "ol.history-list > li.history-item > button.history-item-summary > span.history-status",
+                "label": "Finalizada",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.4pt (12.48px), font weight: bold). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Analítica",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/analitica",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Perfil y Mis datos",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/profile",
+        "score": 95,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "header.profile-header > div > div.profile-breadcrumb > a",
+                "label": "Dashboard",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.35 (foreground color: #00b4d8, background color: #f8fafc, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-badge-banner > div.profile-banner-details > div.profile-tags-row > span.status-pill",
+                "label": "Cuenta Activa",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-badge-banner > div.profile-banner-details > div.profile-tags-row > span.status-pill",
+                "label": "ID: #0001",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section.profile-card > div.profile-fields-list > div.fields-header-row > button.btn-edit-profile-trigger",
+                "label": "✏️ Editar Datos",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.25 (foreground color: #00b4d8, background color: #e6f8fb, font size: 9.8pt (13.12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-fields-list > div.info-grid > div.info-box > span.info-label",
+                "label": "NOMBRES",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-fields-list > div.info-grid > div.info-box > span.info-label",
+                "label": "APELLIDOS",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-fields-list > div.info-grid > div.info-box > span.info-label",
+                "label": "NOMBRE COMPLETO",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-fields-list > div.info-grid > div.info-box > span.info-label",
+                "label": "CORREO INSTITUCIONAL / PERSONAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-fields-list > div.info-grid > div.info-box > span.info-val",
+                "label": "ana.demo@example.com",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.24 (foreground color: #00b4d8, background color: #f1f5f9, font size: 11.3pt (15.04px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-fields-list > div.info-grid > div.info-box > span.info-label",
+                "label": "ESTADO DE CUENTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-fields-list > div.info-grid > div.info-box > span.info-val",
+                "label": "Habilitada para estudio",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.31 (foreground color: #10b981, background color: #f1f5f9, font size: 11.3pt (15.04px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.profile-fields-list > div.info-grid > div.info-box > span.info-label",
+                "label": "FECHA DE REGISTRO",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Eliminar cuenta",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/profile",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Mis solicitudes",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/mis-solicitudes",
+        "score": 96,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Solicitar participación",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 92,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "🏫 Presencial",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "💻 Virtual",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-filter-container > div.filter-results-status > span.filter-results-badge",
+                "label": "📋 6 sesiones encontradas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.36 (foreground color: #64748b, background color: #f5f5f5, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "PRESENCIAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.2 (foreground color: #10b981, background color: #dbf5ec, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-2",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.83 (foreground color: #d97706, background color: #fef0da, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-3",
+                "label": "👥 CUPOS LLENOS",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.9 (foreground color: #d97706, background color: #fef3e2, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-status-restricted-box > span.restriction-caption",
+                "label": "Sesión llena. Si el organizador te acepta, entrarás en la lista de espera.",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 8.8pt (11.68px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-6",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Elena Flores",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Inicio",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/",
+        "score": 95,
+        "failed": [
+          {
+            "id": "heading-order",
+            "title": "Heading elements are not in a sequentially-descending order",
+            "nodes": [
+              {
+                "selector": "section.features-container > div.features > div.feature-card > h3",
+                "label": "Conecta con compañeros",
+                "summary": "Fix any of the following:\n  Heading order invalid"
+              }
+            ]
+          },
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Iniciar sesión",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/login",
+        "score": 98,
+        "failed": [
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Registro",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/register",
+        "score": 98,
+        "failed": [
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Recuperar acceso",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/forgot-password",
+        "score": 98,
+        "failed": [
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Panel de sesiones",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 91,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "Todas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.11 (foreground color: #d97706, background color: #323031, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Crear sesión",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 91,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "Todas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.11 (foreground color: #d97706, background color: #323031, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Editar sesión",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 85,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "Todas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.11 (foreground color: #d97706, background color: #323031, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.modal > form.edit-session-form > div.modal-actions > button.btn-confirm-edit",
+                "label": "💾 Guardar Cambios",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 10.0pt (13.3333px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "label",
+            "title": "Form elements do not have associated labels",
+            "nodes": [
+              {
+                "selector": "form.edit-session-form > div.form-row-edit > div.form-group > input",
+                "label": "form.edit-session-form > div.form-row-edit > div.form-group > input",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.modal > form.edit-session-form > div.form-group > select",
+                "label": "-- Selecciona una materia --\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura d…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "form.edit-session-form > div.form-row-edit > div.form-group > select",
+                "label": "Presencial\nVirtual\nHíbrida",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.modal > form.edit-session-form > div.form-group > select.edit-status-select",
+                "label": "🟢 Inscripción abierta (Acepta nuevos participantes)\n🔒 Inscripción cerrada (No a…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Gestionar solicitudes",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 92,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "Todas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.11 (foreground color: #d97706, background color: #323031, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.modal > ul.requests-list > li > button.btn-confirm-edit",
+                "label": "Aceptar",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 10.0pt (13.3333px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Historial",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/historial",
+        "score": 97,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Analítica",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/analitica",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Perfil y Mis datos",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/profile",
+        "score": 95,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Eliminar cuenta",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/profile",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Mis solicitudes",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/mis-solicitudes",
+        "score": 96,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Solicitar participación",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 92,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "aside.sidebar > div.sidebar-footer > button.sidebar-logout > span",
+                "label": "Cerrar sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "Todas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.11 (foreground color: #d97706, background color: #323031, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-status-restricted-box > span.restriction-caption",
+                "label": "Sesión llena. Si el organizador te acepta, entrarás en la lista de espera.",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 8.8pt (11.68px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Inicio",
+        "theme": "light",
+        "device": "móvil",
+        "path": "/",
+        "score": 90,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.home-page > section.hero > div.hero-content > div.hero-badge",
+                "label": "🎓 Plataforma de Estudio Colaborativo",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.51 (foreground color: #0284c7, background color: #daf2f8, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div#root > div.home-page > footer.home-footer > p",
+                "label": "© 2026 StudyMatch · Compañeros | Sesiones de Estudio",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 10.6pt (14.08px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "heading-order",
+            "title": "Heading elements are not in a sequentially-descending order",
+            "nodes": [
+              {
+                "selector": "section.features-container > div.features > div.feature-card > h3",
+                "label": "Conecta con compañeros",
+                "summary": "Fix any of the following:\n  Heading order invalid"
+              }
+            ]
+          },
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Panel de sesiones",
+        "theme": "light",
+        "device": "móvil",
+        "path": "/dashboard",
+        "score": 91,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "🏫 Presencial",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "💻 Virtual",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-filter-container > div.filter-results-status > span.filter-results-badge",
+                "label": "📋 6 sesiones encontradas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.36 (foreground color: #64748b, background color: #f5f5f5, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-1",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "PRESENCIAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.2 (foreground color: #10b981, background color: #dbf5ec, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-2",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.83 (foreground color: #d97706, background color: #fef0da, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-3",
+                "label": "👥 CUPOS LLENOS",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.9 (foreground color: #d97706, background color: #fef3e2, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > button#btn-close-session-3",
+                "label": "🔒 Cerrar inscripciones",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #dc2626, background color: #fef0f0, font size: 10.3pt (13.76px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-6",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Elena Flores",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Mis solicitudes",
+        "theme": "light",
+        "device": "móvil",
+        "path": "/mis-solicitudes",
+        "score": 96,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Solicitar participación",
+        "theme": "light",
+        "device": "móvil",
+        "path": "/dashboard",
+        "score": 92,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "🏫 Presencial",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "💻 Virtual",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-filter-container > div.filter-results-status > span.filter-results-badge",
+                "label": "📋 6 sesiones encontradas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.36 (foreground color: #64748b, background color: #f5f5f5, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-1",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "PRESENCIAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.2 (foreground color: #10b981, background color: #dbf5ec, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-2",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.83 (foreground color: #d97706, background color: #fef0da, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-3",
+                "label": "👥 CUPOS LLENOS",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.9 (foreground color: #d97706, background color: #fef3e2, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-status-restricted-box > span.restriction-caption",
+                "label": "Sesión llena. Si el organizador te acepta, entrarás en la lista de espera.",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #ef4444, background color: #ffffff, font size: 8.8pt (11.68px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Bruno Rojas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.49 (foreground color: #768499, background color: #f2f6f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #8996a7, background color: #f3f6fa, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.64 (foreground color: #0284c7, background color: #e1f5fe, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-card-header > span#status-badge-6",
+                "label": "🟢 INSCRIPCIÓN ABIERTA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #059669, background color: #e2f7f0, font size: 8.9pt (11.84px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Elena Flores",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.76 (foreground color: #059669, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Inicio",
+        "theme": "dark",
+        "device": "móvil",
+        "path": "/",
+        "score": 95,
+        "failed": [
+          {
+            "id": "heading-order",
+            "title": "Heading elements are not in a sequentially-descending order",
+            "nodes": [
+              {
+                "selector": "section.features-container > div.features > div.feature-card > h3",
+                "label": "Conecta con compañeros",
+                "summary": "Fix any of the following:\n  Heading order invalid"
+              }
+            ]
+          },
+          {
+            "id": "landmark-one-main",
+            "title": "Document does not have a main landmark.",
+            "nodes": [
+              {
+                "selector": "html",
+                "label": "html",
+                "summary": "Fix all of the following:\n  Document does not have a main landmark"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Panel de sesiones",
+        "theme": "dark",
+        "device": "móvil",
+        "path": "/dashboard",
+        "score": 91,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "Todas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.11 (foreground color: #d97706, background color: #323031, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres (Tú)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-creator-footer-box > div.creator-notice-badge",
+                "label": "👤 Eres el organizador de esta sesión",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.6pt (12.8px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Mis solicitudes",
+        "theme": "dark",
+        "device": "móvil",
+        "path": "/mis-solicitudes",
+        "score": 96,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "errors": []
+      },
+      {
+        "name": "Solicitar participación",
+        "theme": "dark",
+        "device": "móvil",
+        "path": "/dashboard",
+        "score": 92,
+        "failed": [
+          {
+            "id": "color-contrast",
+            "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+            "nodes": [
+              {
+                "selector": "div.filter-secondary-row > div.filter-group > div.filter-pill-group > button.filter-pill-btn",
+                "label": "Todas",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #ffffff, background color: #38bdf8, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (4 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "HÍBRIDA",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.11 (foreground color: #d97706, background color: #323031, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-footer > div.session-status-restricted-box > span.restriction-caption",
+                "label": "Sesión llena. Si el organizador te acepta, entrarás en la lista de espera.",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.45 (foreground color: #ef4444, background color: #0f1d38, font size: 8.8pt (11.68px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "section#sesiones > div.sessions-grid > div.session-card > div.session-creator-tag",
+                "label": "👤 Organizado por: Ana Torres",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4 (foreground color: #717f93, background color: #111f3e, font size: 9.8pt (13.12px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.session-card > div.session-card-header > div.session-card-tags > span.session-modality-badge",
+                "label": "VIRTUAL",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.06 (foreground color: #0284c7, background color: #153555, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "selector": "div.sessions-grid > div.session-card > div.session-spots > span.session-spots-available-pill",
+                "label": " (6 cupos libres)",
+                "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #059669, background color: #0f1d38, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          },
+          {
+            "id": "select-name",
+            "title": "Select elements do not have associated label elements.",
+            "nodes": [
+              {
+                "selector": "div.sessions-filter-container > div.filter-main-row > div.filter-select-wrapper > select#select-filter-subject",
+                "label": "Todas las materias\n📋 Administración\n📊 Álgebra Lineal\n🖥️ Arquitectura de Computad…",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              },
+              {
+                "selector": "div.sessions-filter-container > div.filter-secondary-row > div.filter-group > select#select-filter-date",
+                "label": "Cualquier fecha\n📅 Hoy\n🗓️ Próximos 7 días\n📆 Rango personalizado...",
+                "summary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+              }
+            ]
+          }
+        ],
+        "errors": []
+      }
+    ]
+  },
+  "después": {
+    "lighthouse": "13.6.0",
+    "browser": "Chrome/157.0.8103.79",
+    "mode": "snapshot",
+    "phase": "despues",
+    "runs": [
+      {
+        "name": "Inicio",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Iniciar sesión",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/login",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Registro",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/register",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Recuperar acceso",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/forgot-password",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Panel de sesiones",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Crear sesión",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Editar sesión",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Gestionar solicitudes",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Historial",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/historial",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Analítica",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/analitica",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Perfil y Mis datos",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/profile",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Eliminar cuenta",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/profile",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Mis solicitudes",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/mis-solicitudes",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Solicitar participación",
+        "theme": "light",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Inicio",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Iniciar sesión",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/login",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Registro",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/register",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Recuperar acceso",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/forgot-password",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Panel de sesiones",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Crear sesión",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Editar sesión",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Gestionar solicitudes",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Historial",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/historial",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Analítica",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/analitica",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Perfil y Mis datos",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/profile",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Eliminar cuenta",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/profile",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Mis solicitudes",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/mis-solicitudes",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Solicitar participación",
+        "theme": "dark",
+        "device": "escritorio",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Inicio",
+        "theme": "light",
+        "device": "móvil",
+        "path": "/",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Panel de sesiones",
+        "theme": "light",
+        "device": "móvil",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Mis solicitudes",
+        "theme": "light",
+        "device": "móvil",
+        "path": "/mis-solicitudes",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Solicitar participación",
+        "theme": "light",
+        "device": "móvil",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Inicio",
+        "theme": "dark",
+        "device": "móvil",
+        "path": "/",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Panel de sesiones",
+        "theme": "dark",
+        "device": "móvil",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Mis solicitudes",
+        "theme": "dark",
+        "device": "móvil",
+        "path": "/mis-solicitudes",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      },
+      {
+        "name": "Solicitar participación",
+        "theme": "dark",
+        "device": "móvil",
+        "path": "/dashboard",
+        "score": 100,
+        "failed": [],
+        "errors": []
+      }
+    ]
+  },
+  "comprobaciones": {
+    "measurements": [
+      {
+        "phase": "antes",
+        "theme": "light",
+        "name": "Inicio · distintivo",
+        "ratio": 3.508969900398737
+      },
+      {
+        "phase": "antes",
+        "theme": "light",
+        "name": "Acceso · enlace de registro",
+        "ratio": 4.095330637522397
+      },
+      {
+        "phase": "antes",
+        "theme": "light",
+        "name": "Panel · modalidad virtual",
+        "ratio": 3.6487276308549124
+      },
+      {
+        "phase": "antes",
+        "theme": "light",
+        "name": "Panel · inscripción abierta",
+        "ratio": 3.365591971613128
+      },
+      {
+        "phase": "antes",
+        "theme": "light",
+        "name": "Panel · filtro de modalidad activo",
+        "ratio": 8.708314014880585
+      },
+      {
+        "phase": "antes",
+        "theme": "dark",
+        "name": "Inicio · distintivo",
+        "ratio": 7.204059117412053
+      },
+      {
+        "phase": "antes",
+        "theme": "dark",
+        "name": "Acceso · enlace de registro",
+        "ratio": 7.822331714349349
+      },
+      {
+        "phase": "antes",
+        "theme": "dark",
+        "name": "Panel · modalidad virtual",
+        "ratio": 3.066867496170758
+      },
+      {
+        "phase": "antes",
+        "theme": "dark",
+        "name": "Panel · inscripción abierta",
+        "ratio": 6.202580658401822
+      },
+      {
+        "phase": "antes",
+        "theme": "dark",
+        "name": "Panel · filtro de modalidad activo",
+        "ratio": 2.142277591669845
+      },
+      {
+        "phase": "después",
+        "theme": "light",
+        "name": "Inicio · distintivo",
+        "ratio": 5.084072894434464
+      },
+      {
+        "phase": "después",
+        "theme": "light",
+        "name": "Acceso · enlace de registro",
+        "ratio": 5.933638668604332
+      },
+      {
+        "phase": "después",
+        "theme": "light",
+        "name": "Panel · modalidad virtual",
+        "ratio": 5.286564938928542
+      },
+      {
+        "phase": "después",
+        "theme": "light",
+        "name": "Panel · inscripción abierta",
+        "ratio": 4.898022215068454
+      },
+      {
+        "phase": "después",
+        "theme": "light",
+        "name": "Panel · filtro de modalidad activo",
+        "ratio": 8.708314014880585
+      },
+      {
+        "phase": "después",
+        "theme": "dark",
+        "name": "Inicio · distintivo",
+        "ratio": 7.204059117412053
+      },
+      {
+        "phase": "después",
+        "theme": "dark",
+        "name": "Acceso · enlace de registro",
+        "ratio": 7.822331714349349
+      },
+      {
+        "phase": "después",
+        "theme": "dark",
+        "name": "Panel · modalidad virtual",
+        "ratio": 5.862842643328809
+      },
+      {
+        "phase": "después",
+        "theme": "dark",
+        "name": "Panel · inscripción abierta",
+        "ratio": 6.202580658401822
+      },
+      {
+        "phase": "después",
+        "theme": "dark",
+        "name": "Panel · filtro de modalidad activo",
+        "ratio": 8.92751948919774
+      }
+    ],
+    "keyboard": [
+      {
+        "theme": "light",
+        "dialog": "Nueva Sesión de Estudio",
+        "opening": true,
+        "tab": true,
+        "escape": true,
+        "focusRestored": true
+      },
+      {
+        "theme": "light",
+        "dialog": "Editar Sesión de Estudio",
+        "opening": true,
+        "tab": true,
+        "escape": true,
+        "focusRestored": true
+      },
+      {
+        "theme": "dark",
+        "dialog": "Nueva Sesión de Estudio",
+        "opening": true,
+        "tab": true,
+        "escape": true,
+        "focusRestored": true
+      },
+      {
+        "theme": "dark",
+        "dialog": "Editar Sesión de Estudio",
+        "opening": true,
+        "tab": true,
+        "escape": true,
+        "focusRestored": true
+      }
+    ]
+  }
+}
