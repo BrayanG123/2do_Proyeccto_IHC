@@ -6,6 +6,15 @@
 
 Plataforma para conectar estudiantes, organizar sesiones de estudio y encontrar compañeros por materia.
 
+## Material de entrega
+
+- [Aplicación StudyMatch en Azure](https://studymatch-ihc-demo.mangomushroom-148b7629.eastus2.azurecontainerapps.io)
+- [Diseño y componentes en Figma](https://www.figma.com/design/zpO4TBs4ErFzndROtLRVy9/StudyMatch)
+- [Prototipo interactivo](https://www.figma.com/proto/zpO4TBs4ErFzndROtLRVy9/StudyMatch?node-id=30-49)
+- [Informe de defensa](presentacion/Informe%20StudyMatch.pdf)
+- [Diapositivas](presentacion/diapositivas%20-%20StudyMatch.pptx)
+- [Video de demostración](presentacion/video.mp4)
+
 ## Pruebas automáticas y cobertura
 
 Cada `push` y pull request ejecuta las pruebas unitarias del backend y del frontend, y las pruebas E2E en Chromium. GitHub Actions levanta PostgreSQL 17 con una comprobación de salud. FastAPI carga el catálogo de materias al iniciar y las pruebas crean sus propias cuentas y sesiones.
