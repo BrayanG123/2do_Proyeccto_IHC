@@ -353,7 +353,8 @@ test('una solicitud aun sin enviar se puede cerrar con Escape o Cancelar', async
   renderDashboard()
   const card = await findCard()
   click('Solicitar Inscribirme', card)
-  fireEvent.keyDown(screen.getByRole('dialog', { name: 'Solicitar participar' }), { key: 'Escape' })
+  // En el navegador, Escape dispara el evento cancel del diálogo nativo.
+  fireEvent(screen.getByRole('dialog', { name: 'Solicitar participar' }), new Event('cancel', { cancelable: true }))
   expect(screen.queryByRole('dialog')).toBeNull()
   click('Solicitar Inscribirme', card)
   click('Cancelar', screen.getByRole('dialog', { name: 'Solicitar participar' }))

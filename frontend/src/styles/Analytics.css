@@ -25,8 +25,8 @@
   padding: 12px 18px;
   margin: 16px 0;
   min-height: 44px;
-  background: #047857;
-  color: #fff;
+  background: var(--palette-positive-700);
+  color: var(--palette-white);
   border: none;
   border-radius: 8px;
   font: inherit;

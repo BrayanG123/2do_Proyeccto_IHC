@@ -18,7 +18,7 @@ Revisé Inicio, Iniciar sesión, Registro, Recuperación de acceso, el Panel de 
 
 ## 2. Cinco tokens de diseño
 
-Los cinco tokens están definidos para ambos temas en [index.css](../frontend/src/index.css#L7). El nombre del inventario describe su función y la columna «Variable CSS» conserva el nombre que ya usa la app.
+Al momento del inventario, los cinco tokens estaban definidos para ambos temas en [index.css del corte de clase](https://github.com/BrayanG123/2do_Proyeccto_IHC/blob/cc6cac6/frontend/src/index.css#L7). La columna «Variable CSS» conserva el nombre que usa la app. Para la entrega final, las definiciones se trasladaron a [tokens.css](../frontend/src/styles/tokens.css).
 
 | Token | Variable CSS | Claro | Oscuro | Dónde se usa |
 | --- | --- | --- | --- | --- |
@@ -30,11 +30,11 @@ Los cinco tokens están definidos para ambos temas en [index.css](../frontend/sr
 
 ## 3. Conteo de colores fijos
 
-**Pantalla revisada:** Analítica de StudyMatch (`/analitica`). Busqué colores hexadecimales y funciones de color como `rgb()`, `rgba()` y `hsl()` en el [componente de la pantalla](../frontend/src/pages/Analytics.jsx) y su [hoja de estilos](../frontend/src/styles/Analytics.css). El conteo toma cada valor literal como una ocurrencia y excluye las referencias `var(...)` y las definiciones globales del tema.
+**Pantalla revisada:** Analítica de StudyMatch (`/analitica`). Busqué colores hexadecimales y funciones de color como `rgb()`, `rgba()` y `hsl()` en el [componente de la pantalla](../frontend/src/pages/Analytics.jsx) y su [hoja de estilos al momento del inventario](https://github.com/BrayanG123/2do_Proyeccto_IHC/blob/cc6cac6/frontend/src/styles/Analytics.css). El conteo toma cada valor literal como una ocurrencia y excluye las referencias `var(...)` y las definiciones globales del tema.
 
 **Resultado: 2 ocurrencias**, ambas en `.analytics-refresh`.
 
 | Color fijo | Uso | Ubicación |
 | --- | --- | --- |
-| `#047857` | Fondo de «Actualizar panel». | [Analytics.css, línea 28](../frontend/src/styles/Analytics.css#L28) |
-| `#fff` | Texto de «Actualizar panel». | [Analytics.css, línea 29](../frontend/src/styles/Analytics.css#L29) |
+| `#047857` | Fondo de «Actualizar panel». | [Analytics.css, línea 28](https://github.com/BrayanG123/2do_Proyeccto_IHC/blob/cc6cac6/frontend/src/styles/Analytics.css#L28) |
+| `#fff` | Texto de «Actualizar panel». | [Analytics.css, línea 29](https://github.com/BrayanG123/2do_Proyeccto_IHC/blob/cc6cac6/frontend/src/styles/Analytics.css#L29) |

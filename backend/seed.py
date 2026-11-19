@@ -6,6 +6,7 @@ Los datos existentes no se reinician al volver a ejecutar el script.
 """
 from datetime import date, timedelta
 import json
+import os
 
 from app.database import Base, SessionLocal, engine
 from app.models import (
@@ -100,7 +101,7 @@ DEMO_SESSIONS = [
 ]
 
 
-def seed_demo_data(db, reference_date=None):
+def seed_demo_data(db, reference_date=None, password=DEMO_PASSWORD):
     """Agrega datos faltantes; el llamador confirma la transacción."""
     today = reference_date or date.today()
     result = {"users": 0, "sessions": 0, "requests": 0, "history": 0}
@@ -114,7 +115,7 @@ def seed_demo_data(db, reference_date=None):
                 last_name=last_name,
                 full_name=f"{first_name} {last_name}",
                 email=email,
-                hashed_password=hash_password(DEMO_PASSWORD),
+                hashed_password=hash_password(password),
                 is_active=True,
             )
             db.add(user)
@@ -208,11 +209,12 @@ def seed_demo_data(db, reference_date=None):
 
 
 def main():
+    configured_password = os.getenv("DEMO_PASSWORD")
     Base.metadata.create_all(bind=engine)
 
     with SessionLocal() as db:
         subjects = seed_subjects_in_db(db)
-        demo = seed_demo_data(db)
+        demo = seed_demo_data(db, password=configured_password or DEMO_PASSWORD)
         db.commit()
 
     print(f"Materias sincronizadas: {subjects['total']}")
@@ -223,7 +225,8 @@ def main():
     print("\nCuentas de demostracion:")
     for _, _, email in DEMO_USERS:
         print(f"  {email}")
-    print(f"Contrasena de las cuentas nuevas: {DEMO_PASSWORD}")
+    if not configured_password:
+        print(f"Contrasena de las cuentas nuevas: {DEMO_PASSWORD}")
     print("Las cuentas existentes conservan su contrasena.")
     print("Las sesiones existentes conservan sus fechas y sus cambios.")
 

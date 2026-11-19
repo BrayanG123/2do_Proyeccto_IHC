@@ -60,8 +60,8 @@
 
 .reschedule-modal .btn-confirm-edit,
 .reschedule-notice .btn-confirm-edit {
-  background: #047857;
-  color: #ffffff;
+  background: var(--palette-positive-700);
+  color: var(--palette-white);
 }
 
 .reschedule-modal fieldset:disabled {
