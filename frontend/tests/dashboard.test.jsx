@@ -279,7 +279,9 @@ test('el participante consulta su asistencia y envía una justificación', async
 })
 
 test('crear comprueba campos, cupos y materia nueva antes de publicar una sesión con hora', async () => {
-  const published = ownerSession({ id: 73, name: 'Nuevo grupo de estudio', subject: 'Algoritmos', time: '16:30:00' })
+  const published = ownerSession({
+    id: 73, name: 'Nuevo grupo de estudio', subject: 'Algoritmos', time: '16:30:00', modality: 'Híbrida',
+  })
   api.post.mockImplementation(path => Promise.resolve({
     data: path === '/subjects/' ? { id: 5, name: 'Algoritmos' } : published,
   }))
@@ -294,6 +296,7 @@ test('crear comprueba campos, cupos y materia nueva antes de publicar una sesió
   fill(name, published.name)
   fill(screen.getByLabelText('Fecha', { exact: true }), published.date)
   fill(screen.getByLabelText('Hora opcional'), '16:30')
+  fill(screen.getByLabelText('Modalidad', { exact: true }), published.modality)
   const spots = screen.getByLabelText('Cupos disponibles')
   fill(spots, '0')
   fireEvent.submit(form)
@@ -307,29 +310,69 @@ test('crear comprueba campos, cupos y materia nueva antes de publicar una sesió
   expect((await findCard(published.name)).textContent).toContain('16:30')
   expect(api.post).toHaveBeenCalledWith('/subjects/', { name: 'Algoritmos' })
   expect(api.post).toHaveBeenCalledWith('/sessions/', expect.objectContaining({
-    name: published.name, subject: 'Algoritmos', time: '16:30', spots: 3,
+    name: published.name, subject: 'Algoritmos', time: '16:30', modality: 'Híbrida', spots: 3,
   }), { headers: { 'X-Analytics-Attempt': 'crear_sesion' } })
 })
 
-test('edita la hora y exige un nombre cuando se elige una materia nueva', async () => {
-  const revised = ownerSession({ time: '17:30:00' })
+test('edita los datos de la sesión y exige un nombre para registrar una materia nueva', async () => {
+  const revised = ownerSession({
+    name: 'Repaso de algoritmos', subject: 'Algoritmos', date: '2030-12-12',
+    time: '17:30:00', modality: 'Híbrida', spots: 4, status: 'cerrada',
+  })
+  api.post.mockResolvedValueOnce({ data: { id: 5, name: revised.subject } })
   api.put.mockResolvedValueOnce({ data: revised })
   renderDashboard({ sessions: [ownerSession()] })
   click(/Editar/, await findCard())
-  const time = screen.getByLabelText('Hora opcional')
+  const dialog = within(screen.getByRole('dialog', { name: /Editar Sesión de Estudio/ }))
+  const time = dialog.getByLabelText('Hora opcional')
   const form = time.form
   fireEvent.invalid(time)
-  const subject = form.querySelector('select')
-  fill(subject, '__OTRO__')
+  fill(dialog.getByLabelText('Materia asociada'), '__OTRO__')
   fireEvent.submit(form)
   expect(screen.getByText(/Por favor ingresa el nombre de la materia/)).toBeTruthy()
-  fill(subject, 'Programación II')
+  fill(dialog.getByLabelText('Nombre de la nueva materia'), revised.subject)
+  fill(dialog.getByLabelText('Nombre de la sesión'), revised.name)
+  fill(dialog.getByLabelText('Fecha', { exact: true }), revised.date)
   fill(time, '17:30')
+  fill(dialog.getByLabelText('Modalidad'), revised.modality)
+  fill(dialog.getByLabelText('Cupos totales'), String(revised.spots))
+  fill(dialog.getByLabelText('Estado de inscripción'), revised.status)
   fireEvent.submit(form)
   await waitFor(() => expect(screen.getByText(/actualizada con éxito/)).toBeTruthy())
+  expect((await findCard(revised.name)).textContent).toContain('17:30')
+  expect(api.post).toHaveBeenCalledExactlyOnceWith('/subjects/', { name: revised.subject })
   expect(api.put).toHaveBeenCalledExactlyOnceWith('/sessions/42', expect.objectContaining({
-    subject: 'Programación II', time: '17:30',
+    name: revised.name, subject: revised.subject, date: revised.date, time: '17:30',
+    modality: revised.modality, spots: revised.spots, status: revised.status,
   }), { headers: { 'X-Analytics-Attempt': 'editar_sesion' } })
+})
+
+test.each([
+  [/Crear Sesión/, /Nueva Sesión de Estudio/, 'Cerrar'],
+  [/Editar/, /Editar Sesión de Estudio/, 'Cerrar edición'],
+])('el formulario %s permite descartar sin guardar y devuelve el foco', async (open, title, close) => {
+  renderDashboard({ sessions: [ownerSession()] })
+  await findCard()
+  const trigger = screen.getByRole('button', { name: open })
+  trigger.focus()
+
+  fireEvent.click(trigger)
+  let dialog = screen.getByRole('dialog', { name: title })
+  fireEvent(dialog, new Event('cancel', { cancelable: true }))
+  expect(screen.queryByRole('dialog', { name: title })).toBeNull()
+  expect(document.activeElement).toBe(trigger)
+
+  fireEvent.click(trigger)
+  dialog = screen.getByRole('dialog', { name: title })
+  click(close, dialog)
+  expect(screen.queryByRole('dialog', { name: title })).toBeNull()
+
+  fireEvent.click(trigger)
+  dialog = screen.getByRole('dialog', { name: title })
+  click('Cancelar', dialog)
+  expect(screen.queryByRole('dialog', { name: title })).toBeNull()
+  expect(api.post).not.toHaveBeenCalled()
+  expect(api.put).not.toHaveBeenCalled()
 })
 
 test('el organizador reintenta cerrar inscripciones y puede eliminar la sesión por confirmación', async () => {
@@ -349,7 +392,7 @@ test('el organizador reintenta cerrar inscripciones y puede eliminar la sesión 
   })
 })
 
-test('una solicitud aun sin enviar se puede cerrar con Escape o Cancelar', async () => {
+test('una solicitud sin enviar se puede cerrar por teclado, botón o fondo del diálogo', async () => {
   renderDashboard()
   const card = await findCard()
   click('Solicitar Inscribirme', card)
@@ -358,6 +401,19 @@ test('una solicitud aun sin enviar se puede cerrar con Escape o Cancelar', async
   expect(screen.queryByRole('dialog')).toBeNull()
   click('Solicitar Inscribirme', card)
   click('Cancelar', screen.getByRole('dialog', { name: 'Solicitar participar' }))
+  expect(screen.queryByRole('dialog')).toBeNull()
+
+  click('Solicitar Inscribirme', card)
+  click('Cerrar ventana', screen.getByRole('dialog', { name: 'Solicitar participar' }))
+  expect(screen.queryByRole('dialog')).toBeNull()
+
+  click('Solicitar Inscribirme', card)
+  const dialog = screen.getByRole('dialog', { name: 'Solicitar participar' })
+  vi.spyOn(dialog, 'getBoundingClientRect').mockReturnValue(new DOMRect(20, 20, 280, 280))
+  fireEvent.click(within(dialog).getByRole('heading', { name: 'Solicitar participar' }))
+  fireEvent.click(dialog, { clientX: 100, clientY: 100 })
+  expect(screen.getByRole('dialog', { name: 'Solicitar participar' })).toBe(dialog)
+  fireEvent.click(dialog, { clientX: 10, clientY: 100 })
   expect(screen.queryByRole('dialog')).toBeNull()
   expect(api.post).not.toHaveBeenCalled()
 })

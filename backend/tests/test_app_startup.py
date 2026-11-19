@@ -5,6 +5,7 @@ from unittest.mock import Mock
 
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
+from starlette.staticfiles import StaticFiles
 
 from app import database, triggers
 from app.models import Session, Subject
@@ -31,6 +32,47 @@ def test_startup_loads_catalog_and_keeps_analytics_private(api, monkeypatch):
             assert client.get('/analytics/funnels').status_code in {401, 403}
         configure_triggers.assert_called_once_with()
     finally:
+        sys.modules.pop('app.main', None)
+
+
+def test_production_serves_react_routes_and_preserves_api_errors(api, monkeypatch, tmp_path):
+    use_isolated_database(monkeypatch, api)
+    monkeypatch.setattr(triggers, 'setup_triggers', Mock())
+
+    index = '<main>StudyMatch</main>'
+    (tmp_path / 'index.html').write_text(index, encoding='utf-8')
+    (tmp_path / 'app.js').write_text('console.log("StudyMatch")', encoding='utf-8')
+    static_init = StaticFiles.__init__
+
+    def use_build_fixture(self, *, directory, html):
+        assert directory.name == 'static'
+        static_init(self, directory=tmp_path, html=html)
+
+    monkeypatch.setattr(StaticFiles, '__init__', use_build_fixture)
+    module = importlib.import_module('app.web')
+    try:
+        with TestClient(module.app) as client:
+            home = client.get('/')
+            assert home.status_code == 200
+            assert home.text == index
+            route = client.get('/mis-solicitudes')
+            assert route.status_code == 200
+            assert route.text == index
+
+            asset = client.get('/app.js')
+            assert asset.status_code == 200
+            assert asset.text == 'console.log("StudyMatch")'
+            assert client.get('/missing.js').status_code == 404
+            assert client.post('/mis-solicitudes').status_code == 405
+
+            health = client.get('/api/')
+            assert health.status_code == 200
+            assert health.json()['message'] == 'StudyMatch API funcionando'
+            missing_api = client.get('/api/desconocida')
+            assert missing_api.status_code == 404
+            assert missing_api.json()['detail'] == 'Not Found'
+    finally:
+        sys.modules.pop('app.web', None)
         sys.modules.pop('app.main', None)
 
 
