@@ -30,10 +30,10 @@ async function prepareSession(organizer, students) {
   return { session, name, members };
 }
 
-test('Asistencia completa con presentes, ausencia, justificación aceptada e historial persistente', async ({ browser }) => {
+test('Asistencia completa con presentes, ausencia, justificación aceptada e historial persistente', async ({ browser }, testInfo) => {
   test.setTimeout(120000);
   const contexts = await Promise.all([1, 2, 3].map(() => browser.newContext({ viewport: { width: 1280, height: 900 } })));
-  const evidence = resolve('evidencias/tarea-8');
+  const evidence = process.env.CI ? testInfo.outputPath('capturas') : resolve('evidencias/tarea-8');
   await mkdir(evidence, { recursive: true });
   try {
     const [organizer, present, absent] = await Promise.all(contexts.map(context => context.newPage()));
@@ -91,7 +91,7 @@ test('Asistencia completa con presentes, ausencia, justificación aceptada e his
   }
 });
 
-test('Un usuario ajeno y un participante no pueden modificar la asistencia del organizador', async ({ browser }) => {
+test('Un usuario ajeno y un participante no pueden modificar la asistencia del organizador', async ({ browser }, testInfo) => {
   test.setTimeout(90000);
   const contexts = await Promise.all([1, 2, 3].map(() => browser.newContext()));
   try {
@@ -116,8 +116,9 @@ test('Un usuario ajeno y un participante no pueden modificar la asistencia del o
     }
     const denied = state => embudo(state, 'registrar_asistencia').blockers.find(item => item.reason === 'permiso_denegado')?.count ?? 0;
     expect(denied(await leerAnalitica(organizer)) - denied(baseline)).toBeGreaterThanOrEqual(2);
-    await mkdir(resolve('evidencias/tarea-8'), { recursive: true });
-    await outsider.locator('.session-card').screenshot({ path: resolve('evidencias/tarea-8/05-usuario-ajeno.png'), animations: 'disabled' });
+    const evidence = process.env.CI ? testInfo.outputPath('capturas') : resolve('evidencias/tarea-8');
+    await mkdir(evidence, { recursive: true });
+    await outsider.locator('.session-card').screenshot({ path: resolve(evidence, '05-usuario-ajeno.png'), animations: 'disabled' });
     await organizer.getByRole('button', { name: 'Cerrar asistencia', exact: true }).click();
     await organizer.reload();
     await buscar(organizer, name);

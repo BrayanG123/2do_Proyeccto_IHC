@@ -25,7 +25,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
@@ -73,11 +73,22 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  // CI inicia sus propios servidores sobre la base de pruebas.
+  webServer: process.env.STUDYMATCH_E2E_SERVERS === '1' ? [
+    {
+      command: 'python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --no-access-log',
+      cwd: 'backend',
+      url: 'http://127.0.0.1:8000/',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+    {
+      command: 'npm run dev -- --host 127.0.0.1 --strictPort --configLoader native',
+      cwd: 'frontend',
+      url: 'http://127.0.0.1:5173/',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+  ] : undefined,
 });
 

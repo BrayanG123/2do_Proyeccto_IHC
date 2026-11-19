@@ -10,6 +10,6 @@ const boliviaDate = new Intl.DateTimeFormat('en', {
 })
 
 export function todayInBolivia() {
-  const parts = Object.fromEntries(boliviaDate.formatToParts().map(({ type, value }) => [type, value]))
+  const parts = Object.fromEntries(boliviaDate.formatToParts(new Date()).map(({ type, value }) => [type, value]))
   return `${parts.year}-${parts.month}-${parts.day}`
 }

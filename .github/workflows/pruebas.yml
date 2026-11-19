@@ -1,0 +1,107 @@
+name: Pruebas y cobertura
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TZ: America/La_Paz
+      DATABASE_URL: postgresql://studymatch_ci@127.0.0.1:5432/studymatch_ci
+      COVERAGE_FILE: test-results/cobertura/.coverage
+      FORK_BASE: ff495ba6fc9214b2376aba0429fe4c8a3b52c136
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: studymatch_ci
+          POSTGRES_DB: studymatch_ci
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd="pg_isready -U studymatch_ci -d studymatch_ci"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - uses: pnpm/action-setup@v6
+
+      - name: Instalar dependencias
+        id: deps
+        run: |
+          python -m pip install -r backend/requirements-ci.txt
+          pnpm install --frozen-lockfile
+          npm ci --prefix frontend
+          pnpm exec playwright install --with-deps chromium
+          mkdir -p test-results/cobertura
+          ci_key=$(openssl rand -hex 32)
+          echo "::add-mask::$ci_key"
+          echo "SECRET_KEY=$ci_key" >> "$GITHUB_ENV"
+
+      - name: Pruebas unitarias del backend
+        env:
+          PYTHONPATH: backend
+        run: |
+          python -m coverage run --source=backend/app,seed -m pytest backend/tests --junitxml=test-results/cobertura/unitarias-backend.xml
+          python -m coverage report -m
+          python -m coverage xml -o test-results/cobertura/backend.xml
+          python -m coverage html -d test-results/cobertura/backend
+
+      - name: Pruebas unitarias del frontend
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: npm --prefix frontend run test:coverage
+
+      - name: Pruebas E2E en Chromium
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        env:
+          STUDYMATCH_E2E_SERVERS: '1'
+        run: pnpm exec playwright test --project=chromium --output=test-results/e2e
+
+      - name: Reporte de cobertura del fork
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: |
+          test -s test-results/cobertura/backend.xml
+          test -s test-results/cobertura/frontend/cobertura-coverage.xml
+          git merge-base --is-ancestor "$FORK_BASE" HEAD
+          diff-cover test-results/cobertura/backend.xml test-results/cobertura/frontend/cobertura-coverage.xml \
+            --compare-branch="$FORK_BASE" \
+            --format=html:test-results/cobertura/diff.html,markdown:test-results/cobertura/diff.md,json:test-results/cobertura/diff.json
+          cat test-results/cobertura/diff.md >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("test-results/cobertura/diff.json").read_text(encoding="utf-8"))
+          missing = report["total_num_violations"]
+          if missing:
+              print(f"::warning::Meta de cobertura del 100 % pendiente. Líneas sin cobertura: {missing}.")
+          PY
+
+      - name: Publicar reportes de pruebas y cobertura
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reportes-pruebas-y-cobertura
+          path: |
+            test-results/cobertura/
+            test-results/e2e/
+            playwright-report/

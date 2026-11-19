@@ -3,10 +3,10 @@ import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { registrar, crearSesion, buscar, leerAnalitica, comprobarEventos } from './apoyo.js';
 
-test('Reprogramar, reservar dos cupos, reconfirmar y promover al primero en espera', async ({ browser }) => {
+test('Reprogramar, reservar dos cupos, reconfirmar y promover al primero en espera', async ({ browser }, testInfo) => {
   test.setTimeout(120000);
   const contexts = [];
-  const evidence = resolve('evidencias/tarea-7/reprogramacion');
+  const evidence = process.env.CI ? testInfo.outputPath('capturas') : resolve('evidencias/tarea-7/reprogramacion');
   await mkdir(evidence, { recursive: true });
   try {
     // Cada persona utiliza una cuenta y un navegador independientes.
